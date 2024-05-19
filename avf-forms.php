@@ -40,3 +40,14 @@ function run_avf_forms() {
 }
 
 run_avf_forms();
+
+function avf_enqueue_scripts() {
+    wp_enqueue_script(
+        'avf-form-scripts',
+        plugin_dir_url( __FILE__ ) . 'assets/js/form-scripts.js',
+        array(),
+        null,
+        true
+    );
+}
+add_action( 'wp_enqueue_scripts', 'avf_enqueue_scripts' );

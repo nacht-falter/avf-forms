@@ -9,7 +9,7 @@ class Avf_Forms_Shortcodes {
     public static function render_membership_form() {
         ob_start();
         ?>
-        <form id="membership_form" class="custom-form" method="post" action="">
+        <form id="membership-form" class="custom-form" method="post" action="">
             <div class="personal-details">
                 <h2>Persönliche Angaben</h2>
                 <div class="flex-container">
@@ -111,25 +111,26 @@ class Avf_Forms_Shortcodes {
                     <input class="custom-checkbox" type="checkbox" name="spende" id="spende">
                     <label for="spende">Ich möchte den Aikido Verein Freiburg gerne zusätzlich mit einer freiwilligen Spende unterstützen (gegen Erhalt einer Spendenquittung):</label>
                 </div>
-                <div class="flex-container align-center no-wrap">
-                    <label for="spende_einmalig" class="indent normal-weight">Monatlich:</label>
-                    <input type="radio" name="spende_monatlich" value="5"> 5€
-                    <input type="radio" name="spende_monatlich" value="10"> 10€
-                    <input type="radio" name="spende_monatlich" value="15"> 15€
-                    <input type="radio" name="spende_monatlich" value="freibetrag"> Freier Betrag
-                    <input type="number" name="spende_monatlich_freibetrag" placeholder="Betrag">
-                </div>
-                <div class="flex-container align-center no-wrap">
-                        <label for="spende_einmalig" class="indent normal-weight">Einmalig:</label>
-                        <input type="number" name="spende_einmalig" id="spende_einmalig" placeholder="Betrag">
+                <div id="spende-details">
+                    <div class="flex-container align-center no-wrap indent">
+                        <input type="radio" name="intervall" value="monatlich">Monatlich
+                        <input type="radio" name="intervall" value="einmalig">Einmalig
+                    </div>
+                    <div class="flex-container align-center no-wrap indent">
+                        <input type="radio" name="spende" value="5">5€
+                        <input type="radio" name="spende" value="10">10€
+                        <input type="radio" name="spende" value="15">15€
+                        <input type="radio" name="spende" value="freibetrag">Freier Betrag
+                        <input type="number" name="spende" placeholder="Betrag">
+                    </div>
                 </div>
                 <div class="flex-container no-wrap align-baseline">
-                    <input class="custom-checkbox" type="checkbox" name="sepa" id="sepa">
+                    <input class="custom-checkbox" type="checkbox" name="sepa" id="sepa" required>
                     <label for="sepa">Hiermit ermächtige ich den Aikido Verein Freiburg e.V., Zahlungen von meinem Konto mittels Lastschrift einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom Aikido Verein Freiburg e.V. auf mein Konto gezogenen Lastschriften einzulösen. Die untenstehenden Hinweise habe ich zur Kenntnis genommen.</label>
                 </div>
                 <div>
-                    <p><strong>Hinweise:</strong><br>
-                    Der Aikido Verein Freiburg e.V. zieht die Mitgliedsbeiträge quartalsweise jeweils in den ersten beiden Wochen zu Beginn eines neuen Quartals ein. Mir ist bekannt, dass seitens des kontoführenden Kreditinstitutes keine Verpflichtung zur Einlösung besteht, wenn mein Konto die erforderliche Deckung nicht aufweist.</p>
+                    <h5>Hinweise:</h5>
+                    <p>Der Aikido Verein Freiburg e.V. zieht die Mitgliedsbeiträge quartalsweise jeweils in den ersten beiden Wochen zu Beginn eines neuen Quartals ein. Mir ist bekannt, dass seitens des kontoführenden Kreditinstitutes keine Verpflichtung zur Einlösung besteht, wenn mein Konto die erforderliche Deckung nicht aufweist.</p>
                     <p>Der/die Kontoinhaber/in kann innerhalb von acht Wochen, beginnend mit dem Belastungsdatum, die Erstattung des belasteten Betrages verlangen. Es gelten dabei die mit meinem Kreditinstitut vereinbarten Bedingungen.</p>
                     <p>Falls dem Aikido-Verein Freiburg e.V. im Rahmen des Lastschriftverfahrens Kosten entstehen, die der Kontoinhaber zu vertreten hat, z.B. Rücklastschriftgebühren wegen mangelnder Kontodeckung oder fehlerhafter Angaben, sind diese Kosten vom Kontoinhaber zu tragen.</p>
              </div>

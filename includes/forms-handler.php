@@ -24,8 +24,8 @@ class Avf_Forms_Handler {
             $beitrittsdatum = sanitize_text_field( $_POST['beitrittsdatum'] );
             $starterpaket = isset( $_POST['starterpaket'] ) ? 1 : 0;
             $spende = isset( $_POST['spende'] ) ? 1 : 0;
-            $spende_monatlich = isset( $_POST['spende_monatlich'] ) ? intval( $_POST['spende_monatlich'] ) : null;
-            $spende_einmalig = isset( $_POST['spende_einmalig'] ) ? intval( $_POST['spende_einmalig'] ) : null;
+            $spende_monatlich = isset( $_POST['spende'] ) && $_POST['intervall'] === 'monatlich' ? floatval( $_POST['spende'] ) : 0;
+            $spende_einmalig = isset( $_POST['spende'] ) && $_POST['intervall'] === 'einmalig' ? floatval( $_POST['spende'] ) : 0;
             $satzung_datenschutz = isset( $_POST['satzung_datenschutz'] ) ? 1 : 0;
             $hinweise = isset( $_POST['hinweise'] ) ? 1 : 0;
             $sepa = isset( $_POST['sepa'] ) ? 1 : 0;
@@ -47,7 +47,6 @@ class Avf_Forms_Handler {
                     'mitgliedschaft' => $mitgliedschaft,
                     'beitrittsdatum' => $beitrittsdatum,
                     'starterpaket' => $starterpaket,
-                    'spende' => $spende,
                     'spende_monatlich' => $spende_monatlich,
                     'spende_einmalig' => $spende_einmalig,
                     'satzung_datenschutz' => $satzung_datenschutz,
