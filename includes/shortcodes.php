@@ -6,6 +6,7 @@ class Avf_Forms_Shortcodes
     public static function register()
     {
         add_shortcode('membership_form', array( __CLASS__, 'render_membership_form' ));
+        add_shortcode('membership_csv_download', array( __CLASS__, 'membership_csv_shortcode' ));
     }
 
     public static function render_membership_form()
@@ -145,6 +146,20 @@ class Avf_Forms_Shortcodes
             <input class="button" type="submit" name="membership_form_submit" value="Antrag abschicken">
         </form>
         <?php
+        return ob_get_clean();
+    }
+
+    public static function membership_csv_shortcode()
+    {
+        ob_start();
+
+        if (is_user_logged_in() && current_user_can('edit_posts')) {
+            $csv_url = esc_url(add_query_arg('download_csv', 'true', home_url('/')));
+            echo '<a href="' . $csv_url . '">Download CSV</a>';
+        } else {
+            echo 'You do not have permission to access this resource.';
+        }
+
         return ob_get_clean();
     }
 }
