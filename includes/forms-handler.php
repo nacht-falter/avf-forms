@@ -1,36 +1,39 @@
 <?php
 
-class Avf_Forms_Handler {
+class Avf_Forms_Handler
+{
 
-    public static function register() {
-        add_action( 'init', array( __CLASS__, 'handle_membership_form_submission' ) );
+    public static function register()
+    {
+        add_action('init', array( __CLASS__, 'handle_membership_form_submission' ));
     }
 
-    public static function handle_membership_form_submission() {
-        if ( isset( $_POST['membership_form_submit'] ) ) {
+    public static function handle_membership_form_submission()
+    {
+        if (isset($_POST['membership_form_submit']) ) {
             global $wpdb;
-            $table_name = $wpdb->prefix . 'avf_membership_entries';
+            $table_name = $wpdb->prefix . 'avf_membership_applications';
 
-            $vorname = sanitize_text_field( $_POST['vorname'] );
-            $nachname = sanitize_text_field( $_POST['nachname'] );
-            $email = sanitize_email( $_POST['email'] );
-            $telefon = sanitize_text_field( $_POST['telefon'] );
-            $geburtsdatum = sanitize_text_field( $_POST['geburtsdatum'] );
-            $strasse = sanitize_text_field( $_POST['strasse'] );
-            $hausnummer = sanitize_text_field( $_POST['hausnummer'] );
-            $plz = sanitize_text_field( $_POST['plz'] );
-            $ort = sanitize_text_field( $_POST['ort'] );
-            $mitgliedschaft = sanitize_text_field( $_POST['mitgliedschaft'] );
-            $beitrittsdatum = sanitize_text_field( $_POST['beitrittsdatum'] );
-            $starterpaket = isset( $_POST['starterpaket'] ) ? 1 : 0;
-            $spende = isset( $_POST['spende'] ) ? 1 : 0;
-            $spende_monatlich = isset( $_POST['spende'] ) && $_POST['intervall'] === 'monatlich' ? floatval( $_POST['spende'] ) : 0;
-            $spende_einmalig = isset( $_POST['spende'] ) && $_POST['intervall'] === 'einmalig' ? floatval( $_POST['spende'] ) : 0;
-            $satzung_datenschutz = isset( $_POST['satzung_datenschutz'] ) ? 1 : 0;
-            $hinweise = isset( $_POST['hinweise'] ) ? 1 : 0;
-            $sepa = isset( $_POST['sepa'] ) ? 1 : 0;
-            $kontoinhaber = sanitize_text_field( $_POST['kontoinhaber'] );
-            $iban = sanitize_text_field( $_POST['iban'] );
+            $vorname = sanitize_text_field($_POST['vorname']);
+            $nachname = sanitize_text_field($_POST['nachname']);
+            $email = sanitize_email($_POST['email']);
+            $telefon = sanitize_text_field($_POST['telefon']);
+            $geburtsdatum = sanitize_text_field($_POST['geburtsdatum']);
+            $strasse = sanitize_text_field($_POST['strasse']);
+            $hausnummer = sanitize_text_field($_POST['hausnummer']);
+            $plz = sanitize_text_field($_POST['plz']);
+            $ort = sanitize_text_field($_POST['ort']);
+            $mitgliedschaft = sanitize_text_field($_POST['mitgliedschaft']);
+            $beitrittsdatum = sanitize_text_field($_POST['beitrittsdatum']);
+            $starterpaket = isset($_POST['starterpaket']) ? 1 : 0;
+            $spende = isset($_POST['spende']) ? 1 : 0;
+            $spende_monatlich = isset($_POST['spende']) && $_POST['intervall'] === 'monatlich' ? floatval($_POST['spende']) : 0;
+            $spende_einmalig = isset($_POST['spende']) && $_POST['intervall'] === 'einmalig' ? floatval($_POST['spende']) : 0;
+            $satzung_datenschutz = isset($_POST['satzung_datenschutz']) ? 1 : 0;
+            $hinweise = isset($_POST['hinweise']) ? 1 : 0;
+            $sepa = isset($_POST['sepa']) ? 1 : 0;
+            $kontoinhaber = sanitize_text_field($_POST['kontoinhaber']);
+            $iban = sanitize_text_field($_POST['iban']);
 
             $wpdb->insert(
                 $table_name,
@@ -56,6 +59,8 @@ class Avf_Forms_Handler {
                     'iban' => $iban
                 )
             );
+            wp_redirect(home_url());
+            exit;
         }
     }
 }

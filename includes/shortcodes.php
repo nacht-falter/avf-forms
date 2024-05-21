@@ -1,17 +1,21 @@
 <?php
 
-class Avf_Forms_Shortcodes {
+class Avf_Forms_Shortcodes
+{
 
-    public static function register() {
-        add_shortcode( 'membership_form', array( __CLASS__, 'render_membership_form' ) );
+    public static function register()
+    {
+        add_shortcode('membership_form', array( __CLASS__, 'render_membership_form' ));
     }
 
-    public static function render_membership_form() {
+    public static function render_membership_form()
+    {
         ob_start();
         ?>
-        <form id="membership-form" class="custom-form" method="post" action="">
-            <div class="personal-details">
-                <h2>Persönliche Angaben</h2>
+        <form id="membership-form" class="avf-form" method="post" action="">
+
+            <h2>Persönliche Angaben</h2>
+            <div class="container">
                 <div class="flex-container">
                     <div class="half-width">
                         <label for="vorname">Vorname</label>
@@ -38,8 +42,8 @@ class Avf_Forms_Shortcodes {
                 </div>
             </div>
 
-            <div class="address">
-                <h2>Adresse</h2>
+            <h2>Adresse</h2>
+            <div class="container">
                 <div class="flex-container">
                     <div class="half-width">
                         <label for="strasse">Strasse</label>
@@ -62,8 +66,8 @@ class Avf_Forms_Shortcodes {
                 </div>
             </div>
 
-            <div class="membership">
-                <h2>Mitgliedschaft</h2>
+            <h2>Mitgliedschaft</h2>
+            <div class="container">
                 <div class="flex-container">
                     <div class="half-width">
                         <label for="mitgliedschaft">Art der Mitgliedschaft</label>
@@ -79,8 +83,10 @@ class Avf_Forms_Shortcodes {
                     </div>
                 </div>
                 <div>
-                    <p><strong>Hinweis:</strong> Eine Kündigung der Mitgliedschaft hat bis spätestens 6 Wochen vor Quartalsende zu erfolgen.</p>
+                    <h5>Hinweise</h5>
+                    <p><strong>Kündigung:</strong> Eine Kündigung der Mitgliedschaft hat bis spätestens 6 Wochen vor Quartalsende zu erfolgen.</p>
                     <p><strong>Haftungsausschluss:</strong> Der Aikido-Verein Freiburg e.V. weist ausdrücklich daraufhin, dass der Vereinsbeitritt keine Versicherung einschließt. Jedes Mitglied ist für ausreichenden Versicherungsschutz selbst verantwortlich. Eine Haftung durch den Verein ist, außer bei Vorsatz und grober Fahrlässigkeit, ausgeschlossen.</p>
+                </div>
                 <div class="flex-container no-wrap align-baseline">
                     <input class="custom-checkbox" type="checkbox" name="satzung_datenschutz" id="satzung_datenschutz" required>
                     <label for="satzung_datenschutz">Ich habe die <a>Satzung</a> und die <a>Datenschutzordnung</a> des Aikido-Verein Freiburg e.V. gelesen und erkenne diese
@@ -94,9 +100,10 @@ class Avf_Forms_Shortcodes {
                     <input class="custom-checkbox" type="checkbox" name="starterpaket" id="starterpaket">
                     <label for="starterpaket">Ich möchte das <strong>vergünstigte Starter-Angebot</strong> in Anspruch nehmen (Aikido-Anzug und Vereins-T-Shirt für 35 €). Ich bin damit einverstanden, dass der Betrag einmalig mit dem ersten Mitgliedsbeitrag per Lastschrift eingezogen wird.</label>
                 </div>
-      </div>
-            <div class="payment-details">
-                <h2>Zahlungsdetails</h2>
+            </div>
+
+            <h2>Zahlungsdetails</h2>
+            <div class="container">
                 <div class="flex-container">
                     <div class="half-width">
                         <label for="kontoinhaber">Kontoinhaber</label>
@@ -113,15 +120,15 @@ class Avf_Forms_Shortcodes {
                 </div>
                 <div id="spende-details">
                     <div class="flex-container align-center no-wrap indent">
-                        <input type="radio" name="intervall" value="monatlich">Monatlich
-                        <input type="radio" name="intervall" value="einmalig">Einmalig
+                        <label for="intervall-mtl" class="disabled"><input class="disabled" type="radio" name="intervall" id="intervall-mtl" value="monatlich" disabled> Monatlich</label>
+                        <label for="intervall-einmal" class="disabled"><input class="disabled" type="radio" name="intervall" id="intervall-einmal" value="einmalig" disabled> Einmalig</label>
                     </div>
-                    <div class="flex-container align-center no-wrap indent">
-                        <input type="radio" name="spende" value="5">5€
-                        <input type="radio" name="spende" value="10">10€
-                        <input type="radio" name="spende" value="15">15€
-                        <input type="radio" name="spende" value="freibetrag">Freier Betrag
-                        <input type="number" name="spende" placeholder="Betrag">
+                    <div class="flex-container flex-row indent">
+                            <label for="spende-5" class="disabled"><input class="disabled" type="radio" name="spende" value="5" id="spende-5" disabled> 5 €</label>
+                            <label for="spende-10" class="disabled"><input class="disabled" type="radio" name="spende" value="10" id="spende-10" disabled> 10 €</label>
+                            <label for="spende-15" class="disabled"><input class="disabled" type="radio" name="spende" value="15" id="spende-15" disabled> 15 €</label>
+                            <label for="spende-freibetrag" class="disabled"><input class="disabled" type="radio" name="spende" value="freibetrag" id="spende-freibetrag" disabled> Freibetrag</label>
+                            <input id="freibetrag-input" type="number" name="spende" placeholder="Betrag">
                     </div>
                 </div>
                 <div class="flex-container no-wrap align-baseline">
@@ -133,8 +140,9 @@ class Avf_Forms_Shortcodes {
                     <p>Der Aikido Verein Freiburg e.V. zieht die Mitgliedsbeiträge quartalsweise jeweils in den ersten beiden Wochen zu Beginn eines neuen Quartals ein. Mir ist bekannt, dass seitens des kontoführenden Kreditinstitutes keine Verpflichtung zur Einlösung besteht, wenn mein Konto die erforderliche Deckung nicht aufweist.</p>
                     <p>Der/die Kontoinhaber/in kann innerhalb von acht Wochen, beginnend mit dem Belastungsdatum, die Erstattung des belasteten Betrages verlangen. Es gelten dabei die mit meinem Kreditinstitut vereinbarten Bedingungen.</p>
                     <p>Falls dem Aikido-Verein Freiburg e.V. im Rahmen des Lastschriftverfahrens Kosten entstehen, die der Kontoinhaber zu vertreten hat, z.B. Rücklastschriftgebühren wegen mangelnder Kontodeckung oder fehlerhafter Angaben, sind diese Kosten vom Kontoinhaber zu tragen.</p>
-             </div>
-            <input class="button" type="submit" name="submit_form" value="Submit">
+                </div>
+            </div>
+            <input class="button" type="submit" name="membership_form_submit" value="Antrag abschicken">
         </form>
         <?php
         return ob_get_clean();

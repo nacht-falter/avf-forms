@@ -1,11 +1,13 @@
 <?php
 
-class Avf_Forms_Activator {
+class Avf_Forms_Activator
+{
 
-    public static function activate() {
+    public static function activate()
+    {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
-        $table_name = $wpdb->prefix . 'avf_membership_entries';
+        $table_name = $wpdb->prefix . 'avf_membership_applications';
 
         $sql = "CREATE TABLE IF NOT EXISTS $table_name (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
@@ -33,7 +35,7 @@ class Avf_Forms_Activator {
             PRIMARY KEY  (id)
         ) $charset_collate;";
 
-        require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-        dbDelta( $sql );
+        include_once ABSPATH . 'wp-admin/includes/upgrade.php';
+        dbDelta($sql);
     }
 }
