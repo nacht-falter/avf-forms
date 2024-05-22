@@ -172,13 +172,13 @@ class Avf_Forms_Handler
                     $row['nachname'] . ',' .
                     $row['email'] . ',' .
                     $row['telefon'] . ',' .
-                    $row['geburtsdatum'] . ',' .
+                    date('d.m.Y', strtotime($row['geburtsdatum'])) . "\n";
                     $row['strasse'] . ',' .
                     $row['hausnummer'] . ',' .
                     $row['plz'] . ',' .
                     $row['ort'] . ',' .
                     $row['mitgliedschaft'] . ',' .
-                    $row['beitrittsdatum'] . ',' .
+                    date('d.m.Y', strtotime($row['beitrittsdatum'])) . ',' .
                     ($row['starterpaket'] ? "Ja" : "Nein") . ',' .
                     ($row['spende'] ? "Ja" : "Nein") . ',' .
                     $row['spende_einmalig'] . ',' .
@@ -188,7 +188,7 @@ class Avf_Forms_Handler
                     ($row['sepa'] ? "Erteilt" : "Nicht erteilt") . ',' .
                     $row['kontoinhaber'] . ',' .
                     $row['iban'] . ',' .
-                    $row['submission_date'] . "\n";
+                    date('d.m.Y', strtotime($row['submission_date'])) . "\n";
             }
         } else {
             $csv_content = "No data found.";
@@ -244,7 +244,7 @@ class Avf_Forms_Handler
                     $row['nachname'] . ',' .
                     $row['email'] . ',' .
                     $row['telefon'] . ',' .
-                    $row['geburtsdatum'] . ',' .
+                    date('d.m.Y', strtotime($row['geburtsdatum'])) . ',' .
                     $row['vorname_eltern'] . ',' .
                     $row['nachname_eltern'] . ',' .
                     $row['strasse'] . ',' .
@@ -252,13 +252,13 @@ class Avf_Forms_Handler
                     $row['plz'] . ',' .
                     $row['ort'] . ',' .
                     ($row['geschwisterkind'] ? "Ja" : "Nein") . ',' .
-                    $row['beitrittsdatum'] . ',' .
+                    date('d.m.Y', strtotime($row['beitrittsdatum'])) . ',' .
                     ($row['satzung_datenschutz'] ? "Akzeptiert" : "Nicht akzeptiert") . ',' .
                     ($row['hinweise'] ? "Gelesen" : "Nicht gelesen") . ',' .
                     ($row['sepa'] ? "Erteilt" : "Nicht erteilt") . ',' .
                     $row['kontoinhaber'] . ',' .
                     $row['iban'] . ',' .
-                    $row['submission_date'] . "\n";
+                    date('d.m.Y', strtotime($row['submission_date'])) . "\n";
             }
         } else {
             $csv_content = "No data found.";
