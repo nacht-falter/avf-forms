@@ -1,4 +1,5 @@
 <?php
+
 class Avf_Forms_Activator
 {
     public static function activate()
