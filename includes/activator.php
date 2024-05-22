@@ -38,6 +38,8 @@ class Avf_Forms_Activator
                     id mediumint(9) NOT NULL AUTO_INCREMENT,
                     vorname varchar(255) NOT NULL,
                     nachname varchar(255) NOT NULL,
+                    vorname_eltern varchar(255) NOT NULL,
+                    nachname_eltern varchar(255) NOT NULL,
                     email varchar(255) NOT NULL,
                     telefon varchar(20) NOT NULL,
                     geburtsdatum date NOT NULL,

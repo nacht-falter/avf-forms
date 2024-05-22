@@ -28,7 +28,7 @@ class Avf_Forms_Handler
             $ort = sanitize_text_field($_POST['ort']);
             $mitgliedschaft = sanitize_text_field($_POST['mitgliedschaft']);
             $beitrittsdatum = sanitize_text_field($_POST['beitrittsdatum']);
-            $starterpaket = isset($_POST['starterpaket']) ? "Ja" : "Nein";
+            $starterpaket = isset($_POST['starterpaket']) ? 1 : 0;
             $spende = isset($_POST['spende']) ? 1 : 0;
             $spende_monatlich = isset($_POST['spende']) && $_POST['intervall'] === 'monatlich' ? floatval($_POST['spende']) : 0;
             $spende_einmalig = isset($_POST['spende']) && $_POST['intervall'] === 'einmalig' ? floatval($_POST['spende']) : 0;
@@ -62,7 +62,8 @@ class Avf_Forms_Handler
                     'iban' => $iban
                 )
             );
-            wp_redirect(home_url());
+            self::send_confirmation_email($email, $vorname, $nachname);
+            wp_redirect(home_url('/success'));
             exit;
         }
     }
@@ -75,6 +76,8 @@ class Avf_Forms_Handler
             $vorname = sanitize_text_field($_POST['vorname']);
             $nachname = sanitize_text_field($_POST['nachname']);
             $geburtsdatum = sanitize_text_field($_POST['geburtsdatum']);
+            $vorname_eltern = sanitize_text_field($_POST['vorname_eltern']);
+            $nachname_eltern = sanitize_text_field($_POST['nachname_eltern']);
             $strasse = sanitize_text_field($_POST['strasse']);
             $hausnummer = sanitize_text_field($_POST['hausnummer']);
             $plz = sanitize_text_field($_POST['plz']);
@@ -95,6 +98,8 @@ class Avf_Forms_Handler
                     'vorname' => $vorname,
                     'nachname' => $nachname,
                     'geburtsdatum' => $geburtsdatum,
+                    'vorname_eltern' => $vorname_eltern,
+                    'nachname_eltern' => $nachname_eltern,
                     'strasse' => $strasse,
                     'hausnummer' => $hausnummer,
                     'plz' => $plz,
@@ -110,6 +115,9 @@ class Avf_Forms_Handler
                     'iban' => $iban
                 )
             );
+            self::send_confirmation_email($email, $vorname_eltern, $nachname_eltern);
+            wp_redirect(home_url('/success'));
+            exit;
         }
     }
 
@@ -171,7 +179,7 @@ class Avf_Forms_Handler
                     $row['ort'] . ',' .
                     $row['mitgliedschaft'] . ',' .
                     $row['beitrittsdatum'] . ',' .
-                    $row['starterpaket'] . ',' .
+                    ($row['starterpaket'] ? "Ja" : "Nein") . ',' .
                     ($row['spende'] ? "Ja" : "Nein") . ',' .
                     $row['spende_einmalig'] . ',' .
                     $row['spende_monatlich'] . ',' .
@@ -216,6 +224,8 @@ class Avf_Forms_Handler
                 "E-Mail," .
                 "Telefon," .
                 "Geburtsdatum," .
+                "Vorname Eltern," .
+                "Nachname Eltern," .
                 "Strasse," .
                 "Hausnummer," .
                 "PLZ," .
@@ -235,6 +245,8 @@ class Avf_Forms_Handler
                     $row['email'] . ',' .
                     $row['telefon'] . ',' .
                     $row['geburtsdatum'] . ',' .
+                    $row['vorname_eltern'] . ',' .
+                    $row['nachname_eltern'] . ',' .
                     $row['strasse'] . ',' .
                     $row['hausnummer'] . ',' .
                     $row['plz'] . ',' .
@@ -253,4 +265,23 @@ class Avf_Forms_Handler
         }
         return $csv_content;
     }
+
+    public static function send_confirmation_email($email, $vorname, $nachname)
+    {
+        $subject = '[Aikido Verein Freiburg e.V.] Mitgliedschaftsantrag erhalten';
+        $message = "Hallo $vorname,\n\n";
+        $message .= "Dein Antrag ist bei uns eingegangen. Wir werden uns in Kürze bei dir melden.\n\n";
+        $message .= "Falls Du Fragen zur Mitgliedschaft hast, schreiben gerne eine Mail an schatzmeister@aikido-freiburg.de.";
+        $message .= "Bei allen anderen Fragen, wende dich gerne an vorstand@aikido-freiburg.de oder sprich uns auf der Matte an.\n\n";
+        $message .= "Viele Grüße\n";
+        $message .= "Dein Aikido Verein Freiburg e.V.\n";
+        wp_mail($email, $subject, $message);
+
+        $admin_email = get_option('admin_email');
+        $admin_subject = 'Neuer Mitgliedschaftsantrag eingegangen';
+        $admin_message = "Neuer Mitgliedschaftsantrag von $vorname $nachname eingegangen.\n\n";
+        $admin_message .= "Download CSV: " . home_url('/csv-download') . "\n";
+        wp_mail($admin_email, $admin_subject, $admin_message);
+    }
+
 }

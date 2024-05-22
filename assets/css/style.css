@@ -1,6 +1,6 @@
 .container {
   background-color: #f6f6f6;
-  padding: 1rem;
+  padding: 0 1rem 1rem;
 }
 
 .avf-form .flex-container {
@@ -45,6 +45,11 @@
 
 .avf-form h5 {
   margin: 2rem 0 1rem;
+}
+
+.avf-form h2 {
+  margin: 2rem 0 1rem;
+  padding: 0;
 }
 
 .avf-form select {

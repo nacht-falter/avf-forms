@@ -159,7 +159,7 @@ class Avf_Forms_Shortcodes
 
         if (is_user_logged_in() && current_user_can('edit_posts')) {
             $csv_url = esc_url(add_query_arg('download_csv', 'true', home_url('/')));
-            echo '<a href="' . $csv_url . '">Download CSV</a>';
+            echo '<p><a href="' . $csv_url . '">Mitgliedschaftsanträge Erwachsene als CSV herunterladen</a></p>';
         } else {
             echo 'You do not have permission to access this resource.';
         }
@@ -201,6 +201,16 @@ class Avf_Forms_Shortcodes
 
             <h2>Kontaktdaten der Eltern</h2>
             <div class="container">
+                <div class="flex-container">
+                    <div class="half-width">
+                        <label for="vorname_eltern">Vorname</label>
+                        <input type="text" name="vorname_eltern" id="vorname_eltern" placeholder="Vorname" required>
+                    </div>
+                    <div class="half-width">
+                        <label for="nachname_eltern">Nachname</label>
+                        <input type="text" name="nachname_eltern" id="nachname_eltern" placeholder="Nachname" required>
+                    </div>
+                </div>
                 <div class="flex-container">
                     <div class="half-width">
                         <label for="strasse">Strasse</label>
@@ -291,7 +301,7 @@ class Avf_Forms_Shortcodes
         ob_start();
         if (is_user_logged_in() && current_user_can('edit_posts')) {
             $csv_url = esc_url(add_query_arg('download_children_csv', 'true', home_url('/')));
-            echo '<a href="' . $csv_url . '">Download CSV</a>';
+            echo '<p><a href="' . $csv_url . '">Mitgliedschaftsanträge Kinder/Jugendliche als CSV herunterladen</a></p>';
         } else {
             echo 'You do not have permission to access this resource.';
         }
