@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const elements = spendeDetails.querySelectorAll("input, label");
         for (let element of elements) {
           element.disabled = true;
+          element.checked = false;
           element.classList.add("disabled");
         }
       }
