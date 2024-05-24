@@ -1,4 +1,4 @@
-.container {
+.avf-form .container {
   background-color: #f6f6f6;
   padding: 0 1rem 1rem;
 }
@@ -39,12 +39,16 @@
   font-weight: normal;
 }
 
+.avf-form input::placeholder {
+  color: gray;
+}
+
 .avf-form #spende-details input {
   max-width: 50%;
 }
 
 .avf-form h5 {
-  margin: 2rem 0 1rem;
+  margin: 1rem 0 1rem;
 }
 
 .avf-form h2 {

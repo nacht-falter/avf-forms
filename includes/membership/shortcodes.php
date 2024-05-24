@@ -36,9 +36,11 @@ class Avf_Forms_Membership_Shortcodes
                         <input type="tel" name="telefon" id="telefon" placeholder="Telefonnummer">
                     </div>
                 </div>
-                <div>
-                    <label for="geburtsdatum">Geburtsdatum</label>
-                    <input type="date" name="geburtsdatum" id="geburtsdatum" placeholder="Geburtsdatum" required>
+                <div class="flex-container">
+                    <div class="half-width">
+                        <label for="geburtsdatum">Geburtsdatum</label>
+                        <input type="date" name="geburtsdatum" id="geburtsdatum" placeholder="Geburtsdatum" required>
+                    </div>
                 </div>
             </div>
 

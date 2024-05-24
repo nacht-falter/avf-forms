@@ -75,6 +75,24 @@ class Avf_Forms_Activator
                     submission_date datetime DEFAULT CURRENT_TIMESTAMP,
                     PRIMARY KEY (id)
                 ) $charset_collate;",
+            'avf_schnupperkurs_children_registrations' => "
+                CREATE TABLE IF NOT EXISTS {$wpdb->prefix}avf_schnupperkurs_children_registrations (
+                    id mediumint(9) NOT NULL AUTO_INCREMENT,
+                    vorname varchar(255) NOT NULL,
+                    nachname varchar(255) NOT NULL,
+                    geburtsdatum date NOT NULL,
+                    vorname_eltern varchar(255) NOT NULL,
+                    nachname_eltern varchar(255) NOT NULL,
+                    email varchar(255) NOT NULL,
+                    telefon varchar(20) NOT NULL,
+                    schnupperkurs_beginn date NOT NULL,
+                    wie_gefunden varchar(255) NOT NULL,
+                    datenschutz boolean NOT NULL,
+                    hinweise boolean NOT NULL,
+                    zahlungsmethode varchar(255) NOT NULL,
+                    submission_date datetime DEFAULT CURRENT_TIMESTAMP,
+                    PRIMARY KEY (id)
+                ) $charset_collate;"
         );
 
         foreach ($tables as $table_name => $sql) {

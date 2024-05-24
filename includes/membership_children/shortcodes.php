@@ -27,9 +27,11 @@ class Avf_Forms_Membership_Children_Shortcodes
                         <input type="text" name="nachname" id="nachname" placeholder="Nachname" required>
                     </div>
                 </div>
-                <div>
-                    <label for="geburtsdatum">Geburtsdatum</label>
-                    <input type="date" name="geburtsdatum" id="geburtsdatum" placeholder="Geburtsdatum" required>
+                <div class="flex-container">
+                    <div class="half-width">
+                        <label for="geburtsdatum">Geburtsdatum</label>
+                        <input type="date" name="geburtsdatum" id="geburtsdatum" placeholder="Geburtsdatum" required>
+                    </div>
                 </div>
                 <div>
                     <label>Geschwisterkind<label>

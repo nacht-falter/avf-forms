@@ -35,6 +35,8 @@ require_once plugin_dir_path(__FILE__) . 'includes/membership_children/forms-han
 require_once plugin_dir_path(__FILE__) . 'includes/membership_children/shortcodes.php';
 require_once plugin_dir_path(__FILE__) . 'includes/schnupperkurse/forms-handler.php';
 require_once plugin_dir_path(__FILE__) . 'includes/schnupperkurse/shortcodes.php';
+require_once plugin_dir_path(__FILE__) . 'includes/schnupperkurse_children/forms-handler.php';
+require_once plugin_dir_path(__FILE__) . 'includes/schnupperkurse_children/shortcodes.php';
 
 
 register_activation_hook(__FILE__, 'Activate_Avf_forms');
@@ -52,6 +54,8 @@ function Run_Avf_forms()
     Avf_Forms_Membership_Children_Handler::register();
     Avf_Forms_Schnupperkurs_Shortcodes::register();
     Avf_Forms_Schnupperkurs_Handler::register();
+    Avf_Forms_Schnupperkurs_Children_Shortcodes::register();
+    Avf_Forms_Schnupperkurs_Children_Handler::register();
 }
 
 Run_Avf_forms();
