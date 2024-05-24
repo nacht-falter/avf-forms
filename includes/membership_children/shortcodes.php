@@ -140,7 +140,7 @@ class Avf_Forms_Membership_Children_Shortcodes
     {
         ob_start();
         if (is_user_logged_in() && current_user_can('edit_posts')) {
-            $csv_url = esc_url(add_query_arg('download_children_csv', 'true', home_url('/')));
+            $csv_url = esc_url(add_query_arg('download_membership_children_csv', 'true', home_url('/')));
             echo '<p><a href="' . $csv_url . '">Mitgliedschaftsanträge Kinder/Jugendliche als CSV herunterladen</a></p>';
         } else {
             echo 'You do not have permission to access this resource.';

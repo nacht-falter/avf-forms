@@ -27,7 +27,6 @@ class Avf_Forms_Membership_Handler
             $mitgliedschaft = sanitize_text_field($_POST['mitgliedschaft']);
             $beitrittsdatum = sanitize_text_field($_POST['beitrittsdatum']);
             $starterpaket = isset($_POST['starterpaket']) ? 1 : 0;
-            $spende = isset($_POST['spende']) ? 1 : 0;
             $spende_monatlich = isset($_POST['spende']) && $_POST['intervall'] === 'monatlich' ? floatval($_POST['spende']) : 0;
             $spende_einmalig = isset($_POST['spende']) && $_POST['intervall'] === 'einmalig' ? floatval($_POST['spende']) : 0;
             $satzung_datenschutz = isset($_POST['satzung_datenschutz']) ? 1 : 0;
@@ -60,7 +59,7 @@ class Avf_Forms_Membership_Handler
                     'iban' => $iban
                 )
             );
-            Avf_Forms_Utils::send_confirmation_email($email, $vorname, $nachname);
+            Avf_Forms_Utils::send_membership_confirmation_email($email, $vorname, $nachname);
             wp_redirect(home_url('/success'));
             exit;
         }
@@ -68,7 +67,7 @@ class Avf_Forms_Membership_Handler
 
     public static function handle_membership_csv_download_request()
     {
-        if (isset($_GET['download_csv']) && $_GET['download_csv'] === 'true') {
+        if (isset($_GET['download_membership_csv']) && $_GET['download_membership_csv'] === 'true') {
             if (is_user_logged_in() && current_user_can('edit_posts')) {
                 $csv_data = self::generate_membership_csv_data();
 
@@ -102,7 +101,6 @@ class Avf_Forms_Membership_Handler
                 "Mitgliedschaft," .
                 "Beitrittsdatum," .
                 "Starterpaket," .
-                "Spende," .
                 "Spende einmalig," .
                 "Spende monatlich," .
                 "Satzung und Datenschutz," .
@@ -125,7 +123,6 @@ class Avf_Forms_Membership_Handler
                     $row['mitgliedschaft'] . ',' .
                     date('d.m.Y', strtotime($row['beitrittsdatum'])) . ',' .
                     ($row['starterpaket'] ? "Ja" : "Nein") . ',' .
-                    ($row['spende'] ? "Ja" : "Nein") . ',' .
                     $row['spende_einmalig'] . ',' .
                     $row['spende_monatlich'] . ',' .
                     ($row['satzung_datenschutz'] ? "Akzeptiert" : "Nicht akzeptiert") . ',' .

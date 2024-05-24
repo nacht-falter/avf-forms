@@ -153,7 +153,7 @@ class Avf_Forms_Membership_Shortcodes
         ob_start();
 
         if (is_user_logged_in() && current_user_can('edit_posts')) {
-            $csv_url = esc_url(add_query_arg('download_csv', 'true', home_url('/')));
+            $csv_url = esc_url(add_query_arg('download_membership_csv', 'true', home_url('/')));
             echo '<p><a href="' . $csv_url . '">Mitgliedschaftsanträge Erwachsene als CSV herunterladen</a></p>';
         } else {
             echo 'You do not have permission to access this resource.';

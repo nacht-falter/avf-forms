@@ -56,7 +56,7 @@ class Avf_Forms_Membership_Children_Handler
                     'iban' => $iban
                 )
             );
-            Avf_Forms_Utils::send_confirmation_email($email, $vorname_eltern, $nachname_eltern);
+            Avf_Forms_Utils::send_membership_confirmation_email($email, $vorname_eltern, $nachname_eltern);
             wp_redirect(home_url('/success'));
             exit;
         }
@@ -64,7 +64,7 @@ class Avf_Forms_Membership_Children_Handler
 
     public static function handle_membership_children_csv_download_request()
     {
-        if (isset($_GET['download_children_csv']) && $_GET['download_children_csv'] === 'true') {
+        if (isset($_GET['download_membership_children_csv']) && $_GET['download_membership_children_csv'] === 'true') {
             if (is_user_logged_in() && current_user_can('edit_posts')) {
                 $csv_data = self::generate_membership_children_csv_data();
                 header('Content-Type: text/csv');
