@@ -43,4 +43,26 @@ class Avf_Forms_Utils
         $admin_message .= "Download CSV: " . home_url('/csv-download') . "\n";
         wp_mail($admin_email, $admin_subject, $admin_message);
     }
+
+    public static function subscribe_to_mailinglist($email, $listname)
+    {
+        $data = array(
+            'subscribe_r' => 'subscribe',
+            'mailaccount_r' => $email,
+            'mailaccount2_r' => $email,
+            'FBMLNAME' => $listname,
+            'FBLANG' => 'de',
+            'FBURLERROR_L' => 'https://ml.kundenserver.de/mailinglist/error.de.html',
+            'FBURLSUBSCRIBE_L' => 'https://ml.kundenserver.de/mailinglist/subscribe.de.html',
+            'FBURLUNSUBSCRIBE_L' => 'https://ml.kundenserver.de/mailinglist/unsubscribe.de.html',
+            'FBURLINVALID_L' => 'https://ml.kundenserver.de/mailinglist/invalid.de.html'
+        );
+
+        $ch = curl_init('https://ml.kundenserver.de/cgi-bin/mailinglist.cgi');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+        curl_close($ch);
+    }
 }

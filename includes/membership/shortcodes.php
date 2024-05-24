@@ -91,17 +91,18 @@ class Avf_Forms_Membership_Shortcodes
                 </div>
                 <div class="flex-container no-wrap align-baseline">
                     <input class="custom-checkbox" type="checkbox" name="satzung_datenschutz" id="satzung_datenschutz" required>
-                    <label for="satzung_datenschutz">Ich habe die <a>Satzung</a> und die <a>Datenschutzordnung</a> des Aikido-Verein Freiburg e.V. gelesen und erkenne diese
+                    <label for="satzung_datenschutz">Ich habe die <a><strong>Satzung</strong></a> und die <a><strong>Datenschutzordnung</strong></a> des Aikido-Verein Freiburg e.V. gelesen und erkenne diese
     hiermit an.</label>
                 </div>
                 <div class="flex-container no-wrap align-baseline">
                     <input class="custom-checkbox" type="checkbox" name="hinweise" id="hinweise" required>
-                    <label for="hinweise">Die Hinweise zum Haftungsausschluss und zur Kündigung habe ich zur Kenntnis genommen.</label>
+                    <label for="hinweise">Die Hinweise zum <strong>Haftungsausschluss</strong> und zur <strong>Kündigung</strong> habe ich zur Kenntnis genommen.</label>
                 </div>
                 <div class="flex-container no-wrap align-baseline">
-                    <input class="custom-checkbox" type="checkbox" name="starterpaket" id="starterpaket">
-                    <label for="starterpaket">Ich möchte das <strong>vergünstigte Starter-Angebot</strong> in Anspruch nehmen (Aikido-Anzug und Vereins-T-Shirt für 35 €). Ich bin damit einverstanden, dass der Betrag einmalig mit dem ersten Mitgliedsbeitrag per Lastschrift eingezogen wird.</label>
+                    <input class="custom-checkbox" type="checkbox" name="mailinglist" id="mailinglist">
+                    <label for="mailinglist">Ich möchte mich in die <strong>Mailingliste des Aikido Verein Freiburg</strong> eintragen, um wichtige Informationen zum Training, zu Lehrgängen und zum Vereinsleben zu erhalten.</label>
                 </div>
+                <p class="indent my-0"><small>Nach dem Absenden des Formulars erhältst du eine E-Mail, in der du deine Mailinglisten-Anmeldung bestätigen musst. Du kannst dich jederzeit wieder abmelden.</small></p>
             </div>
 
             <h2>Zahlungsdetails</h2>
@@ -115,6 +116,14 @@ class Avf_Forms_Membership_Shortcodes
                         <label for="iban">IBAN</label>
                         <input type="text" name="iban" id="iban" placeholder="IBAN" required>
                     </div>
+                </div>
+                <div class="flex-container no-wrap align-baseline">
+                    <input class="custom-checkbox" type="checkbox" name="sepa" id="sepa" required>
+                    <label for="sepa">Hiermit ermächtige ich den Aikido Verein Freiburg e.V., Zahlungen von meinem Konto mittels Lastschrift einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom Aikido Verein Freiburg e.V. auf mein Konto gezogenen Lastschriften einzulösen. Die untenstehenden Hinweise habe ich zur Kenntnis genommen.</label>
+                </div>
+                <div class="flex-container no-wrap align-baseline">
+                    <input class="custom-checkbox" type="checkbox" name="starterpaket" id="starterpaket">
+                    <label for="starterpaket">Ich möchte das <strong>vergünstigte Starter-Angebot</strong> in Anspruch nehmen (Aikido-Anzug und Vereins-T-Shirt für 35 €). Ich bin damit einverstanden, dass der Betrag einmalig mit dem ersten Mitgliedsbeitrag per Lastschrift eingezogen wird.</label>
                 </div>
                 <div class="flex-container no-wrap align-baseline">
                     <input class="custom-checkbox" type="checkbox" name="spende" id="spende">
@@ -132,10 +141,6 @@ class Avf_Forms_Membership_Shortcodes
                             <label for="spende-freibetrag" class="disabled font-weight-normal"><input class="disabled" type="radio" name="spende" value="freibetrag" id="spende-freibetrag" disabled> Freibetrag</label>
                             <input id="freibetrag-input" type="number" name="spende" placeholder="Betrag">
                     </div>
-                </div>
-                <div class="flex-container no-wrap align-baseline">
-                    <input class="custom-checkbox" type="checkbox" name="sepa" id="sepa" required>
-                    <label for="sepa">Hiermit ermächtige ich den Aikido Verein Freiburg e.V., Zahlungen von meinem Konto mittels Lastschrift einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom Aikido Verein Freiburg e.V. auf mein Konto gezogenen Lastschriften einzulösen. Die untenstehenden Hinweise habe ich zur Kenntnis genommen.</label>
                 </div>
                 <div>
                     <h5>Hinweise:</h5>

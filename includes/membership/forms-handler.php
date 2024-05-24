@@ -27,6 +27,7 @@ class Avf_Forms_Membership_Handler
             $mitgliedschaft = sanitize_text_field($_POST['mitgliedschaft']);
             $beitrittsdatum = sanitize_text_field($_POST['beitrittsdatum']);
             $starterpaket = isset($_POST['starterpaket']) ? 1 : 0;
+            $mailinglist = isset($_POST['mailinglist']) ? 1 : 0;
             $spende_monatlich = isset($_POST['spende']) && $_POST['intervall'] === 'monatlich' ? floatval($_POST['spende']) : 0;
             $spende_einmalig = isset($_POST['spende']) && $_POST['intervall'] === 'einmalig' ? floatval($_POST['spende']) : 0;
             $satzung_datenschutz = isset($_POST['satzung_datenschutz']) ? 1 : 0;
@@ -59,6 +60,9 @@ class Avf_Forms_Membership_Handler
                     'iban' => $iban
                 )
             );
+            if ($mailinglist) {
+                Avf_Forms_Utils::subscribe_to_mailinglist($email, "alle@aikido-freiburg.de");
+            }
             Avf_Forms_Utils::send_membership_confirmation_email($email, $vorname, $nachname);
             wp_redirect(home_url('/success'));
             exit;
@@ -115,7 +119,7 @@ class Avf_Forms_Membership_Handler
                     $row['nachname'] . ',' .
                     $row['email'] . ',' .
                     $row['telefon'] . ',' .
-                    date('d.m.Y', strtotime($row['geburtsdatum'])) . "\n";
+                    date('d.m.Y', strtotime($row['geburtsdatum'])) . ',' .
                     $row['strasse'] . ',' .
                     $row['hausnummer'] . ',' .
                     $row['plz'] . ',' .
