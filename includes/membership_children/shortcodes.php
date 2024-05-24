@@ -75,7 +75,7 @@ class Avf_Forms_Membership_Children_Shortcodes
                 </div>
                 <div class="flex-container">
                     <div class="half-width">
-                        <label for="email">E-mail</label>
+                        <label for="email">E-Mail</label>
                         <input type="email" name="email" id="email" placeholder="E-Mail" required>
                     </div>
                     <div class="half-width">
@@ -100,8 +100,16 @@ class Avf_Forms_Membership_Children_Shortcodes
                 </div>
                 <div class="flex-container no-wrap align-baseline">
                     <input class="custom-checkbox" type="checkbox" name="satzung_datenschutz" id="satzung_datenschutz" required>
-                    <label for="satzung_datenschutz">Ich habe die <a>Satzung</a> und die <a>Datenschutzordnung</a> des Aikido-Verein Freiburg e.V. gelesen und erkenne diese
-    hiermit an.</label>
+                    <label for="satzung_datenschutz">Ich habe die 
+                        <a href="https://www.aikido-freiburg.de/wp-content/uploads/2024/05/Satzung-2022.pdf" title="Satzung" target="_blank">
+                            <strong>Satzung</strong>
+                        </a> 
+                        und die 
+                        <a href="https://www.aikido-freiburg.de/wp-content/uploads/2021/07/Datenschutzordnung_1.0.pdf" title="Datenschutzerklärung" target="_blank">
+                            <strong>Datenschutzordnung</strong>
+                        </a> 
+                        des Aikido-Verein Freiburg e.V. gelesen und erkenne diese hiermit an.
+                    </label>
                 </div>
                 <div class="flex-container no-wrap align-baseline">
                     <input class="custom-checkbox" type="checkbox" name="hinweise" id="hinweise" required>

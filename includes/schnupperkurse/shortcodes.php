@@ -28,7 +28,7 @@ class Avf_Forms_Schnupperkurs_Shortcodes
                 </div>
                 <div class="flex-container">
                     <div class="half-width">
-                        <label for="email">E-mail</label>
+                        <label for="email">E-Mail</label>
                         <input type="email" name="email" id="email" placeholder="E-Mail" required>
                     </div>
                     <div class="half-width">

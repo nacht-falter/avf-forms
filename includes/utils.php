@@ -22,7 +22,7 @@ class Avf_Forms_Utils
 
     public static function send_schnupperkurs_confirmation_email($email, $vorname, $nachname, $betrag)
     {
-        $subject = '[Aikido Verein Freiburg e.V.] Schnupperkurs-Anmeldung erhalten';
+        $subject = '[Aikido Verein Freiburg e.V.] Deine Schnupperkurs-Anmeldung';
         $message = "Hallo $vorname,\n\n";
         $message .= "Deine Anmeldung ist bei uns eingegangen. Vielen Dank!\n\n";
         $message .= "Bitte zahle die Kursgebühr in Höhe von $betrag € innerhalb von zwei Wochen entweder in bar oder per Überweisung auf unser Konto:\n";
@@ -37,8 +37,8 @@ class Avf_Forms_Utils
         $message .= "Dein Aikido Verein Freiburg e.V.\n";
         wp_mail($email, $subject, $message);
 
-        $admin_email = get_option('admin_email');
-        $admin_subject = "Neue Schnupperkurs-Anmeldung";
+        $admin_email = get_option('treasurer_email');
+        $admin_subject = "[Aikido Verein Freiburg e.V.] Neue Schnupperkurs-Anmeldung";
         $admin_message = "Neue Schnupperkurs-Anmeldung von $vorname $nachname eingegangen.\n\n";
         $admin_message .= "Download CSV: " . home_url('/csv-download') . "\n";
         wp_mail($admin_email, $admin_subject, $admin_message);
