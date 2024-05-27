@@ -30,14 +30,13 @@ class Avf_Forms_Membership_Children_Shortcodes
                 <div class="flex-container">
                     <div class="half-width">
                         <label for="geburtsdatum">Geburtsdatum</label>
-                        <input type="date" name="geburtsdatum" id="geburtsdatum" placeholder="Geburtsdatum" required>
+                        <input type="date" name="geburtsdatum" id="geburtsdatum" required>
                     </div>
                 </div>
                 <div>
                     <label>Geschwisterkind<label>
-                    <label for="geschwisterkind" class="font-weight-normal">
-                        <input type="checkbox" name="geschwisterkind" id="geschwisterkind"> Mein Kind hat ein Geschwisterkind, das bereits Mitglied im Aikido-Verein Freiburg e.V. ist.
-                    </label>
+                    <input class="d-inline align-top" type="checkbox" name="geschwisterkind" id="geschwisterkind">
+                    <label class="d-inline align-top" for="geschwisterkind" class="font-weight-normal">Mein Kind hat ein Geschwisterkind, das bereits Mitglied im Aikido-Verein Freiburg e.V. ist.</label>
                 </div>
            </div>
 
@@ -90,7 +89,7 @@ class Avf_Forms_Membership_Children_Shortcodes
                 <div class="flex-container">
                     <div class="half-width">
                         <label for="beitrittsdatum">Beitrittsdatum</label>
-                        <input type="date" name="beitrittsdatum" id="beitrittsdatum" placeholder="Beitrittsdatum" required>
+                        <input type="date" name="beitrittsdatum" id="beitrittsdatum" required>
                     </div>
                 </div>
                 <div>
@@ -98,9 +97,9 @@ class Avf_Forms_Membership_Children_Shortcodes
                     <p><strong>Kündigung:</strong> Eine Kündigung der Mitgliedschaft hat bis spätestens 6 Wochen vor Quartalsende zu erfolgen.</p>
                     <p><strong>Haftungsausschluss:</strong> Der Aikido-Verein Freiburg e.V. weist ausdrücklich daraufhin, dass der Vereinsbeitritt keine Versicherung einschließt. Jedes Mitglied ist für ausreichenden Versicherungsschutz selbst verantwortlich. Eine Haftung durch den Verein ist, außer bei Vorsatz und grober Fahrlässigkeit, ausgeschlossen.</p>
                 </div>
-                <div class="flex-container no-wrap align-baseline">
-                    <input class="custom-checkbox" type="checkbox" name="satzung_datenschutz" id="satzung_datenschutz" required>
-                    <label for="satzung_datenschutz">Ich habe die 
+                <div>
+                    <input class="d-inline align-top mt-1" type="checkbox" name="satzung_datenschutz" id="satzung_datenschutz" required>
+                    <label class="d-inline align-top" for="satzung_datenschutz">Ich habe die 
                         <a href="https://www.aikido-freiburg.de/wp-content/uploads/2024/05/Satzung-2022.pdf" title="Satzung" target="_blank">
                             <strong>Satzung</strong>
                         </a> 
@@ -111,9 +110,9 @@ class Avf_Forms_Membership_Children_Shortcodes
                         des Aikido-Verein Freiburg e.V. gelesen und erkenne diese hiermit an.
                     </label>
                 </div>
-                <div class="flex-container no-wrap align-baseline">
-                    <input class="custom-checkbox" type="checkbox" name="hinweise" id="hinweise" required>
-                    <label for="hinweise">Die Hinweise zum Haftungsausschluss und zur Kündigung habe ich zur Kenntnis genommen.</label>
+                <div>
+                    <input class="d-inline align-top mt-4" type="checkbox" name="hinweise" id="hinweise" required>
+                    <label class="d-inline align-top" for="hinweise">Die Hinweise zum Haftungsausschluss und zur Kündigung habe ich zur Kenntnis genommen.</label>
                 </div>
             </div>
 
@@ -129,9 +128,9 @@ class Avf_Forms_Membership_Children_Shortcodes
                         <input type="text" name="iban" id="iban" placeholder="IBAN" required>
                     </div>
                 </div>
-                <div class="flex-container no-wrap align-baseline">
-                    <input class="custom-checkbox" type="checkbox" name="sepa" id="sepa" required>
-                    <label for="sepa">Hiermit ermächtige ich den Aikido Verein Freiburg e.V., Zahlungen von meinem Konto mittels Lastschrift einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom Aikido Verein Freiburg e.V. auf mein Konto gezogenen Lastschriften einzulösen. Die untenstehenden Hinweise habe ich zur Kenntnis genommen.</label>
+                <div>
+                    <input class="d-inline align-top mt-4" type="checkbox" name="sepa" id="sepa" required>
+                    <label class="d-inline align-top" for="sepa">Hiermit ermächtige ich den Aikido Verein Freiburg e.V., Zahlungen von meinem Konto mittels Lastschrift einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom Aikido Verein Freiburg e.V. auf mein Konto gezogenen Lastschriften einzulösen. Die untenstehenden Hinweise habe ich zur Kenntnis genommen.</label>
                 </div>
                 <div>
                     <h5>Hinweise:</h5>

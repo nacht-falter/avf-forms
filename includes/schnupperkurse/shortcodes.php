@@ -39,7 +39,7 @@ class Avf_Forms_Schnupperkurs_Shortcodes
                 <div class="flex-container">
                     <div class="half-width">
                         <label for="geburtsdatum">Geburtsdatum</label>
-                        <input type="date" name="geburtsdatum" id="geburtsdatum" placeholder="Geburtsdatum" required>
+                        <input type="date" name="geburtsdatum" id="geburtsdatum" required>
                     </div>
                 </div>
             </div>
@@ -49,25 +49,25 @@ class Avf_Forms_Schnupperkurs_Shortcodes
                 <div class="flex-container">
                     <div class="half-width">
                         <label for="schnupperkurs-beginn">Schnupperkurs-Beginn</label>
-                        <input type="date" name="schnupperkurs-beginn" id="schnupperkurs-beginn" placeholder="Schnupperkurs-Beginn" required>
+                        <input type="date" name="schnupperkurs-beginn" id="schnupperkurs-beginn" required>
                     </div>
                 </div>
                 <h5>Hinweise</h5>
                 <div>
                     <p class="mt-3"><strong>Haftungsausschluss:</strong> Der Aikido-Verein Freiburg e.V. weist ausdrücklich daraufhin, dass der Vereinsbeitritt keine Versicherung einschließt. Jedes Mitglied ist für ausreichenden Versicherungsschutz selbst verantwortlich. Eine Haftung durch den Verein ist, außer bei Vorsatz und grober Fahrlässigkeit, ausgeschlossen.</p>
                 </div>
-                <div class="flex-container no-wrap align-baseline">
-                    <input class="custom-checkbox" type="checkbox" name="datenschutz" id="datenschutz" required>
-                    <label for="datenschutz">Ich habe die 
+                <div>
+                    <input class="d-inline align-top mt-1" type="checkbox" name="datenschutz" id="datenschutz" required>
+                    <label class="d-inline align-top" for="datenschutz">Ich habe die 
                         <a href="https://www.aikido-freiburg.de/wp-content/uploads/2021/07/Datenschutzordnung_1.0.pdf" title="Datenschutzerklärung" target="_blank">
                             <strong>Datenschutzordnung</strong>
                         </a> 
                          des Aikido-Verein Freiburg e.V. gelesen und erkenne diese hiermit an.
                     </label>
                 </div>
-                <div class="flex-container no-wrap align-baseline">
-                    <input class="custom-checkbox" type="checkbox" name="hinweise" id="hinweise" required>
-                    <label for="hinweise">Die Hinweise zum Haftungsausschluss habe ich zur Kenntnis genommen.</label>
+                <div>
+                    <input class="d-inline align-top mt-4" type="checkbox" name="hinweise" id="hinweise" required>
+                    <label class="d-inline align-top" for="hinweise">Die Hinweise zum Haftungsausschluss habe ich zur Kenntnis genommen.</label>
                 </div>
                 <div class="flex-container">
                     <div class="no-wrap">
@@ -96,31 +96,27 @@ class Avf_Forms_Schnupperkurs_Shortcodes
                         <label for="barzahlung" class="font-weight-normal"><input type="radio" name="zahlungsmethode" id="barzahlung" value="barzahlung" required> Den Betrag werde ich bar bezahlen</label>
                     </div>
                 </div>
-                <div class="flex-container">
-                    <div class="bg-light p-3 mt-3">
-                        <p class="mb-0"><small><strong>Überweisungen bitte innerhalb von zwei Wochen auf folgendes Konto:</strong></small></p>
-                        <table class="mb-0">
-                            <tr class="border-0">
-                                <td>Empfänger</td>
-                                <td>Aikido Verein Freiburg e.V.</td>
-                            </tr>
-                            <tr class="border-0">
-                                <td>IBAN</td>
-                                <td>DE34680900000024401901</td>
-                            </tr>
-                            <tr class="border-0">
-                                <td>BIC</td>
-                                <td>GENODE61FR1</td>
-                            </tr>
-                            <tr class="border-0">
-                                <td>Bank</td>
-                                <td>Volksbank Freiburg</td>
-                            </tr>
-                            <tr class="border-0">
-                                <td>Verwendungszweck</td>
-                                <td>Schnupperkurs + Name</td>
-                            </tr>
-                        </table>
+                <div class="d-flex bg-light flex-column fs-small p-3 mt-3">
+                    <div class="mb-2"><strong>Überweisungen bitte innerhalb von zwei Wochen auf folgendes Konto:</strong></div>
+                    <div class="flex-column md-flex-row d-flex">
+                        <div class="flex-1"><strong>Empfänger:</strong></div>
+                        <div class="flex-1">Aikido Verein Freiburg e.V.</div>
+                    </div>
+                    <div class="flex-column md-flex-row d-flex">
+                        <div class="flex-1"><strong>IBAN:</strong></div>
+                        <div class="flex-1">DE34680900000024401901</div>
+                    </div>
+                    <div class="flex-column md-flex-row d-flex">
+                        <div class="flex-1"><strong>BIC:</strong></div>
+                        <div class="flex-1">GENODE61FR1</div>
+                    </div>
+                    <div class="flex-column md-flex-row d-flex">
+                        <div class="flex-1"><strong>Bank</strong></div>
+                        <div class="flex-1">Volksbank Freiburg:</div>
+                    </div>
+                    <div class="flex-column md-flex-row d-flex">
+                        <div class="flex-1"><strong>Verwendungszweck:</strong></div>
+                        <div class="flex-1">Schnupperkurs + Name</div>
                     </div>
                 </div>
             </div>
