@@ -421,3 +421,11 @@
   margin-top: 3rem !important;
   margin-bottom: 3rem !important;
 }
+.avf-form .form-error {
+  display: none;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+  font-size: 0.9rem;
+  border-radius: 0.25rem;
+}

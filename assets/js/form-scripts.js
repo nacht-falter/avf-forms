@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const form = document.getElementById("membership-form");
-  if (form) {
+  const membershipForm = document.getElementById("membership-form");
+  const membershipChildrenForm = document.getElementById("membership-children-form");
+
+  if (membershipForm) {
     const spende = document.getElementById("spende");
     const spendeDetails = document.getElementById("spende-details");
     const freibetrag = document.getElementById("spende-freibetrag");
@@ -31,6 +33,37 @@ document.addEventListener("DOMContentLoaded", function () {
           freibetragInput.required = false;
         }
       });
+    });
+  }
+
+  if (membershipForm || membershipChildrenForm) {
+    document.getElementById("geburtsdatum").addEventListener("change", function () {
+      const geburtsdatumValue = new Date(this.value);
+      const today = new Date();
+      const ageError = document.getElementById("age-error");
+
+      if (isNaN(geburtsdatumValue.getTime())) {
+        return;
+      }
+
+      let age = today.getFullYear() - geburtsdatumValue.getFullYear();
+
+      const isBirthdayPassedThisYear = today.getMonth() > geburtsdatumValue.getMonth() ||
+        (today.getMonth() === geburtsdatumValue.getMonth() && today.getDate() >= geburtsdatumValue.getDate());
+
+      if (!isBirthdayPassedThisYear) {
+        age--;
+      }
+
+      if (age < 18 && membershipForm) {
+        ageError.style.display = "block";
+        ageError.innerHTML = "Für Kinder und Jugendliche verwenden Sie bitte das <a href='/mitgliedschaftsantrag-kinder-jugendliche'>Anmeldeformular für Kinder und Jugendliche.</a>.";
+      } else if (age >= 18 && membershipChildrenForm) {
+        ageError.style.display = "block";
+        ageError.innerHTML = "Für Erwachsene verwenden Sie bitte das <a href='/mitgliedschaftsantrag-erwachsene'>Anmeldeformular für Erwachsene.</a>.";
+      } else {
+        ageError.style.display = "none";
+      }
     });
   }
 });
