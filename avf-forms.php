@@ -13,7 +13,7 @@
  * @wordpress-plugin
  * Plugin Name:       AVF Forms
  * Plugin URI:        http://github.com/nacht-falter/avf-forms/
- * Description:       A plugin for creating forms
+ * Description:       A plugin for membership forms
  * Version:           1.0.0
  * Author:            Johannes Bernet
  * Author URI:        http://johannesbernet.com
@@ -31,12 +31,7 @@ require_once plugin_dir_path(__FILE__) . 'includes/activator.php';
 require_once plugin_dir_path(__FILE__) . 'includes/utils.php';
 require_once plugin_dir_path(__FILE__) . 'includes/membership/forms-handler.php';
 require_once plugin_dir_path(__FILE__) . 'includes/membership/shortcodes.php';
-require_once plugin_dir_path(__FILE__) . 'includes/membership_children/forms-handler.php';
-require_once plugin_dir_path(__FILE__) . 'includes/membership_children/shortcodes.php';
-require_once plugin_dir_path(__FILE__) . 'includes/schnupperkurse/forms-handler.php';
-require_once plugin_dir_path(__FILE__) . 'includes/schnupperkurse/shortcodes.php';
-require_once plugin_dir_path(__FILE__) . 'includes/schnupperkurse_children/forms-handler.php';
-require_once plugin_dir_path(__FILE__) . 'includes/schnupperkurse_children/shortcodes.php';
+require_once plugin_dir_path(__FILE__) . 'includes/admin/admin-page.php';
 
 
 register_activation_hook(__FILE__, 'Activate_Avf_forms');
@@ -50,12 +45,6 @@ function Run_Avf_forms()
 {
     Avf_Forms_Membership_Shortcodes::register();
     Avf_Forms_Membership_Handler::register();
-    Avf_Forms_Membership_Children_Shortcodes::register();
-    Avf_Forms_Membership_Children_Handler::register();
-    Avf_Forms_Schnupperkurs_Shortcodes::register();
-    Avf_Forms_Schnupperkurs_Handler::register();
-    Avf_Forms_Schnupperkurs_Children_Shortcodes::register();
-    Avf_Forms_Schnupperkurs_Children_Handler::register();
 }
 
 Run_Avf_forms();
@@ -82,3 +71,23 @@ function Avf_Enqueue_styles()
     );
 }
 add_action('wp_enqueue_scripts', 'Avf_Enqueue_styles');
+
+add_action('admin_menu', 'Avf_forms_add_admin_menu');
+
+function Avf_forms_add_admin_menu() {
+    add_menu_page(
+        'AVF Mitgliederverwaltung', // Page title
+        'AVF Mitgliederverwaltung', // Menu title
+        'manage_options', // Capability
+        'avf-membership-admin', // Menu slug
+        'avf_display_submissions', // Callback function
+        'dashicons-feedback', // Icon URL
+        6 // Position
+    );
+}
+
+function Avf_enqueue_admin_styles() {
+    wp_enqueue_style('avf-admin-styles', plugin_dir_url(__FILE__) . 'assets/css/admin-styles.css');
+}
+add_action('admin_enqueue_scripts', 'Avf_enqueue_admin_styles');
+
