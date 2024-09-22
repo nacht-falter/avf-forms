@@ -427,5 +427,7 @@
   border: 1px solid #f5c6cb;
   color: #721c24;
   font-size: 0.9rem;
+  padding: 0.75rem;
+  margin-top: 1rem;
   border-radius: 0.25rem;
 }

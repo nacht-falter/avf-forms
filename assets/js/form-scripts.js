@@ -35,19 +35,19 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     });
   }
-
   if (membershipForm || membershipChildrenForm) {
-    document.getElementById("geburtsdatum").addEventListener("change", function () {
+    const geburtsdatum = document.getElementById("geburtsdatum");
+    const ageError = document.getElementById("age-error");
+
+    const handleDateChange = function () {
       const geburtsdatumValue = new Date(this.value);
       const today = new Date();
-      const ageError = document.getElementById("age-error");
 
       if (isNaN(geburtsdatumValue.getTime())) {
-        return;
+        return; // Invalid date, exit early
       }
 
       let age = today.getFullYear() - geburtsdatumValue.getFullYear();
-
       const isBirthdayPassedThisYear = today.getMonth() > geburtsdatumValue.getMonth() ||
         (today.getMonth() === geburtsdatumValue.getMonth() && today.getDate() >= geburtsdatumValue.getDate());
 
@@ -55,15 +55,33 @@ document.addEventListener("DOMContentLoaded", function () {
         age--;
       }
 
-      if (age < 18 && membershipForm) {
-        ageError.style.display = "block";
-        ageError.innerHTML = "Für Kinder und Jugendliche verwenden Sie bitte das <a href='/mitgliedschaftsantrag-kinder-jugendliche'>Anmeldeformular für Kinder und Jugendliche.</a>.";
-      } else if (age >= 18 && membershipChildrenForm) {
-        ageError.style.display = "block";
-        ageError.innerHTML = "Für Erwachsene verwenden Sie bitte das <a href='/mitgliedschaftsantrag-erwachsene'>Anmeldeformular für Erwachsene.</a>.";
-      } else {
-        ageError.style.display = "none";
+      if (membershipForm) {
+        const maxDateAdult = new Date(today);
+        maxDateAdult.setFullYear(today.getFullYear() - 18);
+        geburtsdatum.setAttribute("max", maxDateAdult.toLocaleDateString('en-CA'));
+
+        if (age < 18) {
+          ageError.style.display = "block";
+          ageError.innerHTML = "Für Kinder und Jugendliche verwende bitte das <a href='/mitgliedschaftsantrag-kinder-jugendliche'>Anmeldeformular für Kinder und Jugendliche.</a>.";
+        } else {
+          ageError.style.display = "none";
+        }
+      } else if (membershipChildrenForm) {
+        const minDateChild = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+        geburtsdatum.setAttribute("min", minDateChild.toLocaleDateString('en-CA'));
+
+        if (age >= 18) {
+          ageError.style.display = "block";
+          ageError.innerHTML = "Für Erwachsene verwende bitte das <a href='/mitgliedschaftsantrag-erwachsene'>Anmeldeformular für Erwachsene.</a>.";
+        } else {
+          ageError.style.display = "none";
+        }
       }
-    });
+    };
+
+    if (!geburtsdatum.dataset.listenerAttached) {
+      geburtsdatum.addEventListener("change", handleDateChange);
+      geburtsdatum.dataset.listenerAttached = "true";
+    }
   }
 });
