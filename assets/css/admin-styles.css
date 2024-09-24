@@ -1,0 +1,44 @@
+#update-membership {
+  margin-top: 1rem;
+  margin-right: 0.5rem;
+}
+
+#delete-membership {
+  margin-top: 1rem;
+}
+
+.notizen-col {
+  max-width: 200px;
+  word-wrap: break-word;
+}
+
+.flex-container {
+  display: flex;
+  flex-direction: column;
+  max-width: 500px;
+}
+
+@media (max-width: 768px) {
+  .flex-container {
+    max-width: 100%;
+  }
+}
+
+#avf-membership-form label, #avf-membership-form button {
+  margin-top: 1rem;
+}
+
+.form-group {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center; /* Aligns checkbox and label vertically */
+}
+
+#avf-membership-form .form-group label {
+  margin-top: 0;
+}
+
+.form-group input[type="checkbox"] {
+  margin-right: 10px;
+  order: -1;
+}
