@@ -22,72 +22,116 @@
  * Text Domain:       avf-forms
  * Domain Path:       /languages
  */
-
-if (! defined('WPINC') ) {
+if (!defined('WPINC')) {
     die;
 }
 
-require_once plugin_dir_path(__FILE__) . 'includes/activator.php';
-require_once plugin_dir_path(__FILE__) . 'includes/utils.php';
-require_once plugin_dir_path(__FILE__) . 'includes/membership/forms-handler.php';
-require_once plugin_dir_path(__FILE__) . 'includes/membership/shortcodes.php';
-require_once plugin_dir_path(__FILE__) . 'includes/admin/admin-page.php';
+// Define constants for plugin path and URL
+define('AVF_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('AVF_PLUGIN_URL', plugin_dir_url(__FILE__));
+define(
+    'MITGLIEDSCHAFTSARTEN', [
+    'aktiv' => 'Aktives Mitglied',
+    'familie' => 'Familienmitglied',
+    'foerder' => 'Fördermitglied',
+    'sonder' => 'Sondermitglied',
+    'kind' => 'Kind',
+    'jugend' => 'Jugend',
+    ]
+);
 
+
+// Autoload required files
+$includes = [
+    'includes/activator.php',
+    'includes/utils.php',
+    'includes/membership/forms-handler.php',
+    'includes/membership/shortcodes.php',
+    'includes/admin/admin-page.php',
+    'includes/admin/form-page.php',
+    'includes/ajax-handler.php'
+];
+
+foreach ($includes as $file) {
+    include_once AVF_PLUGIN_DIR . $file;
+}
 
 register_activation_hook(__FILE__, 'Activate_Avf_forms');
-
 function Activate_Avf_forms()
 {
     Avf_Forms_Activator::activate();
 }
 
-function Run_Avf_forms()
+class Avf_Forms_Plugin
 {
-    Avf_Forms_Membership_Shortcodes::register();
-    Avf_Forms_Membership_Handler::register();
+
+    public static function init()
+    {
+        Avf_Forms_Membership_Shortcodes::register();
+        Avf_Forms_Membership_Handler::register();
+
+        add_action('wp_enqueue_scripts', [__CLASS__, 'enqueue_public_assets']);
+        add_action('admin_enqueue_scripts', [__CLASS__, 'enqueue_admin_assets']);
+        add_action('admin_menu', [__CLASS__, 'add_admin_menu']);
+    }
+
+    public static function enqueue_public_assets()
+    {
+        wp_enqueue_script(
+            'avf-form-scripts',
+            AVF_PLUGIN_URL . 'assets/js/form-scripts.js',
+            array(),
+            null,
+            true
+        );
+
+        wp_enqueue_style(
+            'avf-form-styles',
+            AVF_PLUGIN_URL . 'assets/css/style.css',
+            array(),
+            null
+        );
+    }
+
+    public static function enqueue_admin_assets()
+    {
+        wp_enqueue_script(
+            'avf-admin-scripts',
+            AVF_PLUGIN_URL . 'assets/js/admin-scripts.js',
+            array('jquery'),
+            null,
+            true
+        );
+
+        wp_localize_script(
+            'avf-admin-scripts', 'avf_ajax_admin', [
+            'ajaxurl' => admin_url('admin-ajax.php'),
+            'nonce'   => wp_create_nonce('avf_membership_action'),
+            ]
+        );
+
+        wp_enqueue_style('avf-admin-styles', AVF_PLUGIN_URL . 'assets/css/admin-styles.css');
+    }
+
+    public static function add_admin_menu()
+    {
+        add_menu_page(
+            'AVF Mitgliederverwaltung', // Page title
+            'AVF Mitgliederverwaltung', // Menu title
+            'manage_options', // Capability
+            'avf-membership-admin', // Menu slug
+            'Avf_Display_memberships', // Callback function
+            'dashicons-feedback', // Icon URL
+        );
+        add_submenu_page(
+            'avf-membership-page',             // Parent slug
+            'Neue Mitgliedschaft hinzufügen',   // Page title
+            'Neue Mitgliedschaft',              // Menu title
+            'manage_options',                   // Capability
+            'avf-membership-form-page',        // Slug for the new membership page
+            'Avf_Display_Membership_form',      // Function to display the new membership form
+        );
+    }
 }
 
-Run_Avf_forms();
-
-function Avf_Enqueue_scripts()
-{
-    wp_enqueue_script(
-        'avf-form-scripts',
-        plugin_dir_url(__FILE__) . 'assets/js/form-scripts.js',
-        array(),
-        null,
-        true
-    );
-}
-add_action('wp_enqueue_scripts', 'Avf_Enqueue_scripts');
-
-function Avf_Enqueue_styles()
-{
-    wp_enqueue_style(
-        'avf-form-styles',
-        plugin_dir_url(__FILE__) . 'assets/css/style.css',
-        array(), // No dependencies
-        null // Version number (optional)
-    );
-}
-add_action('wp_enqueue_scripts', 'Avf_Enqueue_styles');
-
-add_action('admin_menu', 'Avf_forms_add_admin_menu');
-
-function Avf_forms_add_admin_menu() {
-    add_menu_page(
-        'AVF Mitgliederverwaltung', // Page title
-        'AVF Mitgliederverwaltung', // Menu title
-        'manage_options', // Capability
-        'avf-membership-admin', // Menu slug
-        'avf_display_submissions', // Callback function
-        'dashicons-feedback', // Icon URL
-        6 // Position
-    );
-}
-
-function Avf_enqueue_admin_styles() {
-    wp_enqueue_style('avf-admin-styles', plugin_dir_url(__FILE__) . 'assets/css/admin-styles.css');
-}
-add_action('admin_enqueue_scripts', 'Avf_enqueue_admin_styles');
-
+Avf_Forms_Plugin::init();
