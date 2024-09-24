@@ -42,7 +42,7 @@ class Avf_Forms_Membership_Shortcodes
                         <label for="geburtsdatum">Geburtsdatum</label>
                         <input type="date" name="geburtsdatum" id="geburtsdatum" required>
                     </div>
-                    <div class="half-width">
+                    <div class="half-width mt-3 p-2">
                         <span id="age-error" class="form-error"></span>
                     </div>
                 </div>
@@ -192,7 +192,7 @@ class Avf_Forms_Membership_Shortcodes
                         <label for="geburtsdatum">Geburtsdatum</label>
                         <input type="date" name="geburtsdatum" id="geburtsdatum" required>
                     </div>
-                    <div class="half-width">
+                    <div class="half-width mt-3 p-2">
                         <span id="age-error" class="form-error"></span>
                     </div>
                 </div>
