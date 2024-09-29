@@ -19,10 +19,67 @@ jQuery(document).ready(function ($) {
   const deleteButton = $("#delete-membership");
   const deleteButtonSingle = $("#delete-membership-single");
   const goBackButton = $("#go-back");
+  const mitgliedschaftArt = $("#mitgliedschaft_art");
+  const vornameEltern = $("#vorname_eltern");
+  const labelVornameEltern = $('label[for="' + vornameEltern.attr("id") + '"]');
+  const nachnameEltern = $("#nachname_eltern");
+  const labelNachnameEltern = $(
+    'label[for="' + nachnameEltern.attr("id") + '"]',
+  );
+  const geschwisterkind = $("#geschwisterkind");
+  const starterpaket = $("#starterpaket");
+  const spende = $("#spende");
+  const spendeMonatlich = $("#spende_monatlich");
+  const labelSpendeMonatlich = $(
+    'label[for="' + spendeMonatlich.attr("id") + '"]',
+  );
+  const spendeEinmalig = $("#spende_einmalig");
+  const labelSpendeEinmalig = $(
+    'label[for="' + spendeEinmalig.attr("id") + '"]',
+  );
 
   function updateButtons() {
     const selectedCheckboxes = checkboxes.filter(":checked");
     deleteButton.prop("disabled", selectedCheckboxes.length === 0);
+  }
+
+  const chieldFields = [
+    vornameEltern,
+    labelVornameEltern,
+    nachnameEltern,
+    labelNachnameEltern,
+    geschwisterkind.parent(),
+  ];
+
+  const adultFields = [
+    starterpaket.parent(),
+    spende.parent(),
+    spendeMonatlich,
+    labelSpendeMonatlich,
+    spendeEinmalig,
+    labelSpendeEinmalig,
+  ];
+
+  function showHideFields(fields, show) {
+    fields.forEach((field) => {
+      if (show) {
+        field.show();
+      } else {
+        field.hide();
+      }
+    });
+  }
+
+  function updateFields() {
+    const isChildOrYouth =
+      mitgliedschaftArt.val() === "kind" ||
+      mitgliedschaftArt.val() === "jugend";
+
+    vornameEltern.prop("required", isChildOrYouth);
+    nachnameEltern.prop("required", isChildOrYouth);
+
+    showHideFields(chieldFields, isChildOrYouth);
+    showHideFields(adultFields, !isChildOrYouth);
   }
 
   checkboxes.on("change", function () {
@@ -35,6 +92,7 @@ jQuery(document).ready(function ($) {
   });
 
   updateButtons();
+  updateFields();
 
   deleteButton.on("click", function (e) {
     e.preventDefault();
@@ -98,4 +156,6 @@ jQuery(document).ready(function ($) {
     e.preventDefault();
     window.location.href = "admin.php?page=avf-membership-admin";
   });
+
+  mitgliedschaftArt.on("change", updateFields);
 });
