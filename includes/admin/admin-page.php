@@ -36,6 +36,7 @@ function Avf_Display_memberships()
                                 'nachname'           => 'Nachname',
                                 'email'              => 'E-Mail',
                                 'beitrittsdatum'     => 'Beitrittsdatum',
+                                'submission_date'    => 'Eingangsdatum',
                                 'notizen'            => 'Notizen'
                             ];
 
@@ -52,8 +53,8 @@ function Avf_Display_memberships()
                     </thead>
                     <tbody>
                         <?php foreach ($results as $row) : ?>
-                            <tr>
-                                <th scope="row" class="check-column">
+                            <tr class="table-row-link" onclick="handleRowClick(event, <?php echo esc_attr($row['id']); ?>)">
+                                <th scope="row" class="check-column" style="cursor: initial;">
                                     <input type="checkbox" class="membership-checkbox" value="<?php echo esc_attr($row['id']); ?>">
                                 </th>
                                 <td><?php echo esc_html($row['id']); ?></td>
@@ -62,16 +63,23 @@ function Avf_Display_memberships()
                                 <td><?php echo esc_html($row['nachname']); ?></td>
                                 <td><?php echo esc_html($row['email']); ?></td>
                                 <td><?php echo esc_html(date('d.m.Y', strtotime($row['beitrittsdatum']))); ?></td>
+                                <td><?php echo esc_html(date('d.m.Y', strtotime($row['submission_date']))); ?></td>
                                 <td class="notizen-col"><?php echo esc_html($row['notizen']); ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
                 <div class="bulk-actions">
-                    <button type="button" id="update-membership" class="button button-primary" disabled>Ansehen/Bearbeiten</button>
-                    <button type="button" id="delete-membership" class="button button-secondary" disabled>Löschen</button>
+                    <button type="button" id="delete-membership" class="button button-secondary" disabled>Ausgewählte Mitgliedschaften löschen</button>
                 </div>
             </form>
+            <script>
+            function handleRowClick(event, id) {
+                if (event.target.tagName != 'INPUT' && event.target.tagName != 'TH') {
+                    window.location.href = 'admin.php?page=avf-membership-form-page&edit=' + id;
+                }
+            }
+            </script>
         <?php endif; ?>
     </div>
     <?php

@@ -1,8 +1,6 @@
 jQuery(document).ready(function ($) {
-
   $("#avf-membership-form").on("submit", function (e) {
     e.preventDefault();
-    console.log("Form submitted");
 
     let formData = $(this).serialize();
 
@@ -18,13 +16,12 @@ jQuery(document).ready(function ($) {
 
   const checkboxes = $(".membership-checkbox");
   const selectAll = $("#select-all");
-  const updateButton = $("#update-membership");
   const deleteButton = $("#delete-membership");
+  const deleteButtonSingle = $("#delete-membership-single");
   const goBackButton = $("#go-back");
 
   function updateButtons() {
     const selectedCheckboxes = checkboxes.filter(":checked");
-    updateButton.prop("disabled", selectedCheckboxes.length !== 1);
     deleteButton.prop("disabled", selectedCheckboxes.length === 0);
   }
 
@@ -75,12 +72,25 @@ jQuery(document).ready(function ($) {
     }
   });
 
-  updateButton.on("click", function (e) {
+  deleteButtonSingle.on("click", function (e) {
     e.preventDefault();
-    const selectedCheckbox = checkboxes.filter(":checked");
-    if (selectedCheckbox.length === 1) {
-      const id = selectedCheckbox.val();
-      window.location.href = `admin.php?page=avf-membership-form-page&edit=${id}`;
+    if (confirm("Möchtest Du die Mitgliedschaft wirklich löschen?")) {
+      let formData = {
+        action_type: "delete",
+        action: "avf_membership_action",
+        id: $(this).data("id"),
+        _ajax_nonce: avf_ajax_admin.nonce,
+      };
+
+      console.log(formData);
+      $.post(avf_ajax_admin.ajaxurl, formData, function (response) {
+        let data = JSON.parse(response);
+        if (data.status === "success") {
+          window.location.href = "admin.php?page=avf-membership-admin";
+        } else {
+          alert("Error: " + data.message);
+        }
+      });
     }
   });
 

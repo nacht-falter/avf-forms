@@ -24,7 +24,8 @@
   }
 }
 
-#avf-membership-form label, #avf-membership-form button {
+#avf-membership-form label,
+#avf-membership-form button {
   margin-top: 1rem;
 }
 
@@ -41,4 +42,20 @@
 .form-group input[type="checkbox"] {
   margin-right: 10px;
   order: -1;
+}
+
+.table-row-link {
+  cursor: pointer;
+}
+
+.table-row-link:hover {
+  background-color: lightgray !important;
+}
+
+label:has(+ input:required)::after {
+  content: "*";
+}
+
+.form-group input:required + label::after {
+  content: "*";
 }
