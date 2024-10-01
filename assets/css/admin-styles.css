@@ -3,7 +3,7 @@
   margin-right: 0.5rem;
 }
 
-#delete-membership {
+#delete-membership, #export-csv {
   margin-top: 1rem;
 }
 

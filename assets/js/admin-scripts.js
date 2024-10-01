@@ -18,6 +18,7 @@ jQuery(document).ready(function ($) {
   const selectAll = $("#select-all");
   const deleteButton = $("#delete-membership");
   const deleteButtonSingle = $("#delete-membership-single");
+  const exportCsvButton = $("#export-csv");
   const goBackButton = $("#go-back");
   const mitgliedschaftArt = $("#mitgliedschaft_art");
   const vornameEltern = $("#vorname_eltern");
@@ -41,6 +42,7 @@ jQuery(document).ready(function ($) {
   function updateButtons() {
     const selectedCheckboxes = checkboxes.filter(":checked");
     deleteButton.prop("disabled", selectedCheckboxes.length === 0);
+    exportCsvButton.prop("disabled", selectedCheckboxes.length === 0);
   }
 
   const chieldFields = [
@@ -140,7 +142,6 @@ jQuery(document).ready(function ($) {
         _ajax_nonce: avf_ajax_admin.nonce,
       };
 
-      console.log(formData);
       $.post(avf_ajax_admin.ajaxurl, formData, function (response) {
         let data = JSON.parse(response);
         if (data.status === "success") {
@@ -150,6 +151,39 @@ jQuery(document).ready(function ($) {
         }
       });
     }
+  });
+
+  exportCsvButton.on("click", function (e) {
+    e.preventDefault();
+    const selectedIds = checkboxes
+      .filter(":checked")
+      .map(function () {
+        return $(this).val();
+      })
+      .get();
+    if (selectedIds.length === 0) {
+      alert("Bitte wähle mindestens einen Eintrag zum Exportieren aus.");
+      return;
+    }
+    let formData = {
+      action_type: "export_csv",
+      action: "avf_membership_action",
+      ids: selectedIds,
+      _ajax_nonce: avf_ajax_admin.nonce,
+    };
+
+    $.post(
+      avf_ajax_admin.ajaxurl,
+      formData,
+      function (response) {
+        if (response.success) {
+          window.location.href = response.data.download_url;
+        } else {
+          alert("Error: " + response.data.message);
+        }
+      },
+      "json",
+    );
   });
 
   goBackButton.on("click", function (e) {

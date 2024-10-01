@@ -14,10 +14,10 @@ function avf_handle_ajax_requests()
     global $wpdb;
     $table_name = $wpdb->prefix . 'avf_memberships';
 
-    $action = $_POST['action_type'];
+    $action_type = $_POST['action_type'];
     $response = array('status' => 'error', 'message' => 'Invalid action');
 
-    if ($action === 'create' || $action === 'update') {
+    if ($action_type === 'create' || $action_type === 'update') {
         $data = [
             'mitgliedschaft_art' => sanitize_text_field($_POST['mitgliedschaft_art']),
             'vorname' => sanitize_text_field($_POST['vorname']),
@@ -46,7 +46,7 @@ function avf_handle_ajax_requests()
             'submission_date' => current_time('mysql'), // Capture the current timestamp
         ];
 
-        if ($action === 'update') {
+        if ($action_type === 'update') {
             $id = intval($_POST['id']);
             $wpdb->update($table_name, $data, ['id' => $id]);
             $response = array('status' => 'success', 'message' => 'Mitgliedschaft erfolgreich aktualisiert');
@@ -55,13 +55,13 @@ function avf_handle_ajax_requests()
             $response = array('status' => 'success', 'message' => 'Mitgliedschaft erfolgreich angelegt');
         }
 
-    } elseif ($action === 'delete') {
+    } elseif ($action_type === 'delete') {
         $id = intval($_POST['id']);
         $wpdb->delete($table_name, ['id' => $id]);
         $response = array('status' => 'success', 'message' => 'Mitgliedschaft erfolgreich entfernt');
 
-    } elseif ($action === 'bulk_delete' && isset($_POST['ids']) && is_array($_POST['ids'])) {
-        $ids = array_map('intval', $_POST['ids']); // Sanitize the IDs
+    } elseif ($action_type === 'bulk_delete' && isset($_POST['ids']) && is_array($_POST['ids'])) {
+        $ids = array_map('intval', $_POST['ids']);
 
         $placeholders = implode(',', array_fill(0, count($ids), '%d'));
         $query = "DELETE FROM $table_name WHERE id IN ($placeholders)";
@@ -73,6 +73,21 @@ function avf_handle_ajax_requests()
         } else {
             $response = array('status' => 'error', 'message' => 'Fehler beim Löschen der Einträge.');
         }
+    } elseif ($action_type === 'export_csv' && isset($_POST['ids']) && is_array($_POST['ids'])) {
+        if (empty($_POST['ids'])) {
+            wp_send_json_error('No data selected for export');
+        } else {
+            $ids = implode(',', array_map('intval', $_POST['ids']));
+
+            $download_url = add_query_arg(
+                [
+                'action' => 'avf_download_csv',
+                'ids' => $ids,
+                '_ajax_nonce' => $_POST['_ajax_nonce'],
+                ], admin_url('admin-ajax.php')
+            );
+            wp_send_json_success(['download_url' => $download_url]);
+        }
     }
 
     echo json_encode($response);
@@ -80,3 +95,107 @@ function avf_handle_ajax_requests()
 }
 
 add_action('wp_ajax_avf_membership_action', 'avf_handle_ajax_requests');
+
+function generate_csv_download()
+{
+    check_ajax_referer('avf_membership_action', '_ajax_nonce');
+
+    if (!current_user_can('manage_options')) {
+        wp_die('You do not have permission to perform this action.');
+    }
+
+    $ids = isset($_GET['ids']) ? explode(',', $_GET['ids']) : [];
+
+    if (!empty($ids) && is_array($ids)) {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'avf_memberships';
+        $ids_string = implode(',', array_map('intval', $ids));
+        $data = $wpdb->get_results("SELECT * FROM $table_name WHERE id IN ($ids_string)", ARRAY_A);
+
+        if (!empty($data)) {
+            header('Content-Type: text/csv');
+            header('Content-Disposition: attachment; filename="memberships.csv"');
+
+            $header = [
+                'Mitgliedschaftsart',
+                'Vorname',
+                'Nachname',
+                'Geschwisterkind',
+                'Vorname Eltern',
+                'Nachname Eltern',
+                'E-Mail',
+                'Telefon',
+                'Geburtsdatum',
+                'Strasse',
+                'Hausnummer',
+                'PLZ',
+                'Ort',
+                'Beitrittsdatum',
+                'Starterpaket',
+                'Spende',
+                'Spende monatlich',
+                'Spende einmalig',
+                'Satzung und Datenschutz',
+                'Hinweise',
+                'SEPA-Mandat',
+                'Kontoinhaber',
+                'IBAN',
+                'Notizen',
+                'Eingangsdatum'
+            ];
+
+            $output = fopen('php://output', 'w');
+
+            fputcsv($output, $header);
+
+            foreach ($data as $row) {
+                fputcsv(
+                    $output, [
+                        MITGLIEDSCHAFTSARTEN[$row['mitgliedschaft_art']],
+                        $row['vorname'],
+                        $row['nachname'],
+                        formatField($row['geschwisterkind']),
+                        $row['vorname_eltern'],
+                        $row['nachname_eltern'],
+                        $row['email'],
+                        $row['telefon'],
+                        date('d.m.Y', strtotime($row['geburtsdatum'])),
+                        $row['strasse'],
+                        $row['hausnummer'],
+                        $row['plz'],
+                        $row['ort'],
+                        date('d.m.Y', strtotime($row['beitrittsdatum'])),
+                        formatField($row['starterpaket']),
+                        formatField($row['spende']),
+                        $row['spende_monatlich'],
+                        $row['spende_einmalig'],
+                        $row['satzung_datenschutz'] ? 'Akzeptiert' : 'Nicht akzeptiert',
+                        $row['hinweise'] ? 'Gelesen' : 'Nicht gelesen',
+                        $row['sepa'] ? 'Erteilt' : 'Nicht erteilt',
+                        $row['kontoinhaber'],
+                        $row['iban'],
+                        $row['notizen'],
+                        date('d.m.Y', strtotime($row['submission_date']))
+                    ]
+                );
+            }
+
+            fclose($output);
+            exit();
+        } else {
+            wp_die('No data found for the selected IDs.');
+        }
+    } else {
+        wp_die('Invalid request.');
+    }
+}
+
+add_action('wp_ajax_avf_download_csv', 'generate_csv_download');
+
+function formatField($value)
+{
+    if (is_null($value) || $value === '') {
+        return '';
+    }
+    return $value ? 'Ja' : 'Nein';
+}

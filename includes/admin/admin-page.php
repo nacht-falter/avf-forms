@@ -70,6 +70,7 @@ function Avf_Display_memberships()
                     </tbody>
                 </table>
                 <div class="bulk-actions">
+                    <button type="button" id="export-csv" class="button button-primary" disabled>Ausgewählte Mitgliedschaften als CSV exportieren</button>
                     <button type="button" id="delete-membership" class="button button-secondary" disabled>Ausgewählte Mitgliedschaften löschen</button>
                 </div>
             </form>
