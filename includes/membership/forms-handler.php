@@ -11,6 +11,12 @@ class Avf_Forms_Membership_Handler
     public static function handle_membership_form_submission()
     {
         if (isset($_POST['membership_form_submit']) ) {
+
+            // Check nonce
+            if (!isset($_POST['membership_nonce']) || !wp_verify_nonce($_POST['membership_nonce'], 'membership_form_submit')) {
+                wp_die();
+            }
+
             global $wpdb;
             $table_name = $wpdb->prefix . 'avf_memberships';
 

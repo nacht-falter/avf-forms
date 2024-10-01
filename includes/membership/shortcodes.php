@@ -162,6 +162,9 @@ class Avf_Forms_Membership_Shortcodes
                     <p>Falls dem Aikido-Verein Freiburg e.V. im Rahmen des Lastschriftverfahrens Kosten entstehen, die der Kontoinhaber zu vertreten hat, z.B. Rücklastschriftgebühren wegen mangelnder Kontodeckung oder fehlerhafter Angaben, sind diese Kosten vom Kontoinhaber zu tragen.</p>
                 </div>
             </div>
+
+            <?php wp_nonce_field('membership_form_submit', 'membership_nonce'); ?>
+
             <input class="button" type="submit" name="membership_form_submit" value="Antrag abschicken">
         </form>
         <?php
@@ -302,6 +305,9 @@ class Avf_Forms_Membership_Shortcodes
                     <p>Falls dem Aikido-Verein Freiburg e.V. im Rahmen des Lastschriftverfahrens Kosten entstehen, die der Kontoinhaber zu vertreten hat, z.B. Rücklastschriftgebühren wegen mangelnder Kontodeckung oder fehlerhafter Angaben, sind diese Kosten vom Kontoinhaber zu tragen.</p>
                 </div>
             </div>
+
+            <?php wp_nonce_field("membership_form_submit", 'membership_nonce'); ?>
+
             <input class="button" type="submit" name="membership_form_submit" value="Antrag abschicken">
         </form>
         <?php
