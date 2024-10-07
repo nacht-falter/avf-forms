@@ -85,6 +85,45 @@ jQuery(document).ready(function ($) {
     showHideFields(adultFields, !isChildOrYouth);
   }
 
+  const chieldFields = [
+    vornameEltern,
+    labelVornameEltern,
+    nachnameEltern,
+    labelNachnameEltern,
+    geschwisterkind.parent(),
+  ];
+
+  const adultFields = [
+    starterpaket.parent(),
+    spende.parent(),
+    spendeMonatlich,
+    labelSpendeMonatlich,
+    spendeEinmalig,
+    labelSpendeEinmalig,
+  ];
+
+  function showHideFields(fields, show) {
+    fields.forEach((field) => {
+      if (show) {
+        field.show();
+      } else {
+        field.hide();
+      }
+    });
+  }
+
+  function updateFields() {
+    const isChildOrYouth =
+      mitgliedschaftArt.val() === "kind" ||
+      mitgliedschaftArt.val() === "jugend";
+
+    vornameEltern.prop("required", isChildOrYouth);
+    nachnameEltern.prop("required", isChildOrYouth);
+
+    showHideFields(chieldFields, isChildOrYouth);
+    showHideFields(adultFields, !isChildOrYouth);
+  }
+
   checkboxes.on("change", function () {
     updateButtons();
   });
