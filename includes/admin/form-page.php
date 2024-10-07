@@ -15,7 +15,7 @@ function Avf_Display_Membership_form()
         <h1><?php echo $id ? 'Mitgliedschaft bearbeiten' : 'Neue Mitgliedschaft hinzufügen'; ?></h1>
         
         <button type="button" class="button button-secondary" id="go-back">Zurück zur Übersicht</button>
-        <form id="avf-membership-form">
+        <form id="avf-membership-admin-form">
             <div class="flex-container">
                 <?php wp_nonce_field('avf_membership_action', '_ajax_nonce'); ?>
                 <input type="hidden" name="action" value="avf_membership_action">

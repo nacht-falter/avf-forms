@@ -24,8 +24,8 @@
   }
 }
 
-#avf-membership-form label,
-#avf-membership-form button {
+#avf-membership-admin-form label,
+#avf-membership-admin-form button {
   margin-top: 1rem;
 }
 
@@ -35,7 +35,7 @@
   align-items: center; /* Aligns checkbox and label vertically */
 }
 
-#avf-membership-form .form-group label {
+#avf-membership-admin-form .form-group label {
   margin-top: 0;
 }
 
@@ -58,4 +58,11 @@ label:has(+ input:required)::after {
 
 .form-group input:required + label::after {
   content: "*";
+}
+.highlight-row {
+  background-color: #ffcccc !important;
+}
+
+.highlight-row:hover {
+  background-color: #ffdddd !important;
 }

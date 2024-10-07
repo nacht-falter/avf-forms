@@ -50,27 +50,9 @@ class Avf_Forms_Membership_Handler
             $today = new DateTime();
             $age = $today->diff($dob)->y;
             if ($age < 14) {
-                $mitgliedschaft_art = 'Kind';
+                $mitgliedschaft_art = 'kind';
             } elseif ($age < 18) {
-                $mitgliedschaft_art = 'Jugend';
-            } else {
-                switch ($mitgliedschaft_art) {
-                case 'aktiv':
-                    $mitgliedschaft_art = 'Aktives Mitglied';
-                    break;
-                case 'familie':
-                    $mitgliedschaft_art = 'Familienmitglied';
-                    break;
-                case 'foerder':
-                    $mitgliedschaft_art = 'Fördermitglied';
-                    break;
-                case 'sonder':
-                    $mitgliedschaft_art = 'Sondermitglied';
-                    break;
-                default:
-                    $mitgliedschaft_art = 'Unbekannt';
-                    break;
-                }
+                $mitgliedschaft_art = 'jugend';
             }
 
             $wpdb->insert(

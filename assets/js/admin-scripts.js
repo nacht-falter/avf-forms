@@ -1,10 +1,11 @@
 jQuery(document).ready(function ($) {
-  $("#avf-membership-form").on("submit", function (e) {
+  $("#avf-membership-admin-form").on("submit", function (e) {
     e.preventDefault();
 
     let formData = $(this).serialize();
 
     $.post(avf_ajax_admin.ajaxurl, formData, function (response) {
+      console.log(response);
       let data = JSON.parse(response);
       if (data.status === "success") {
         window.location.href = "admin.php?page=avf-membership-admin"; // Redirect after successful operation

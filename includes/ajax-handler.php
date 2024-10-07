@@ -1,5 +1,5 @@
 <?php
-function avf_handle_ajax_requests()
+function Avf_Handle_Ajax_requests()
 {
     if (!current_user_can('manage_options')) {
         wp_send_json_error('You do not have permission to perform this action.');
@@ -94,9 +94,9 @@ function avf_handle_ajax_requests()
     wp_die(); // Important to close the AJAX call
 }
 
-add_action('wp_ajax_avf_membership_action', 'avf_handle_ajax_requests');
+add_action('wp_ajax_avf_membership_action', 'Avf_Handle_Ajax_requests');
 
-function generate_csv_download()
+function Generate_Csv_download()
 {
     check_ajax_referer('avf_membership_action', '_ajax_nonce');
 
@@ -190,7 +190,7 @@ function generate_csv_download()
     }
 }
 
-add_action('wp_ajax_avf_download_csv', 'generate_csv_download');
+add_action('wp_ajax_avf_download_csv', 'Generate_Csv_download');
 
 function formatField($value)
 {

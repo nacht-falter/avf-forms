@@ -1,5 +1,4 @@
 <?php
-
 class Avf_Forms_Membership_Shortcodes
 {
 

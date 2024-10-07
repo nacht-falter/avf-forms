@@ -52,13 +52,34 @@ function Avf_Display_memberships()
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($results as $row) : ?>
-                            <tr class="table-row-link" onclick="handleRowClick(event, <?php echo esc_attr($row['id']); ?>)">
+                        <?php foreach ($results as $row) :
+                            $checkAge = false;
+                            $age = date_diff(date_create($row['geburtsdatum']), date_create('now'))->y;
+                            if (($age < 14 && $row['mitgliedschaft_art'] != 'kind')) {
+                                $checkAge = true;
+                            } elseif ($age >= 14 && $age < 18 && $row['mitgliedschaft_art'] != 'jugendlicher') {
+                                $checkAge = true;
+                            } elseif ($age >= 18 && ($row['mitgliedschaft_art'] == 'kind' || $row['mitgliedschaft_art'] == 'jugendlicher')) {
+                                $checkAge = true;
+                            }
+                            ?>
+
+                            <tr class="table-row-link <?php if ($checkAge) echo 'highlight-row'; ?>"
+                                <?php if ($checkAge) echo 'title="Mitgliedschaftsart prüfen"'; ?>
+                                onclick="handleRowClick(event, <?php echo esc_attr($row['id']); ?>)">
+
                                 <th scope="row" class="check-column" style="cursor: initial;">
                                     <input type="checkbox" class="membership-checkbox" value="<?php echo esc_attr($row['id']); ?>">
                                 </th>
                                 <td><?php echo esc_html($row['id']); ?></td>
-                                <td><?php echo esc_html(MITGLIEDSCHAFTSARTEN[$row['mitgliedschaft_art']] ?? 'Unbekannt'); ?></td>
+                                <td>
+                                    <?php
+                                        echo esc_html(MITGLIEDSCHAFTSARTEN[$row['mitgliedschaft_art']] ?? 'Unbekannt');
+                                        if ($checkAge) {
+                                        echo '&nbsp;<span class="dashicons dashicons-warning" style="color: red;" title="Alter stimmt nicht mit Mitgliedschaftsart überein."></span>';
+                                        }
+                                    ?>
+                                </td>
                                 <td><?php echo esc_html($row['vorname']); ?></td>
                                 <td><?php echo esc_html($row['nachname']); ?></td>
                                 <td><?php echo esc_html($row['email']); ?></td>
