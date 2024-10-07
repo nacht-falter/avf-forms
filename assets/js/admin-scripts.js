@@ -5,7 +5,6 @@ jQuery(document).ready(function ($) {
     let formData = $(this).serialize();
 
     $.post(avf_ajax_admin.ajaxurl, formData, function (response) {
-      console.log(response);
       let data = JSON.parse(response);
       if (data.status === "success") {
         window.location.href = "admin.php?page=avf-membership-admin"; // Redirect after successful operation
@@ -44,45 +43,6 @@ jQuery(document).ready(function ($) {
     const selectedCheckboxes = checkboxes.filter(":checked");
     deleteButton.prop("disabled", selectedCheckboxes.length === 0);
     exportCsvButton.prop("disabled", selectedCheckboxes.length === 0);
-  }
-
-  const chieldFields = [
-    vornameEltern,
-    labelVornameEltern,
-    nachnameEltern,
-    labelNachnameEltern,
-    geschwisterkind.parent(),
-  ];
-
-  const adultFields = [
-    starterpaket.parent(),
-    spende.parent(),
-    spendeMonatlich,
-    labelSpendeMonatlich,
-    spendeEinmalig,
-    labelSpendeEinmalig,
-  ];
-
-  function showHideFields(fields, show) {
-    fields.forEach((field) => {
-      if (show) {
-        field.show();
-      } else {
-        field.hide();
-      }
-    });
-  }
-
-  function updateFields() {
-    const isChildOrYouth =
-      mitgliedschaftArt.val() === "kind" ||
-      mitgliedschaftArt.val() === "jugend";
-
-    vornameEltern.prop("required", isChildOrYouth);
-    nachnameEltern.prop("required", isChildOrYouth);
-
-    showHideFields(chieldFields, isChildOrYouth);
-    showHideFields(adultFields, !isChildOrYouth);
   }
 
   const chieldFields = [
