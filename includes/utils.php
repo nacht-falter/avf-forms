@@ -20,30 +20,6 @@ class Avf_Forms_Utils
         wp_mail($admin_email, $admin_subject, $admin_message);
     }
 
-    public static function send_schnupperkurs_confirmation_email($email, $betrag, $vorname, $nachname, $vorname_kind = null, $nachname_kind = null)
-    {
-        $subject = '[Aikido Verein Freiburg e.V.] Deine Schnupperkurs-Anmeldung';
-        $message = "Hallo $vorname,\n\n";
-        $message .= "Deine Anmeldung " . ($vorname_kind ? "für $vorname_kind " : "") . "ist bei uns eingegangen. Vielen Dank!\n\n";
-        $message .= "Bitte zahle die Kursgebühr in Höhe von $betrag € innerhalb von zwei Wochen entweder in bar oder per Überweisung auf unser Konto:\n";
-        $message .= "Empfänger: Aikido Verein Freiburg e.V.\n";
-        $message .= "IBAN: DE34680900000024401901\n";
-        $message .= "BIC: GENODE61FR1\n";
-        $message .= "Bank: Volksbank Freiburg\n";
-        $message .= "Verwendungszweck: Schnupperkurs " . ($vorname_kind ? "$vorname_kind $nachname_kind\n\n" : "$vorname $nachname\n\n");
-        $message .= "Falls Du Fragen zur Mitgliedschaft hast, schreibe gerne eine Mail an schatzmeister@aikido-freiburg.de. ";
-        $message .= "Bei allen anderen Fragen, wende dich gerne an vorstand@aikido-freiburg.de oder sprich uns auf der Matte an.\n\n";
-        $message .= "Viele Grüße\n";
-        $message .= "Dein Aikido Verein Freiburg e.V.\n";
-        wp_mail($email, $subject, $message);
-
-        $admin_email = get_option('treasurer_email');
-        $admin_subject = "[Aikido Verein Freiburg e.V.] Neue Schnupperkurs-Anmeldung";
-        $admin_message = "Neue Schnupperkurs-Anmeldung von " . ($vorname_kind ? "$vorname_kind $nachname_kind" : "$vorname $nachname") . " eingegangen.\n\n";
-        $admin_message .= "Zur Migliedschaftsverwaltung: " . home_url('/wp-admin/admin.php?page=avf-membership-admin') . "\n";
-        wp_mail($admin_email, $admin_subject, $admin_message);
-    }
-
     public static function subscribe_to_mailinglist($email, $listname)
     {
         $data = array(
