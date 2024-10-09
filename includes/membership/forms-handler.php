@@ -55,6 +55,10 @@ class Avf_Forms_Membership_Handler
                 $mitgliedschaft_art = 'jugend';
             }
 
+            if (array_key_exists($mitgliedschaft_art, BEITRAEGE)) {
+                $beitrag = BEITRAEGE[$mitgliedschaft_art];
+            }
+
             $wpdb->insert(
                 $table_name,
                 array(
@@ -79,7 +83,8 @@ class Avf_Forms_Membership_Handler
                     'hinweise' => $hinweise,
                     'sepa' => $sepa,
                     'kontoinhaber' => $kontoinhaber,
-                    'iban' => $iban
+                    'iban' => $iban,
+                    'beitrag' => $beitrag
                 )
             );
 

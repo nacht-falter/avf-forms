@@ -32,14 +32,26 @@ define('AVF_PLUGIN_URL', plugin_dir_url(__FILE__));
 define(
     'MITGLIEDSCHAFTSARTEN', [
     'aktiv' => 'Aktives Mitglied',
+    'aktiv_ermaessigt' => 'Aktives Mitglied (ermäßigt)',
     'familie' => 'Familienmitglied',
     'foerder' => 'Fördermitglied',
     'sonder' => 'Sondermitglied',
+    'passiv' => 'Passives Mitglied',
     'kind' => 'Kind',
     'jugend' => 'Jugend',
     ]
 );
-
+define(
+    'BEITRAEGE', [
+        'aktiv' => 24,
+        'aktiv_ermaessigt' => 18,
+        'familie' => 15,
+        'foerder' => 5,
+        'sonder' => 10,
+        'kind' => 14,
+        'jugend' => 18,
+    ]
+);
 
 // Autoload required files
 $includes = [

@@ -36,14 +36,14 @@ function Avf_Handle_Ajax_requests()
             'austrittsdatum' => !empty($_POST['austrittsdatum']) ? sanitize_text_field($_POST['austrittsdatum']) : null,
             'starterpaket' => isset($_POST['starterpaket']) ? 1 : 0,
             'spende' => isset($_POST['spende']) ? 1 : 0,
-            'spende_monatlich' => !empty($_POST['spende_monatlich']) ? floatval($_POST['spende_monatlich']) : null,
-            'spende_einmalig' => !empty($_POST['spende_einmalig']) ? floatval($_POST['spende_einmalig']) : null,
+            'spende_monatlich' => isset($_POST['spende_monatlich']) ? floatval($_POST['spende_monatlich']) : null,
+            'spende_einmalig' => isset($_POST['spende_einmalig']) ? floatval($_POST['spende_einmalig']) : null,
             'satzung_datenschutz' => isset($_POST['satzung_datenschutz']) ? 1 : 0,
             'hinweise' => isset($_POST['hinweise']) ? 1 : 0,
             'sepa' => isset($_POST['sepa']) ? 1 : 0,
             'kontoinhaber' => sanitize_text_field($_POST['kontoinhaber']),
             'iban' => sanitize_text_field($_POST['iban']),
-            'beitrag' => !empty($_POST['beitrag']) ? floatval($_POST['beitrag']) : null,
+            'beitrag' => isset($_POST['beitrag']) ? floatval($_POST['beitrag']) : null,
             'notizen' => sanitize_textarea_field($_POST['notizen']),
             'submission_date' => current_time('mysql'), // Capture the current timestamp
         ];

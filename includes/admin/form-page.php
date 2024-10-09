@@ -113,8 +113,18 @@ function Avf_Display_Membership_form()
                 <label for="iban">IBAN</label>
                 <input id="iban" type="text" name="iban" value="<?php echo esc_attr($record->iban ?? ''); ?>" required>
 
-                <label for="beitrag">Beitrag</label>
-                <input id="beitrag" type="number" name="beitrag" value="<?php echo esc_attr($record->beitrag ?? ''); ?>" step="0.10">
+                <label for="beitrag">Mitgliedsbeitrag</label>
+                <input id="beitrag" type="number" name="beitrag" value="<?php echo esc_attr($record->beitrag ?? ''); ?>" step="0.10" required>
+
+                <table class="beitragsliste">
+                <th>Beiträge</th>
+                <?php
+                foreach (BEITRAEGE as $key => $value) {
+                    $displayName = MITGLIEDSCHAFTSARTEN[$key] ?? $key;
+                    echo "<tr><td>{$displayName}:</td><td>{$value} €</td></tr>";
+                }
+                ?>
+                </table>
 
                 <label for="notizen">Notizen</label>
                 <textarea id="notzien" name="notizen"><?php echo esc_textarea($record->notizen ?? ''); ?></textarea>

@@ -108,7 +108,7 @@ function Avf_Display_memberships()
                                     <td><?php echo esc_html($row['email']); ?></td>
                                     <td><?php echo esc_html(date('d.m.Y', strtotime($row['beitrittsdatum']))); ?></td>
                                     <td>
-                                        <?php echo !empty($row['austrittsdatum']) ? esc_html(date('d.m.Y', strtotime($row['austrittsdatum']))) : ''; ?>
+                                        <?php echo isset($row['austrittsdatum']) ? esc_html(date('d.m.Y', strtotime($row['austrittsdatum']))) : ''; ?>
                                     </td>
                                     <td><?php echo $row['starterpaket'] ? 'Ja' : 'Nein'; ?></td>
                                     <td><?php echo esc_html($row['spende'] ? 'Ja' : 'Nein'); ?></td>
@@ -119,7 +119,7 @@ function Avf_Display_memberships()
                                     <td><?php echo $row['sepa'] ? 'Erteilt' : 'Nicht erteilt'; ?></td>
                                     <td><?php echo esc_html($row['kontoinhaber']); ?></td>
                                     <td><?php echo esc_html($row['iban']); ?></td>
-                                    <td><?php echo esc_html($row['beitrag'] ?? ''); ?></td>
+                                    <td><?php echo isset($row['beitrag']) ? esc_html($row['beitrag']) . ' €' : ''; ?></td>
                                     <td><?php echo esc_html(date('d.m.Y', strtotime($row['submission_date']))); ?></td>
                                     <td class="notizen-col"><?php echo esc_html($row['notizen']); ?></td>
                                 </tr>

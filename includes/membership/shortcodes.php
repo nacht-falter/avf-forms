@@ -78,6 +78,7 @@ class Avf_Forms_Membership_Shortcodes
                         <label for="mitgliedschaft">Art der Mitgliedschaft</label>
                         <select name="mitgliedschaft_art" id="mitgliedschaft_art" required>
                             <option value="aktiv">Aktives Mitglied</option>
+                            <option value="aktiv_ermaessigt">Aktives Mitglied (ermäßigt)</option>
                             <option value="familie">Familienmitglied (ab der 3. Person)</option>
                             <option value="foerder">Fördermitglied</option>
                             <option value="sonder">Sondermitglied (Mitglieder anderer DANBW-Dojos)</option>
@@ -87,6 +88,7 @@ class Avf_Forms_Membership_Shortcodes
                         <label for="beitrittsdatum">Beitrittsdatum</label>
                         <input type="date" name="beitrittsdatum" id="beitrittsdatum" required>
                     </div>
+                    <p><small>*Anspruch auf eine Beitragsermäßigung bei aktiver Mitgliedschaft haben Schüler*innen ab 18 Jahren, Studierende, Auszubildende, Menschen mit Schwerbehinderung, FSJler*innen, Wehrpflichtige und Arbeitslose.</small></p>
                 </div>
                 <div>
                     <h5>Hinweise</h5>
