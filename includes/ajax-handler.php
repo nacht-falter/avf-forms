@@ -33,6 +33,7 @@ function Avf_Handle_Ajax_requests()
             'plz' => sanitize_text_field($_POST['plz']),
             'ort' => sanitize_text_field($_POST['ort']),
             'beitrittsdatum' => sanitize_text_field($_POST['beitrittsdatum']),
+            'austrittsdatum' => !empty($_POST['austrittsdatum']) ? sanitize_text_field($_POST['austrittsdatum']) : null,
             'starterpaket' => isset($_POST['starterpaket']) ? 1 : 0,
             'spende' => isset($_POST['spende']) ? 1 : 0,
             'spende_monatlich' => !empty($_POST['spende_monatlich']) ? floatval($_POST['spende_monatlich']) : null,
@@ -42,6 +43,7 @@ function Avf_Handle_Ajax_requests()
             'sepa' => isset($_POST['sepa']) ? 1 : 0,
             'kontoinhaber' => sanitize_text_field($_POST['kontoinhaber']),
             'iban' => sanitize_text_field($_POST['iban']),
+            'beitrag' => !empty($_POST['beitrag']) ? floatval($_POST['beitrag']) : null,
             'notizen' => sanitize_textarea_field($_POST['notizen']),
             'submission_date' => current_time('mysql'), // Capture the current timestamp
         ];
@@ -131,6 +133,7 @@ function Generate_Csv_download()
                 'PLZ',
                 'Ort',
                 'Beitrittsdatum',
+                'Austrittsdatum',
                 'Starterpaket',
                 'Spende',
                 'Spende monatlich',
@@ -140,6 +143,7 @@ function Generate_Csv_download()
                 'SEPA-Mandat',
                 'Kontoinhaber',
                 'IBAN',
+                'Beitrag',
                 'Notizen',
                 'Eingangsdatum'
             ];
@@ -165,6 +169,7 @@ function Generate_Csv_download()
                         $row['plz'],
                         $row['ort'],
                         date('d.m.Y', strtotime($row['beitrittsdatum'])),
+                        date('d.m.Y', strtotime($row['austrittsdatum'] ?? '')),
                         formatField($row['starterpaket']),
                         formatField($row['spende']),
                         $row['spende_monatlich'],
@@ -174,6 +179,7 @@ function Generate_Csv_download()
                         $row['sepa'] ? 'Erteilt' : 'Nicht erteilt',
                         $row['kontoinhaber'],
                         $row['iban'],
+                        $row['beitrag'],
                         $row['notizen'],
                         date('d.m.Y', strtotime($row['submission_date']))
                     ]

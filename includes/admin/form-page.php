@@ -73,6 +73,9 @@ function Avf_Display_Membership_form()
                 <label for="beitrittsdatum">Beitrittsdatum</label>
                 <input id="beitrittsdatum" type="date" name="beitrittsdatum" value="<?php echo esc_attr($record->beitrittsdatum ?? ''); ?>" required>
 
+                <label for="austrittsdatum">Austrittsdatum</label>
+                <input id="austrittsdatum" type="date" name="austrittsdatum" value="<?php echo esc_attr($record->austrittsdatum ?? ''); ?>">
+
                 <div class="form-group">
                     <input id="starterpaket" type="checkbox" name="starterpaket" value="1" <?php checked($record->starterpaket ?? 0, 1); ?>>
                     <label for="starterpaket">Starterpaket</label>
@@ -109,6 +112,9 @@ function Avf_Display_Membership_form()
 
                 <label for="iban">IBAN</label>
                 <input id="iban" type="text" name="iban" value="<?php echo esc_attr($record->iban ?? ''); ?>" required>
+
+                <label for="beitrag">Beitrag</label>
+                <input id="beitrag" type="number" name="beitrag" value="<?php echo esc_attr($record->beitrag ?? ''); ?>" step="0.10">
 
                 <label for="notizen">Notizen</label>
                 <textarea id="notzien" name="notizen"><?php echo esc_textarea($record->notizen ?? ''); ?></textarea>

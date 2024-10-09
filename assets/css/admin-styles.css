@@ -3,13 +3,9 @@
   margin-right: 0.5rem;
 }
 
-#delete-membership, #export-csv {
+#delete-membership,
+#export-csv {
   margin-top: 1rem;
-}
-
-.notizen-col {
-  max-width: 200px;
-  word-wrap: break-word;
 }
 
 .flex-container {
@@ -44,8 +40,14 @@
   order: -1;
 }
 
+.list-container {
+  width: 100vw;
+  overflow-x: scroll;
+}
+
 .table-row-link {
   cursor: pointer;
+  text-wrap: nowrap;
 }
 
 .table-row-link:hover {
@@ -59,10 +61,19 @@ label:has(+ input:required)::after {
 .form-group input:required + label::after {
   content: "*";
 }
-.highlight-row {
+
+.highlight-row-red {
   background-color: #ffcccc !important;
 }
 
-.highlight-row:hover {
+.highlight-row-red:hover {
   background-color: #ffdddd !important;
+}
+
+.highlight-row-yellow {
+  background-color: #ffffcc !important;
+}
+
+.highlight-row-yellow:hover {
+  background-color: #ffffdd !important;
 }

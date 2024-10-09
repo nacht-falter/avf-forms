@@ -5,6 +5,7 @@ jQuery(document).ready(function ($) {
     let formData = $(this).serialize();
 
     $.post(avf_ajax_admin.ajaxurl, formData, function (response) {
+      console.log(response);
       let data = JSON.parse(response);
       if (data.status === "success") {
         window.location.href = "admin.php?page=avf-membership-admin"; // Redirect after successful operation

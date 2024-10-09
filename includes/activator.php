@@ -25,6 +25,7 @@ class Avf_Forms_Activator
                 plz varchar(10) NOT NULL,
                 ort varchar(255) NOT NULL,
                 beitrittsdatum date NOT NULL,
+                austrittsdatum date NULL,
                 starterpaket boolean NULL,
                 spende boolean NULL,
                 spende_monatlich float NULL,
@@ -34,6 +35,7 @@ class Avf_Forms_Activator
                 sepa boolean NOT NULL,
                 kontoinhaber varchar(255) NOT NULL,
                 iban varchar(34) NOT NULL,
+                beitrag float NULL,
                 notizen text NULL,
                 submission_date datetime DEFAULT CURRENT_TIMESTAMP,
                 
