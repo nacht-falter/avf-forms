@@ -29,8 +29,11 @@ document.addEventListener("DOMContentLoaded", function () {
       radio.addEventListener("change", function () {
         if (freibetrag.checked) {
           freibetragInput.required = true;
+          freibetragInput.disabled = false;
+          freibetragInput.focus();
         } else {
           freibetragInput.required = false;
+          freibetragInput.disabled = true;
         }
       });
     });

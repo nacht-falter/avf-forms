@@ -145,15 +145,28 @@ class Avf_Forms_Membership_Shortcodes
                 </div>
                 <div id="spende-details">
                     <div class="flex-container align-center no-wrap indent">
-                        <label for="intervall-mtl" class="disabled font-weight-normal"><input class="disabled" type="radio" name="intervall" id="intervall-mtl" value="monatlich" disabled> Monatlich</label>
-                        <label for="intervall-einmal" class="disabled font-weight-normal"><input class="disabled" type="radio" name="intervall" id="intervall-einmal" value="einmalig" disabled> Einmalig</label>
+                        <label for="intervall-mtl" class="disabled font-weight-normal">
+                            <input class="disabled" type="radio" name="intervall" id="intervall-mtl" value="monatlich" disabled required> Monatlich
+                        </label>
+                        <label for="intervall-einmal" class="disabled font-weight-normal">
+                            <input class="disabled" type="radio" name="intervall" id="intervall-einmal" value="einmalig" disabled> Einmalig
+                        </label>
                     </div>
+
                     <div class="flex-container flex-row indent">
-                            <label for="spende-5" class="disabled font-weight-normal"><input class="disabled" type="radio" name="spende" value="5" id="spende-5" disabled> 5 €</label>
-                            <label for="spende-10" class="disabled font-weight-normal"><input class="disabled" type="radio" name="spende" value="10" id="spende-10" disabled> 10 €</label>
-                            <label for="spende-15" class="disabled font-weight-normal"><input class="disabled" type="radio" name="spende" value="15" id="spende-15" disabled> 15 €</label>
-                            <label for="spende-freibetrag" class="disabled font-weight-normal"><input class="disabled" type="radio" name="spende" value="freibetrag" id="spende-freibetrag" disabled> Freibetrag</label>
-                            <input id="freibetrag-input" type="number" name="spende" placeholder="Betrag">
+                        <label for="spende-5" class="disabled font-weight-normal">
+                            <input class="disabled" type="radio" name="spende" value="5" id="spende-5" disabled required> 5 €
+                        </label>
+                        <label for="spende-10" class="disabled font-weight-normal">
+                            <input class="disabled" type="radio" name="spende" value="10" id="spende-10" disabled> 10 €
+                        </label>
+                        <label for="spende-15" class="disabled font-weight-normal">
+                            <input class="disabled" type="radio" name="spende" value="15" id="spende-15" disabled> 15 €
+                        </label>
+                        <label for="spende-freibetrag" class="disabled font-weight-normal">
+                            <input class="disabled" type="radio" name="spende" value="freibetrag" id="spende-freibetrag" disabled> Freibetrag
+                        </label>
+                        <input id="freibetrag-input" type="number" name="freibetrag-input" placeholder="Betrag" disabled>
                     </div>
                 </div>
                 <div>

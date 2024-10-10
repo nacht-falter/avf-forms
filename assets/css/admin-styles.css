@@ -42,7 +42,7 @@
 
 .list-container {
   width: 100vw;
-  overflow-x: scroll;
+  overflow-x: auto;
 }
 
 .beitragsliste {

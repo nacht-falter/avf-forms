@@ -33,13 +33,26 @@ class Avf_Forms_Membership_Handler
             $beitrittsdatum = sanitize_text_field($_POST['beitrittsdatum']);
             $starterpaket = isset($_POST['starterpaket']) ? 1 : 0;
             $mailinglist = isset($_POST['mailinglist']) ? 1 : 0;
-            $spende_monatlich = isset($_POST['spende']) && isset($_POST['intervall']) && $_POST['intervall'] === 'monatlich' ? floatval($_POST['spende']) : 0;
-            $spende_einmalig = isset($_POST['spende']) && isset($_POST['intervall']) && $_POST['intervall'] === 'einmalig' ? floatval($_POST['spende']) : 0;
             $satzung_datenschutz = isset($_POST['satzung_datenschutz']) ? 1 : 0;
             $hinweise = isset($_POST['hinweise']) ? 1 : 0;
             $sepa = isset($_POST['sepa']) ? 1 : 0;
             $kontoinhaber = sanitize_text_field($_POST['kontoinhaber']);
             $iban = sanitize_text_field($_POST['iban']);
+
+            // Donations
+            if (isset($_POST['spende'])) {
+                if ($_POST['spende'] === 'freibetrag' && isset($_POST['freibetrag-input']) && is_numeric($_POST['freibetrag-input'])) {
+                    $spende_value = floatval($_POST['freibetrag-input']);
+                } else {
+                    $spende_value = floatval($_POST['spende']);
+                }
+            } else {
+                $spende_value = 0;
+            }
+
+            $spende_monatlich = isset($_POST['intervall']) && $_POST['intervall'] === 'monatlich' ? $spende_value : 0;
+            $spende_einmalig = isset($_POST['intervall']) && $_POST['intervall'] === 'einmalig' ? $spende_value : 0;
+
 
             // Child specific fields
             $vorname_eltern = isset($_POST['vorname_eltern']) ? sanitize_text_field($_POST['vorname_eltern']) : null;

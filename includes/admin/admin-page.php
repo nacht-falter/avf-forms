@@ -68,7 +68,6 @@ function Avf_Display_memberships()
                                 $checkAge = false;
                                 $markInactive = false;
                                 $age = date_diff(date_create($row['geburtsdatum']), date_create('now'))->y;
-                                echo '<script>console.log(' . json_encode($age) . ');</script>';
                                 if (($age < 14 && $row['mitgliedschaft_art'] != 'kind')) {
                                     $checkAge = true;
                                 } elseif ($age >= 14 && $age < 18 && $row['mitgliedschaft_art'] != 'jugend') {
@@ -93,13 +92,12 @@ function Avf_Display_memberships()
                                     <td><?php echo esc_html($row['id']); ?></td>
                                     <td>
                                     <?php
+                                    echo esc_html(MITGLIEDSCHAFTSARTEN[$row['mitgliedschaft_art']] ?? 'Unbekannt');
+                                    if ($checkAge) {
+                                        echo '&nbsp;<span class="dashicons dashicons-warning" style="color: red;" title="Alter stimmt nicht mit Mitgliedschaftsart überein."></span>';
+                                    }
                                     if ($markInactive) {
-                                        echo "Ausgetreten ";
-                                    } else {
-                                        echo esc_html(MITGLIEDSCHAFTSARTEN[$row['mitgliedschaft_art']] ?? 'Unbekannt');
-                                        if ($checkAge) {
-                                            echo '&nbsp;<span class="dashicons dashicons-warning" style="color: red;" title="Alter stimmt nicht mit Mitgliedschaftsart überein."></span>';
-                                        }
+                                        echo '&nbsp;<span class="dashicons dashicons-warning" style="color: orange;" title="Austritt zum ' . date('d.m.Y', strtotime($row['austrittsdatum'])) . '"></span>';
                                     }
                                     ?>
                                     </td>
@@ -132,6 +130,19 @@ function Avf_Display_memberships()
                     <button type="button" id="delete-membership" class="button button-secondary" disabled>Ausgewählte Mitgliedschaften löschen</button>
                 </div>
             </form>
+
+            <table class="beitragsliste">
+                <tr>
+                    <th>Beiträge</th>
+                </tr>
+                <?php
+                foreach (BEITRAEGE as $key => $value) {
+                    $displayName = MITGLIEDSCHAFTSARTEN[$key] ?? $key;
+                    echo "<tr><td>{$displayName}:</td><td>{$value} €</td></tr>";
+                }
+                ?>
+            </table>
+
             <script>
             function handleRowClick(event, id) {
                 if (event.target.tagName != 'INPUT' && event.target.tagName != 'TH') {
