@@ -92,7 +92,7 @@ class Avf_Forms_Membership_Shortcodes
                 </div>
                 <div>
                     <h5>Hinweise</h5>
-                    <p><strong>Kündigung:</strong> Eine Kündigung der Mitgliedschaft hat bis spätestens zum 15. des Kündigungsmonats zu erfolgen.</p>
+                    <p><strong>Kündigung:</strong> Eine Kündigung der Mitgliedschaft hat bis spätestens 6 Wochen vor Quartalsende zu erfolgen.</p>
                     <p><strong>Haftungsausschluss:</strong> Der Aikido-Verein Freiburg e.V. weist ausdrücklich daraufhin, dass der Vereinsbeitritt keine Versicherung einschließt. Jedes Mitglied ist für ausreichenden Versicherungsschutz selbst verantwortlich. Eine Haftung durch den Verein ist, außer bei Vorsatz und grober Fahrlässigkeit, ausgeschlossen.</p>
                 </div>
                 <div>

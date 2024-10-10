@@ -132,7 +132,8 @@ function Avf_Display_Membership_form()
                 <textarea id="notzien" name="notizen"><?php echo esc_textarea($record->notizen ?? ''); ?></textarea>
             </div>
             <button type="submit" class="button button-primary">Mitgliedschaft <?php echo $id ? 'aktualisieren' : 'hinzufügen'; ?></button>
-            <button type="button" id="delete-membership-single" class="button button-secondary" data-id="<?php echo esc_attr($record->id ?? ''); ?>">Mitgliedschaft löschen</button>
+            <button type="button" class="button button-secondary" id="cancel">Abbrechen</button>
+            <button type="button" id="delete-membership-single" class="button button-secondary btn-warning" data-id="<?php echo esc_attr($record->id ?? ''); ?>">Mitgliedschaft löschen</button>
         </form>
     </div>
     <?php

@@ -20,6 +20,7 @@ jQuery(document).ready(function ($) {
   const deleteButtonSingle = $("#delete-membership-single");
   const exportCsvButton = $("#export-csv");
   const goBackButton = $("#go-back");
+  const cancelButton = $("#cancel");
   const mitgliedschaftArt = $("#mitgliedschaft_art");
   const vornameEltern = $("#vorname_eltern");
   const labelVornameEltern = $('label[for="' + vornameEltern.attr("id") + '"]');
@@ -187,6 +188,11 @@ jQuery(document).ready(function ($) {
   });
 
   goBackButton.on("click", function (e) {
+    e.preventDefault();
+    window.location.href = "admin.php?page=avf-membership-admin";
+  });
+
+  cancelButton.on("click", function (e) {
     e.preventDefault();
     window.location.href = "admin.php?page=avf-membership-admin";
   });
