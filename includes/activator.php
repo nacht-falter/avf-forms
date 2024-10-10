@@ -35,6 +35,8 @@ class Avf_Forms_Activator
                 sepa boolean NOT NULL,
                 kontoinhaber varchar(255) NOT NULL,
                 iban varchar(34) NOT NULL,
+                bic varchar(11) NULL,
+                bank varchar(255) NULL,
                 beitrag float NULL,
                 notizen text NULL,
                 submission_date datetime DEFAULT CURRENT_TIMESTAMP,

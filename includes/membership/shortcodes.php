@@ -130,6 +130,14 @@ class Avf_Forms_Membership_Shortcodes
                         <label for="iban">IBAN</label>
                         <input type="text" name="iban" id="iban" placeholder="IBAN" required>
                     </div>
+                    <div class="half-width">
+                        <label for="bic">BIC</label>
+                        <input type="text" name="bic" id="bic" placeholder="BIC" required>
+                    </div>
+                    <div class="half-width">
+                        <label for="bank">Bank</label>
+                        <input type="text" name="bank" id="bank" placeholder="Bank" required>
+                    </div>
                 </div>
                 <div>
                     <input class="d-inline align-top mt-4" type="checkbox" name="sepa" id="sepa" required>
@@ -306,6 +314,14 @@ class Avf_Forms_Membership_Shortcodes
                     <div class="half-width">
                         <label for="iban">IBAN</label>
                         <input type="text" name="iban" id="iban" placeholder="IBAN" required>
+                    </div>
+                    <div class="half-width">
+                        <label for="bic">BIC</label>
+                        <input type="text" name="bic" id="bic" placeholder="BIC" required>
+                    </div>
+                    <div class="half-width">
+                        <label for="bank">Bank</label>
+                        <input type="text" name="bank" id="bank" placeholder="Bank" required>
                     </div>
                 </div>
                 <div>

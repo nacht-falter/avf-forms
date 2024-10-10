@@ -113,6 +113,12 @@ function Avf_Display_Membership_form()
                 <label for="iban">IBAN</label>
                 <input id="iban" type="text" name="iban" value="<?php echo esc_attr($record->iban ?? ''); ?>" required>
 
+                <label for="iban">BIC</label>
+                <input id="bic" type="text" name="bic" value="<?php echo esc_attr($record->bic ?? ''); ?>" required>
+
+                <label for="iban">Bank</label>
+                <input id="bank" type="text" name="bank" value="<?php echo esc_attr($record->bank ?? ''); ?>" required>
+
                 <label for="beitrag">Mitgliedsbeitrag</label>
                 <input id="beitrag" type="number" name="beitrag" value="<?php echo esc_attr($record->beitrag ?? ''); ?>" step="1" required>
 

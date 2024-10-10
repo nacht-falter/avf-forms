@@ -43,6 +43,8 @@ function Avf_Handle_Ajax_requests()
             'sepa' => isset($_POST['sepa']) ? 1 : 0,
             'kontoinhaber' => sanitize_text_field($_POST['kontoinhaber']),
             'iban' => sanitize_text_field($_POST['iban']),
+            'bic' => sanitize_text_field($_POST['bic']),
+            'bank' => sanitize_text_field($_POST['bank']),
             'beitrag' => isset($_POST['beitrag']) ? floatval($_POST['beitrag']) : null,
             'notizen' => sanitize_textarea_field($_POST['notizen']),
             'submission_date' => current_time('mysql'), // Capture the current timestamp

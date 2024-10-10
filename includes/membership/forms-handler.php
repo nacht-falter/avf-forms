@@ -38,6 +38,8 @@ class Avf_Forms_Membership_Handler
             $sepa = isset($_POST['sepa']) ? 1 : 0;
             $kontoinhaber = sanitize_text_field($_POST['kontoinhaber']);
             $iban = sanitize_text_field($_POST['iban']);
+            $bic = sanitize_text_field($_POST['bic']);
+            $bank = sanitize_text_field($_POST['bank']);
 
             // Donations
             if (isset($_POST['spende'])) {

@@ -47,6 +47,8 @@ function Avf_Display_memberships()
                                     'sepa'               => 'SEPA-Mandat',
                                     'kontoinhaber'       => 'Kontoinhaber',
                                     'iban'               => 'IBAN',
+                                    'bic'                => 'BIC',
+                                    'bank'               => 'Bank',
                                     'beitrag'            => 'Beitrag',
                                     'submission_date'    => 'Eingangsdatum',
                                     'notizen'            => 'Notizen'
@@ -117,6 +119,8 @@ function Avf_Display_memberships()
                                     <td><?php echo $row['sepa'] ? 'Erteilt' : 'Nicht erteilt'; ?></td>
                                     <td><?php echo esc_html($row['kontoinhaber']); ?></td>
                                     <td><?php echo esc_html($row['iban']); ?></td>
+                                    <td><?php echo esc_html($row['bic']); ?></td>
+                                    <td><?php echo esc_html($row['bank']); ?></td>
                                     <td><?php echo isset($row['beitrag']) ? esc_html($row['beitrag']) . ' €' : ''; ?></td>
                                     <td><?php echo esc_html(date('d.m.Y', strtotime($row['submission_date']))); ?></td>
                                     <td class="notizen-col"><?php echo esc_html($row['notizen']); ?></td>
