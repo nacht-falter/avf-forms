@@ -39,6 +39,7 @@ define(
     'passiv' => 'Passives Mitglied',
     'kind' => 'Kind',
     'jugend' => 'Jugend',
+    'geschwisterkind_discount' => 'Geschwisterkind-Rabatt',
     ]
 );
 define(
