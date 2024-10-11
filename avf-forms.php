@@ -43,14 +43,15 @@ define(
 );
 define(
     'BEITRAEGE', [
-        'aktiv' => 24,
-        'aktiv_ermaessigt' => 18,
-        'familie' => 15,
-        'foerder' => 5,
-        'sonder' => 10,
-        'kind' => 14,
-        'jugend' => 18,
+        'aktiv' => 72,
+        'aktiv_ermaessigt' => 54,
+        'familie' => 45,
+        'foerder' => 15,
+        'sonder' => 30,
+        'kind' => 42,
+        'jugend' => 54,
         'geschwisterkind_discount' => 9,
+        'passiv' => 0,
     ]
 );
 
