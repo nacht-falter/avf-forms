@@ -71,18 +71,26 @@ label:has(+ input:required)::after {
   content: "*";
 }
 
-.highlight-row-red {
+.highlight-red {
   background-color: #ffcccc !important;
 }
 
-.highlight-row-red:hover {
+.highlight-red:hover {
   background-color: #ffdddd !important;
 }
 
-.highlight-row-yellow {
+.highlight-yellow {
   background-color: #ffffcc !important;
 }
 
-.highlight-row-yellow:hover {
+.highlight-yellow:hover {
   background-color: #ffffdd !important;
+}
+
+.highlight-orange {
+  background-color: #ffcc99 !important;
+}
+
+.highlight-orange:hover {
+  background-color: #ffddaa !important;
 }

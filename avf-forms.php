@@ -50,6 +50,7 @@ define(
         'sonder' => 10,
         'kind' => 14,
         'jugend' => 18,
+        'geschwisterkind_discount' => 9,
     ]
 );
 

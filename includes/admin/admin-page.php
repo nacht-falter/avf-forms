@@ -36,14 +36,14 @@ function Avf_Display_memberships()
                                     'vorname'            => 'Vorname',
                                     'nachname'           => 'Nachname',
                                     'email'              => 'E-Mail',
+                                    'geburtsdatum'       => 'Geburtsdatum',
+                                    'geschwisterkind'    => 'Geschwisterkind',
                                     'beitrittsdatum'     => 'Beitrittsdatum',
                                     'austrittsdatum'     => 'Austrittsdatum',
                                     'starterpaket'       => 'Starterpaket',
                                     'spende'             => 'Spende',
                                     'spende_monatlich'   => 'Spende monatlich',
                                     'spende_einmalig'    => 'Spende einmalig',
-                                    'satzung_datenschutz' => 'Satzung und Datenschutz',
-                                    'hinweise'           => 'Hinweise',
                                     'sepa'               => 'SEPA-Mandat',
                                     'kontoinhaber'       => 'Kontoinhaber',
                                     'iban'               => 'IBAN',
@@ -69,6 +69,7 @@ function Avf_Display_memberships()
                             <?php foreach ($results as $row) :
                                 $checkAge = false;
                                 $markInactive = false;
+                                $markCustomBeitrag = false;
                                 $age = date_diff(date_create($row['geburtsdatum']), date_create('now'))->y;
                                 if (($age < 14 && $row['mitgliedschaft_art'] != 'kind')) {
                                     $checkAge = true;
@@ -81,9 +82,12 @@ function Avf_Display_memberships()
                                 if (!empty($row['austrittsdatum'])) {
                                     $markInactive = true;
                                 }
+                                if (BEITRAEGE[$row['mitgliedschaft_art']] != $row['beitrag']) {
+                                    $markCustomBeitrag = true;
+                                }
                                 ?>
 
-                                <tr class="table-row-link <?php if ($checkAge) echo 'highlight-row-red'; if ($markInactive) echo 'highlight-row-yellow'; ?>"
+                                <tr class="table-row-link <?php if ($checkAge) echo 'highlight-red'; if ($markInactive) echo 'highlight-yellow'; ?>"
                                     <?php if ($checkAge) echo 'title="Mitgliedschaftsart prüfen"'; if ($markInactive) echo 'title="Ausgetreten"'; ?>
 
                                     onclick="handleRowClick(event, <?php echo esc_attr($row['id']); ?>)">
@@ -106,6 +110,8 @@ function Avf_Display_memberships()
                                     <td><?php echo esc_html($row['vorname']); ?></td>
                                     <td><?php echo esc_html($row['nachname']); ?></td>
                                     <td><?php echo esc_html($row['email']); ?></td>
+                                    <td><?php echo esc_html(date('d.m.Y', strtotime($row['geburtsdatum']))); ?></td>
+                                    <td><?php echo $row['geschwisterkind'] ? 'Ja' : 'Nein'; ?></td>
                                     <td><?php echo esc_html(date('d.m.Y', strtotime($row['beitrittsdatum']))); ?></td>
                                     <td>
                                         <?php echo isset($row['austrittsdatum']) ? esc_html(date('d.m.Y', strtotime($row['austrittsdatum']))) : ''; ?>
@@ -114,16 +120,16 @@ function Avf_Display_memberships()
                                     <td><?php echo esc_html($row['spende'] ? 'Ja' : 'Nein'); ?></td>
                                     <td><?php echo esc_html($row['spende_monatlich'] ?? ''); ?></td>
                                     <td><?php echo esc_html($row['spende_einmalig'] ?? ''); ?></td>
-                                    <td><?php echo $row['satzung_datenschutz'] ? 'Akzeptiert' : 'Nicht akzeptiert'; ?></td>
-                                    <td><?php echo $row['hinweise'] ? 'Gelesen' : 'Nicht gelesen'; ?></td>
                                     <td><?php echo $row['sepa'] ? 'Erteilt' : 'Nicht erteilt'; ?></td>
                                     <td><?php echo esc_html($row['kontoinhaber']); ?></td>
                                     <td><?php echo esc_html($row['iban']); ?></td>
                                     <td><?php echo esc_html($row['bic']); ?></td>
                                     <td><?php echo esc_html($row['bank']); ?></td>
-                                    <td><?php echo isset($row['beitrag']) ? esc_html($row['beitrag']) . ' €' : ''; ?></td>
-                                    <td><?php echo esc_html(date('d.m.Y', strtotime($row['submission_date']))); ?></td>
+                                    <td class="<?php if ($markCustomBeitrag) echo 'highlight-orange'; ?>" title="<?php if ($markCustomBeitrag) echo 'Beitrag angepasst'; ?>">
+                                        <?php echo isset($row['beitrag']) ? esc_html($row['beitrag']) . ' €' : ''; ?>
+                                    </td>
                                     <td class="notizen-col"><?php echo esc_html($row['notizen']); ?></td>
+                                    <td><?php echo esc_html(date('d.m.Y', strtotime($row['submission_date']))); ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>

@@ -74,6 +74,10 @@ class Avf_Forms_Membership_Handler
                 $beitrag = BEITRAEGE[$mitgliedschaft_art];
             }
 
+            if ($geschwisterkind) {
+                $beitrag = $beitrag - BEITRAEGE['geschwisterkind_discount'];
+            }
+
             $wpdb->insert(
                 $table_name,
                 array(
