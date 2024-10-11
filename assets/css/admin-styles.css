@@ -93,3 +93,7 @@ label:has(+ input:required)::after {
 .highlight-orange:hover {
   background-color: #ffddaa !important;
 }
+.notizen-col {
+  text-wrap: wrap;
+  min-width: 250px;
+}
