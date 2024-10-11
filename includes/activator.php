@@ -45,5 +45,23 @@ class Avf_Forms_Activator
             ) $charset_collate;";
 
         $wpdb->query($sql);
+
+        // Add treasurer role
+        $editor = get_role('editor');
+        if (!get_role('treasurer')) {
+            add_role(
+                'treasurer',
+                'Treasurer',
+                $editor->capabilities
+            );
+        }
+
+        $role = get_role('treasurer');
+        $role->add_cap('manage_memberships');
+            $admin_role = get_role('administrator');
+
+        if ($admin_role) {
+            $admin_role->add_cap('manage_memberships');
+        }
     }
 }

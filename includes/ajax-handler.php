@@ -1,7 +1,7 @@
 <?php
 function Avf_Handle_Ajax_requests()
 {
-    if (!current_user_can('manage_options')) {
+    if (!current_user_can('manage_memberships')) {
         wp_send_json_error('You do not have permission to perform this action.');
         wp_die();
     }
@@ -104,7 +104,7 @@ function Generate_Csv_download()
 {
     check_ajax_referer('avf_membership_action', '_ajax_nonce');
 
-    if (!current_user_can('manage_options')) {
+    if (!current_user_can('manage_memberships')) {
         wp_die('You do not have permission to perform this action.');
     }
 

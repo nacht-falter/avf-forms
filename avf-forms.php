@@ -132,16 +132,16 @@ class Avf_Forms_Plugin
         add_menu_page(
             'AVF Mitgliederverwaltung', // Page title
             'AVF Mitgliederverwaltung', // Menu title
-            'manage_options', // Capability
+            'manage_memberships', // Capability
             'avf-membership-admin', // Menu slug
             'Avf_Display_memberships', // Callback function
             'dashicons-feedback', // Icon URL
         );
         add_submenu_page(
             'avf-membership-page',             // Parent slug
-            'Neue Mitgliedschaft hinzufügen',   // Page title
+            'Mitgliedschaft bearbeiten',  // Page title
             'Neue Mitgliedschaft',              // Menu title
-            'manage_options',                   // Capability
+            'manage_memberships',              // Capability
             'avf-membership-form-page',        // Slug for the new membership page
             'Avf_Display_Membership_form',      // Function to display the new membership form
         );

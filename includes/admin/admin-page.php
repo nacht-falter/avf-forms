@@ -1,7 +1,7 @@
 <?php
 function Avf_Display_memberships()
 {
-    if (!current_user_can('manage_options')) {
+    if (!current_user_can('manage_memberships')) {
         wp_die(__('You do not have sufficient permissions to access this page.'));
     }
 
