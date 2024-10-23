@@ -50,8 +50,8 @@ function Avf_Display_memberships()
                                     'bic'                => 'BIC',
                                     'bank'               => 'Bank',
                                     'beitrag'            => 'Beitrag',
-                                    'submission_date'    => 'Eingangsdatum',
-                                    'notizen'            => 'Notizen'
+                                    'notizen'            => 'Notizen',
+                                    'submission_date'    => 'Eingangsdatum'
                                 ];
 
                                 foreach ($column_headers as $column_key => $column_label) {
