@@ -103,6 +103,8 @@ class Avf_Forms_Membership_Handler
                     'sepa' => $sepa,
                     'kontoinhaber' => $kontoinhaber,
                     'iban' => $iban,
+                    'bic' => $bic,
+                    'bank' => $bank,
                     'beitrag' => $beitrag
                 )
             );

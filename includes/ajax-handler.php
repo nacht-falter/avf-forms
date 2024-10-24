@@ -145,6 +145,8 @@ function Generate_Csv_download()
                 'SEPA-Mandat',
                 'Kontoinhaber',
                 'IBAN',
+                'BIC',
+                'Bank',
                 'Beitrag',
                 'Notizen',
                 'Eingangsdatum'
@@ -181,6 +183,8 @@ function Generate_Csv_download()
                         $row['sepa'] ? 'Erteilt' : 'Nicht erteilt',
                         $row['kontoinhaber'],
                         $row['iban'],
+                        $row['bic'],
+                        $row['bank'],
                         $row['beitrag'],
                         $row['notizen'],
                         date('d.m.Y', strtotime($row['submission_date']))
