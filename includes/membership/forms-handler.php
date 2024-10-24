@@ -61,6 +61,8 @@ class Avf_Forms_Membership_Handler
             $nachname_eltern = isset($_POST['nachname_eltern']) ? sanitize_text_field($_POST['nachname_eltern']) : null;
             $geschwisterkind = isset($_POST['geschwisterkind']) ? 1 : 0;
 
+            $notizen = '';
+
             $dob = new DateTime($geburtsdatum);
             $today = new DateTime();
             $age = $today->diff($dob)->y;
@@ -76,6 +78,7 @@ class Avf_Forms_Membership_Handler
 
             if ($geschwisterkind) {
                 $beitrag = $beitrag - BEITRAEGE['geschwisterkind_discount'];
+                $notizen = 'Geschwisterkind';
             }
 
             $wpdb->insert(
@@ -105,7 +108,8 @@ class Avf_Forms_Membership_Handler
                     'iban' => $iban,
                     'bic' => $bic,
                     'bank' => $bank,
-                    'beitrag' => $beitrag
+                    'beitrag' => $beitrag,
+                    'notizen' => $notizen,
                 )
             );
 
