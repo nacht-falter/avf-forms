@@ -13,7 +13,7 @@ class Avf_Forms_Utils
         $message .= "Dein Aikido Verein Freiburg e.V.\n";
         wp_mail($email, $subject, $message);
 
-        $admin_email = get_option('admin_email');
+        $admin_email = get_option('treasurer_email');
         $admin_subject = 'Neuer Mitgliedschaftsantrag eingegangen';
         $admin_message = "Neuer Mitgliedschaftsantrag von $vorname $nachname eingegangen.\n\n";
         $admin_message .= "Zur Migliedschaftsverwaltung: " . home_url('/wp-admin/admin.php?page=avf-membership-admin') . "\n";
