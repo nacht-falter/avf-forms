@@ -54,13 +54,20 @@ function Avf_Display_memberships()
                                 ];
 
                                 foreach ($column_headers as $column_key => $column_label) {
+                                    $orderDirection = esc_attr(strtolower($order) == 'asc' ? 'desc' : 'asc');
+                                    $title = esc_attr('Sortieren nach ' . $column_label);
+                                    $link = "?page=avf-membership-admin&orderby=" . esc_attr($column_key) . "&order=" . $orderDirection;
+
                                     echo '<th scope="col">';
-                                    echo '<a href="?page=avf-membership-admin&orderby=' . esc_attr($column_key) . '&order=' . esc_attr(strtolower($order) == 'asc' ? 'desc' : 'asc') . '">';
+                                    echo '<a href="' . $link . '" title="' . $title . '" class="table-header-link">';
                                     echo $column_label . ' ';
-                                    echo ($orderby == $column_key) ? (strtolower($order) == 'asc' ? '&#9650;' : '&#9660;') : '';
-                                    echo '</a>';
-                                    echo '</th>';
+
+                                    if ($orderby == $column_key) {
+                                        echo (strtolower($order) == 'asc' ? '&#9660;' : '&#9650;');
+                                    }
+                                    echo '</a></th>';
                                 }
+
                                 ?>
                             </tr>
                         </thead>
