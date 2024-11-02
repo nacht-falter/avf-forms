@@ -162,20 +162,20 @@ function Generate_Csv_download()
                         MITGLIEDSCHAFTSARTEN[$row['mitgliedschaft_art']],
                         $row['vorname'],
                         $row['nachname'],
-                        formatField($row['geschwisterkind']),
+                        Avf_Forms_Utils::format_bool($row['geschwisterkind']),
                         $row['vorname_eltern'],
                         $row['nachname_eltern'],
                         $row['email'],
                         $row['telefon'],
-                        date('d.m.Y', strtotime($row['geburtsdatum'])),
+                        Avf_Forms_Utils::format_date($row['geburtsdatum']),
                         $row['strasse'],
                         $row['hausnummer'],
                         $row['plz'],
                         $row['ort'],
-                        date('d.m.Y', strtotime($row['beitrittsdatum'])),
-                        date('d.m.Y', strtotime($row['austrittsdatum'] ?? '')),
-                        formatField($row['starterpaket']),
-                        formatField($row['spende']),
+                        Avf_Forms_Utils::format_date($row['beitrittsdatum']),
+                        Avf_Forms_Utils::format_date($row['austrittsdatum']),
+                        Avf_Forms_Utils::format_bool($row['starterpaket']),
+                        Avf_Forms_Utils::format_bool($row['spende']),
                         $row['spende_monatlich'],
                         $row['spende_einmalig'],
                         $row['satzung_datenschutz'] ? 'Akzeptiert' : 'Nicht akzeptiert',
@@ -187,7 +187,7 @@ function Generate_Csv_download()
                         $row['bank'],
                         $row['beitrag'],
                         $row['notizen'],
-                        date('d.m.Y', strtotime($row['submission_date']))
+                        Avf_Forms_Utils::format_date($row['submission_date']),
                     ]
                 );
             }
@@ -204,10 +204,3 @@ function Generate_Csv_download()
 
 add_action('wp_ajax_avf_download_csv', 'Generate_Csv_download');
 
-function formatField($value)
-{
-    if (is_null($value) || $value === '') {
-        return '';
-    }
-    return $value ? 'Ja' : 'Nein';
-}

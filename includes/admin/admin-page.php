@@ -37,7 +37,6 @@ function Avf_Display_memberships()
                                     'nachname'           => 'Nachname',
                                     'email'              => 'E-Mail',
                                     'geburtsdatum'       => 'Geburtsdatum',
-                                    'geschwisterkind'    => 'Geschwisterkind',
                                     'beitrittsdatum'     => 'Beitrittsdatum',
                                     'austrittsdatum'     => 'Austrittsdatum',
                                     'starterpaket'       => 'Starterpaket',
@@ -110,14 +109,13 @@ function Avf_Display_memberships()
                                     <td><?php echo esc_html($row['vorname']); ?></td>
                                     <td><?php echo esc_html($row['nachname']); ?></td>
                                     <td><?php echo esc_html($row['email']); ?></td>
-                                    <td><?php echo esc_html(date('d.m.Y', strtotime($row['geburtsdatum']))); ?></td>
-                                    <td><?php echo $row['geschwisterkind'] ? 'Ja' : 'Nein'; ?></td>
-                                    <td><?php echo esc_html(date('d.m.Y', strtotime($row['beitrittsdatum']))); ?></td>
+                                    <td><?php echo esc_html(Avf_Forms_Utils::format_date($row['geburtsdatum'])); ?></td>
+                                    <td><?php echo esc_html(Avf_Forms_Utils::format_date($row['beitrittsdatum'])); ?></td>
                                     <td>
                                         <?php echo isset($row['austrittsdatum']) ? esc_html(date('d.m.Y', strtotime($row['austrittsdatum']))) : ''; ?>
                                     </td>
-                                    <td><?php echo $row['starterpaket'] ? 'Ja' : 'Nein'; ?></td>
-                                    <td><?php echo esc_html($row['spende'] ? 'Ja' : 'Nein'); ?></td>
+                                    <td><?php echo esc_html(Avf_Forms_Utils::format_bool($row['starterpaket'])); ?></td>
+                                    <td><?php echo esc_html(Avf_Forms_Utils::format_bool($row['spende'])); ?></td>
                                     <td><?php echo esc_html($row['spende_monatlich'] ?? ''); ?></td>
                                     <td><?php echo esc_html($row['spende_einmalig'] ?? ''); ?></td>
                                     <td><?php echo $row['sepa'] ? 'Erteilt' : 'Nicht erteilt'; ?></td>

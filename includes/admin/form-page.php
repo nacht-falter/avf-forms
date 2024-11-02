@@ -26,6 +26,9 @@ function Avf_Display_Membership_form()
                 <select id="mitgliedschaft_art" name="mitgliedschaft_art" required>
                     <?php
                     foreach (MITGLIEDSCHAFTSARTEN as $value => $display) {
+                        if ($value === 'geschwisterkind_discount') {
+                            continue;
+                        }
                         $selected = selected($record->mitgliedschaft_art ?? '', $value, false);
                         echo "<option value=\"{$value}\" {$selected}>{$display}</option>";
                     }

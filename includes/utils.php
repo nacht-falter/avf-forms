@@ -41,4 +41,17 @@ class Avf_Forms_Utils
         $response = curl_exec($ch);
         curl_close($ch);
     }
+
+    public static function format_date($date)
+    {
+        return !empty($date) ? date('d.m.Y', strtotime($date)) : '';
+    }
+
+    public static function format_bool($value)
+    {
+        if (!empty($value) && $value !== '0') {
+            return 'Ja';
+        }
+        return '';
+    }
 }
