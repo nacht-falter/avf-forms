@@ -187,7 +187,7 @@ class Avf_Forms_Membership_Shortcodes
 
             <?php wp_nonce_field('membership_form_submit', 'membership_nonce'); ?>
 
-            <input class="button" type="submit" name="membership_form_submit" value="Antrag abschicken">
+            <input id="submit-btn" class="button" type="submit" name="membership_form_submit" value="Antrag abschicken">
         </form>
         <?php
         return ob_get_clean();
@@ -338,7 +338,7 @@ class Avf_Forms_Membership_Shortcodes
 
             <?php wp_nonce_field("membership_form_submit", 'membership_nonce'); ?>
 
-            <input class="button" type="submit" name="membership_form_submit" value="Antrag abschicken">
+            <input id="submit-btn" class="button" type="submit" name="membership_form_submit" value="Antrag abschicken">
         </form>
         <?php
         return ob_get_clean();
