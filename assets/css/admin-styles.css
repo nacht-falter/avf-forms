@@ -41,7 +41,32 @@
 }
 
 .list-container {
-  overflow-x: auto;
+  max-height: 50vh;
+  max-width: 100%;
+  overflow: auto;
+  border: 1px solid #c3c4c7;
+}
+
+.list-container table {
+  width: 100%;
+  border-top: none;
+}
+
+.list-container thead th {
+  position: sticky;
+  top: 0;
+  background: #f8f8f8;
+  z-index: 3;
+  padding: 1rem 0.5rem;
+  text-align: center;
+}
+
+.list-container th:first-child,
+.list-container td:first-child {
+  padding: 0 !important;
+  min-width: 40px;
+  vertical-align: middle;
+  text-align: center;
 }
 
 .beitragsliste {
@@ -49,11 +74,10 @@
   top: 0;
   margin-top: 1rem;
   padding: 0.5rem;
-  border: 1px solid #ddd;
-  background-color: #f9f9f9;
 }
 
-.table-row-link, .table-header-link {
+.table-row-link,
+.table-header-link {
   cursor: pointer;
   text-wrap: nowrap;
 }
