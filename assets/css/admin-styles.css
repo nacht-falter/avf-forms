@@ -118,12 +118,8 @@ label:has(+ input:required)::after {
   background-color: #ffffdd !important;
 }
 
-.highlight-orange {
-  background-color: #ffcc99 !important;
-}
-
-.highlight-orange:hover {
-  background-color: #ffddaa !important;
+.highlight-blue:hover {
+  background-color: #cceeff !important;
 }
 .notizen-col {
   text-wrap: wrap;

@@ -8,7 +8,7 @@ function Avf_Display_memberships()
     global $wpdb;
     $table_name = $wpdb->prefix . 'avf_memberships';
 
-    $orderby = !empty($_GET['orderby']) ? sanitize_text_field($_GET['orderby']) : 'id';
+    $orderby = !empty($_GET['orderby']) ? sanitize_text_field($_GET['orderby']) : 'mitgliedschaft_art';
     $order = !empty($_GET['order']) ? sanitize_text_field($_GET['order']) : 'ASC';
     $sql = "SELECT * FROM $table_name ORDER BY $orderby $order";
     $results = $wpdb->get_results($sql, ARRAY_A);
@@ -27,7 +27,7 @@ function Avf_Display_memberships()
                         <thead>
                             <tr>
                                 <th scope="col" class="check-column">
-                                    <input type="checkbox" id="select-all" />
+                                    <input type="checkbox" id="select-all" title="Alle Einträge auswählen" />
                                 </th>
                                 <?php
                                 $column_headers = [
@@ -98,7 +98,7 @@ function Avf_Display_memberships()
 
                                     onclick="handleRowClick(event, <?php echo esc_attr($row['id']); ?>)">
 
-                                    <th scope="row" class="check-column" style="cursor: initial;">
+                                    <th scope="row" class="check-column" style="cursor: initial;" title="">
                                         <input type="checkbox" class="membership-checkbox" value="<?php echo esc_attr($row['id']); ?>">
                                     </th>
                                     <td><?php echo esc_html($row['id']); ?></td>
@@ -130,8 +130,13 @@ function Avf_Display_memberships()
                                     <td><?php echo esc_html($row['iban']); ?></td>
                                     <td><?php echo esc_html($row['bic']); ?></td>
                                     <td><?php echo esc_html($row['bank']); ?></td>
-                                    <td class="<?php if ($markCustomBeitrag) echo 'highlight-orange'; ?>" title="<?php if ($markCustomBeitrag) echo 'Beitrag angepasst'; ?>">
+                                    <td class="<?php if ($markCustomBeitrag) echo 'highlight-blue'; ?>" title="<?php if ($markCustomBeitrag) echo 'Beitrag angepasst'; ?>">
                                         <?php echo isset($row['beitrag']) ? esc_html($row['beitrag']) . ' €' : ''; ?>
+                                        <?php
+                                        if ($markCustomBeitrag) {
+                                            echo '&nbsp;<span class="dashicons dashicons-edit" style="color: #2271b1;"></span>';
+                                        }
+                                        ?>
                                     </td>
                                     <td class="notizen-col"><?php echo esc_html($row['notizen']); ?></td>
                                     <td><?php echo esc_html(date('d.m.Y', strtotime($row['submission_date']))); ?></td>
@@ -139,6 +144,13 @@ function Avf_Display_memberships()
                             <?php endforeach; ?>
                         </tbody>
                     </table>
+                </div>
+                <div id="legend">
+                    <ul>
+                        <li><span class="dashicons dashicons-warning" style="color: red;"></span> Alter stimmt nicht mit Mitgliedschaftsart überein</li>
+                        <li><span class="dashicons dashicons-warning" style="color: orange;"></span> Ausgetreten</li>
+                        <li><span class="dashicons dashicons-edit" style="color: #2271b1;"></span> Beitrag angepasst</li>
+                    </ul>
                 </div>
                 <div class="bulk-actions">
                     <button type="button" id="export-csv" class="button button-primary" disabled>Ausgewählte Mitgliedschaften als CSV exportieren</button>
