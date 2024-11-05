@@ -41,7 +41,7 @@
 }
 
 .list-container {
-  max-height: 50vh;
+  max-height: 65vh;
   max-width: 100%;
   overflow: auto;
   border: 1px solid #c3c4c7;
@@ -67,6 +67,14 @@
   min-width: 40px;
   vertical-align: middle;
   text-align: center;
+}
+
+.list-container th, .list-container td {
+  vertical-align: middle;
+}
+
+.list-container input[type="checkbox"] {
+  margin-bottom: 0 !important;
 }
 
 .beitragsliste {
