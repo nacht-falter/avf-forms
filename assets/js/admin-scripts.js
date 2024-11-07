@@ -7,7 +7,7 @@ jQuery(document).ready(function ($) {
     $.post(avf_ajax_admin.ajaxurl, formData, function (response) {
       let data = JSON.parse(response);
       if (data.status === "success") {
-        window.location.href = "admin.php?page=avf-membership-admin"; // Redirect after successful operation
+        window.history.back();
       } else {
         alert("Error: " + data.message);
       }
@@ -85,6 +85,72 @@ jQuery(document).ready(function ($) {
     showHideFields(adultFields, !isChildOrYouth);
   }
 
+  function getUrlParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return Object.fromEntries(urlParams.entries());
+  }
+
+  function setUrlParams(params) {
+    const currentUrlParams = getUrlParams();
+    const urlParams = new URLSearchParams();
+
+    if (currentUrlParams.page) {
+      urlParams.set("page", currentUrlParams.page);
+    }
+
+    Object.entries({ ...currentUrlParams, ...params }).forEach(
+      ([key, value]) => {
+        if (key !== "page") {
+          urlParams.set(key, value);
+        }
+      },
+    );
+
+    window.history.pushState({}, "", `?${urlParams.toString()}`);
+  }
+
+  function fetchMembershipData(column, order) {
+    jQuery.ajax({
+      url: avf_ajax_admin.ajaxurl,
+      method: "POST",
+      data: {
+        action: "avf_fetch_memberships",
+        column,
+        order,
+        _ajax_nonce: avf_ajax_admin.nonce,
+      },
+      success: function (response) {
+        $("#membership-table-body").html(response.data);
+        $(".table-header-link")
+          .removeClass("asc desc")
+          .addClass("inactive")
+          .each(function () {
+            if ($(this).data("column") === column) {
+              $(this).addClass(order).removeClass("inactive");
+            }
+          });
+      },
+    });
+  }
+
+  document.querySelectorAll(".table-header-link").forEach((a) => {
+    a.addEventListener("click", function (e) {
+      e.preventDefault();
+      let column = this.getAttribute("data-column");
+      let order = "asc";
+      const currentParams = getUrlParams();
+      if (currentParams.column === column && currentParams.order === "asc") {
+        order = "desc";
+      }
+
+      fetchMembershipData(column, order);
+      setUrlParams({ column, order });
+    });
+  });
+
+  const urlParams = getUrlParams();
+  fetchMembershipData(urlParams.column, urlParams.order);
+
   checkboxes.on("change", function () {
     updateButtons();
   });
@@ -146,7 +212,7 @@ jQuery(document).ready(function ($) {
       $.post(avf_ajax_admin.ajaxurl, formData, function (response) {
         let data = JSON.parse(response);
         if (data.status === "success") {
-          window.location.href = "admin.php?page=avf-membership-admin";
+          window.history.back();
         } else {
           alert("Error: " + data.message);
         }
@@ -189,12 +255,12 @@ jQuery(document).ready(function ($) {
 
   goBackButton.on("click", function (e) {
     e.preventDefault();
-    window.location.href = "admin.php?page=avf-membership-admin";
+    window.history.back();
   });
 
   cancelButton.on("click", function (e) {
     e.preventDefault();
-    window.location.href = "admin.php?page=avf-membership-admin";
+    window.history.back();
   });
 
   mitgliedschaftArt.on("change", updateFields);

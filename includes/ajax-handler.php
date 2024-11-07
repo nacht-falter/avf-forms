@@ -204,3 +204,118 @@ function Generate_Csv_download()
 
 add_action('wp_ajax_avf_download_csv', 'Generate_Csv_download');
 
+function Fetch_Membership_data()
+{
+    if (!current_user_can('manage_memberships')) {
+        wp_send_json_error('You do not have permission to perform this action.');
+        wp_die();
+    }
+
+    if (!check_ajax_referer('avf_membership_action', 'nonce', false)) {
+        wp_send_json_error('Invalid nonce');
+        wp_die();
+    }
+
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'avf_memberships';
+
+    $column = isset($_POST['column']) ? sanitize_text_field($_POST['column']) : 'mitgliedschaft_art';
+    $order = isset($_POST['order']) ? sanitize_text_field($_POST['order']) : 'ASC';
+
+    if (!array_key_exists($column, COLUMN_HEADERS)) {
+        wp_send_json_error('Invalid column' . $column);
+    }
+
+    if (!in_array(strtoupper($order), ['ASC', 'DESC'])) {
+        wp_send_json_error('Invalid order' . $order);
+    }
+
+    $query = $wpdb->prepare("SELECT * FROM $table_name ORDER BY $column $order");
+    $results = $wpdb->get_results($query, ARRAY_A);
+
+    $html = '';
+    if (empty($results)) {
+        $html .= '<p>Keine Mitgliedschaften gefunden.</p>';
+    } else {
+        foreach ($results as $row) {
+            $checkAge = false;
+            $markInactive = false;
+            $markCustomBeitrag = false;
+            $age = date_diff(date_create($row['geburtsdatum']), date_create('now'))->y;
+            if (($age < 14 && $row['mitgliedschaft_art'] != 'kind')) {
+                $checkAge = true;
+            } elseif ($age >= 14 && $age < 18 && $row['mitgliedschaft_art'] != 'jugend') {
+                $checkAge = true;
+            } elseif ($age >= 18 && ($row['mitgliedschaft_art'] == 'kind' || $row['mitgliedschaft_art'] == 'jugend')) {
+                $checkAge = true;
+            }
+
+            if (!empty($row['austrittsdatum'])) {
+                $markInactive = true;
+            }
+            if (BEITRAEGE[$row['mitgliedschaft_art']] != $row['beitrag']) {
+                $markCustomBeitrag = true;
+            }
+
+            $html .= '<tr class="table-row-link';
+            $html .= $checkAge ? ' highlight-red' : '';
+            $html .= $markInactive ? ' highlight-yellow' : '';
+            $html .= '"';
+            $html .= $checkAge ? ' title="Mitgliedschaftsart prüfen"' : '';
+            $html .= $markInactive ? ' title="Ausgetreten"' : '';
+            $html .= ' onclick="handleRowClick(event, ' . esc_attr($row['id']) . ')">';
+
+            $html .= <<<HTML
+                <th scope="row" class="check-column" style="cursor: initial;">
+                <input type="checkbox" class="membership-checkbox" value="{$row['id']}">
+                </th>
+                <td>{$row['id']}</td>
+                <td>
+                HTML;
+
+            $html .= htmlspecialchars(MITGLIEDSCHAFTSARTEN[$row['mitgliedschaft_art']] ?? 'Unbekannt');
+            $html .= $checkAge ? '&nbsp;<span class="dashicons dashicons-warning" style="color: red;" title="Alter stimmt nicht mit Mitgliedschaftsart überein."></span>' : '';
+            $html .= $markInactive ? '&nbsp;<span class="dashicons dashicons-warning" style="color: orange;" title="Austritt zum ' . date('d.m.Y', strtotime($row['austrittsdatum'])) . '"></span>' : '';
+
+            $html .= <<<HTML
+                </td>
+                <td>{$row['vorname']}</td>
+                <td>{$row['nachname']}</td>
+                <td>{$row['email']}</td>
+                <td>{$row['geburtsdatum']}</td>
+                <td>{$row['beitrittsdatum']}</td>
+                <td>{$row['austrittsdatum']}</td>
+                <td>{$row['starterpaket']}</td>
+                <td>{$row['spende']}</td>
+                <td>{$row['spende_monatlich']}</td>
+                <td>{$row['spende_einmalig']}</td>
+                <td>
+                HTML;
+
+            $html .= $row['sepa'] ? 'Erteilt' : 'Nicht erteilt';
+
+            $html .= <<<HTML
+                </td>
+                <td>{$row['kontoinhaber']}</td>
+                <td>{$row['iban']}</td>
+                <td>{$row['bic']}</td>
+                <td>{$row['bank']}</td>
+                HTML;
+
+            $html .= '<td class="' . ($markCustomBeitrag ? 'highlight-blue' : '') . '" title="' . ($markCustomBeitrag ? 'Beitrag angepasst' : '') . '">';
+            $html .= isset($row['beitrag']) ? esc_html($row['beitrag']) . ' €' : '';
+            $html .= $markCustomBeitrag ? '&nbsp;<span class="dashicons dashicons-edit" style="color: #2271b1;"></span>' : '';
+            $html .= '</td>';
+
+            $html .= <<<HTML
+                <td class="notizen-col">{$row['notizen']}</td>
+                <td>{$row['submission_date']}</td>
+                </tr>
+                HTML;
+        }
+    }
+
+    wp_send_json_success($html);
+}
+
+add_action('wp_ajax_avf_fetch_memberships', 'Fetch_Membership_data');

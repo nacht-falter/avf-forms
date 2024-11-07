@@ -55,6 +55,30 @@ define(
         'passiv' => 0,
     ]
 );
+define(
+    'COLUMN_HEADERS', [
+    'id'                 => 'ID',
+    'mitgliedschaft_art' => 'Art der Mitgliedschaft',
+    'vorname'            => 'Vorname',
+    'nachname'           => 'Nachname',
+    'email'              => 'E-Mail',
+    'geburtsdatum'       => 'Geburtsdatum',
+    'beitrittsdatum'     => 'Beitrittsdatum',
+    'austrittsdatum'     => 'Austrittsdatum',
+    'starterpaket'       => 'Starterpaket',
+    'spende'             => 'Spende',
+    'spende_monatlich'   => 'Spende mtl.',
+    'spende_einmalig'    => 'Spende einm.',
+    'sepa'               => 'SEPA-Mandat',
+    'kontoinhaber'       => 'Kontoinhaber',
+    'iban'               => 'IBAN',
+    'bic'                => 'BIC',
+    'bank'               => 'Bank',
+    'beitrag'            => 'Beitrag',
+    'notizen'            => 'Notizen',
+    'submission_date'    => 'Eingangsdatum'
+    ]
+);
 
 // Autoload required files
 $includes = [

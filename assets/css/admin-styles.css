@@ -69,7 +69,8 @@
   text-align: center;
 }
 
-.list-container th, .list-container td {
+.list-container th,
+.list-container td {
   vertical-align: middle;
 }
 
@@ -92,6 +93,33 @@
 
 .table-row-link:hover {
   background-color: lightgray !important;
+}
+
+.table-header-link:focus {
+  box-shadow: none;
+  color: #0071a1;
+}
+
+.table-header-link.inactive::after {
+  content: "▼▲";
+  margin-left: 3px;
+  color: lightgray;
+}
+
+.table-header-link.asc, .table-header-link.desc {
+  text-shadow: 0 0 1px #0071a1;
+}
+
+.table-header-link.asc::after {
+  content: "▼";
+  margin-left: 6px;
+  margin-right: 7px;
+}
+
+.table-header-link.desc::after {
+  content: "▲";
+  margin-left: 3px;
+  margin-right: 10px;
 }
 
 label:has(+ input:required)::after {
