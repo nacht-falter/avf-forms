@@ -7,7 +7,7 @@ function Avf_Display_memberships()
 
     $filters = [
         'aktiv' => 'Aktive Mitglieder',
-        'kinder' => 'Kinder/Jugendliche',
+        'kind' => 'Kinder/Jugendliche',
         'sonder' => 'Sondermitglieder',
         'passiv' => 'Passive Mitglieder',
         'foerder' => 'Fördermitglieder',

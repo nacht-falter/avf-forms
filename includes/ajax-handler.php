@@ -231,11 +231,16 @@ function Fetch_Membership_data()
     }
 
     $allowed_filters = [
-        'aktiv' => 'aktiv, aktiv_ermaessigt, familie',
-        'kinder' => 'kind, jugend',
-        'sonder' => 'sonder',
-        'passiv' => 'passiv',
-        'foerder' => 'foerder',
+        'aktiv',
+        'kind',
+        'sonder',
+        'passiv',
+        'foerder'
+    ];
+
+    $related_filters = [
+        'aktiv' => ['aktiv_ermaessigt', 'familie'],
+        'kind' => ['jugend'],
     ];
 
     if (!defined('COLUMN_HEADERS') || !array_key_exists($column, COLUMN_HEADERS)) {
@@ -247,12 +252,24 @@ function Fetch_Membership_data()
     }
 
     $active_filters = [];
+
     foreach ($filters as $filter) {
-        if (isset($allowed_filters[$filter])) {
-            $active_filters = array_merge($active_filters, explode(',', $allowed_filters[$filter]));
+        if (in_array($filter, $allowed_filters)) {
+            $active_filters[] = $filter;
+
+            if (isset($related_filters[$filter])) {
+                $active_filters = array_merge($active_filters, $related_filters[$filter]);
+            }
         } else {
             wp_send_json_error('Invalid filter: ' . esc_html($filter));
         }
+    }
+
+    $active_filters = array_unique($active_filters);
+
+    $where_in_clause = '';
+    if ($active_filters) {
+        $where_in_clause = implode(', ', array_fill(0, count($active_filters), '%s'));
     }
 
     $search_clause = '';
@@ -267,11 +284,6 @@ function Fetch_Membership_data()
             ' AND (' . implode(' OR ', $like_clauses) . ')',
             ...array_fill(0, count($search_columns), '%' . $search . '%')
         );
-    }
-
-    $where_in_clause = '';
-    if ($active_filters) {
-        $where_in_clause = implode(', ', array_fill(0, count($active_filters), '%s'));
     }
 
     $query = "SELECT * FROM $table_name WHERE 1=1"; // Always true to allow additional conditions
