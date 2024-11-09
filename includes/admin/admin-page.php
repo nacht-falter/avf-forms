@@ -4,13 +4,37 @@ function Avf_Display_memberships()
     if (!current_user_can('manage_memberships')) {
         wp_die(__('You do not have sufficient permissions to access this page.'));
     }
+
+    $filters = [
+        'aktiv' => 'Aktive Mitglieder',
+        'kinder' => 'Kinder/Jugendliche',
+        'sonder' => 'Sondermitglieder',
+        'passiv' => 'Passive Mitglieder',
+        'foerder' => 'Fördermitglieder',
+    ];
+
     ?>
     <div class="wrap">
         <h1>AVF-Mitgliedschaften</h1>
-        <a href="admin.php?page=avf-membership-form-page" class="button button-primary">Neue Mitgliedschaft hinzufügen</a>
-        <h2>Mitgliedschaften</h2>
+        <div id="admin-page-header">
+            <a href="admin.php?page=avf-membership-form-page" class="button button-primary">Neue Mitgliedschaft hinzufügen</a>
+            <div id="search-container">
+                <label for="search" class="dashicons dashicons-search" id="search-label"></label>
+                <input type="search" id="search" placeholder="Suche" />
+            </div>
+        </div>
+        <div id="filter-list">
+            <span><strong>Anzeigen:&nbsp;</strong></span>
+            <?php foreach ($filters as $filter_key => $filter_label) { ?>
+                <label>
+                    <input type="checkbox" class="filter-checkbox" name="filter" value="<?php echo $filter_key; ?>" />
+                    <?php echo $filter_label; ?>
+                </label>
+            <?php } ?>
+        </div>
+
         <form id="membership-form" method="post" action="">
-            <div class="list-container">
+            <div id="membership-list-container" class="list-container">
                 <table class="wp-list-table widefat striped">
                     <thead>
                         <tr>

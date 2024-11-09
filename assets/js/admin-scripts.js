@@ -109,7 +109,23 @@ jQuery(document).ready(function ($) {
     window.history.pushState({}, "", `?${urlParams.toString()}`);
   }
 
-  function fetchMembershipData(column, order) {
+  function getSelectedFilters() {
+    return Array.from(document.querySelectorAll(".filter-checkbox"))
+      .filter((checkbox) => checkbox.checked)
+      .map((checkbox) => checkbox.value);
+  }
+
+  function updateCheckboxStatesFromUrl() {
+    const urlParams = getUrlParams();
+    const filters = urlParams.filters ? urlParams.filters.split(",") : [];
+
+    document.querySelectorAll(".filter-checkbox").forEach((checkbox) => {
+      checkbox.checked =
+        filters.length === 0 || filters.includes(checkbox.value);
+    });
+  }
+
+  function fetchMembershipData(column, order, filters = []) {
     jQuery.ajax({
       url: avf_ajax_admin.ajaxurl,
       method: "POST",
@@ -117,6 +133,7 @@ jQuery(document).ready(function ($) {
         action: "avf_fetch_memberships",
         column,
         order,
+        filters,
         _ajax_nonce: avf_ajax_admin.nonce,
       },
       success: function (response) {
@@ -143,13 +160,30 @@ jQuery(document).ready(function ($) {
         order = "desc";
       }
 
-      fetchMembershipData(column, order);
-      setUrlParams({ column, order });
+      const filters = getSelectedFilters();
+      fetchMembershipData(column, order, filters);
+      setUrlParams({ column, order, filters });
     });
   });
 
+  document.querySelectorAll(".filter-checkbox").forEach((checkbox) => {
+    checkbox.addEventListener("change", function () {
+      const filters = getSelectedFilters();
+      const urlParams = getUrlParams();
+      fetchMembershipData(urlParams.column, urlParams.order, filters);
+      setUrlParams({ ...urlParams, filters });
+    });
+  });
+
+  /* Initialize */
+  updateCheckboxStatesFromUrl();
+
   const urlParams = getUrlParams();
-  fetchMembershipData(urlParams.column, urlParams.order);
+  fetchMembershipData(
+    urlParams.column,
+    urlParams.order,
+    urlParams.filters ? urlParams.filters.split(",") : getSelectedFilters(),
+  );
 
   checkboxes.on("change", function () {
     updateButtons();

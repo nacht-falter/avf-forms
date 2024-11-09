@@ -16,7 +16,7 @@ function Avf_Display_Membership_form()
         
         <button type="button" class="button button-secondary" id="go-back">Zurück zur Übersicht</button>
         <form id="avf-membership-admin-form">
-            <div class="flex-container">
+            <div id="admin-form-container">
                 <?php wp_nonce_field('avf_membership_action', '_ajax_nonce'); ?>
                 <input type="hidden" name="action" value="avf_membership_action">
                 <input type="hidden" name="action_type" value="<?php echo $id ? 'update' : 'create'; ?>">

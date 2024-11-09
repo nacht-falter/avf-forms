@@ -221,21 +221,50 @@ function Fetch_Membership_data()
 
     $column = isset($_POST['column']) ? sanitize_text_field($_POST['column']) : 'mitgliedschaft_art';
     $order = isset($_POST['order']) ? sanitize_text_field($_POST['order']) : 'ASC';
+    $filters = isset($_POST['filters']) ? (array)$_POST['filters'] : [];
 
-    if (!array_key_exists($column, COLUMN_HEADERS)) {
-        wp_send_json_error('Invalid column' . $column);
+    if (is_array($filters)) {
+        $filters = array_map('sanitize_text_field', $filters);
+    } else {
+        wp_send_json_error('Invalid filters');
+    }
+
+    $allowed_filters = [
+        'aktiv' => 'aktiv, aktiv_ermaessigt, familie',
+        'kinder' => 'kind, jugend',
+        'sonder' => 'sonder',
+        'passiv' => 'passiv',
+        'foerder' => 'foerder',
+    ];
+
+    if (!defined('COLUMN_HEADERS') || !array_key_exists($column, COLUMN_HEADERS)) {
+        wp_send_json_error('Invalid column: ' . esc_html($column));
     }
 
     if (!in_array(strtoupper($order), ['ASC', 'DESC'])) {
-        wp_send_json_error('Invalid order' . $order);
+        wp_send_json_error('Invalid order: ' . esc_html($order));
     }
 
-    $query = $wpdb->prepare("SELECT * FROM $table_name ORDER BY $column $order");
+    $active_filters = [];
+    foreach ($filters as $filter) {
+        if (isset($allowed_filters[$filter])) {
+            $active_filters = array_merge($active_filters, explode(',', $allowed_filters[$filter]));
+        } else {
+            wp_send_json_error('Invalid filter: ' . esc_html($filter));
+        }
+    }
+
+    $where_in_clause = $active_filters ? implode(', ', array_fill(0, count($active_filters), '%s')) : 'NULL';
+    $query = $wpdb->prepare(
+        "SELECT * FROM $table_name WHERE mitgliedschaft_art IN ($where_in_clause) ORDER BY $column $order",
+        ...$active_filters
+    );
+
     $results = $wpdb->get_results($query, ARRAY_A);
 
     $html = '';
     if (empty($results)) {
-        $html .= '<p>Keine Mitgliedschaften gefunden.</p>';
+        $html .= '<td colspan="5" class="no-memberships-msg">Keine Mitgliedschaften gefunden.</td>';
     } else {
         foreach ($results as $row) {
             $checkAge = false;
