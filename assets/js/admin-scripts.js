@@ -14,7 +14,6 @@ jQuery(document).ready(function ($) {
     });
   });
 
-  const checkboxes = $(".membership-checkbox");
   const selectAll = $("#select-all");
   const deleteButton = $("#delete-membership");
   const deleteButtonSingle = $("#delete-membership-single");
@@ -41,7 +40,7 @@ jQuery(document).ready(function ($) {
   );
 
   function updateButtons() {
-    const selectedCheckboxes = checkboxes.filter(":checked");
+    const selectedCheckboxes = $(".membership-checkbox").filter(":checked");
     deleteButton.prop("disabled", selectedCheckboxes.length === 0);
     exportCsvButton.prop("disabled", selectedCheckboxes.length === 0);
   }
@@ -84,14 +83,13 @@ jQuery(document).ready(function ($) {
     showHideFields(chieldFields, isChildOrYouth);
     showHideFields(adultFields, !isChildOrYouth);
   }
-
-  function getUrlParams() {
+  function getCurrentUrlParams() {
     const urlParams = new URLSearchParams(window.location.search);
     return Object.fromEntries(urlParams.entries());
   }
 
-  function setUrlParams(params) {
-    const currentUrlParams = getUrlParams();
+  function updateUrlParams(params) {
+    const currentUrlParams = getCurrentUrlParams();
     const urlParams = new URLSearchParams();
 
     if (currentUrlParams.page) {
@@ -115,8 +113,8 @@ jQuery(document).ready(function ($) {
       .map((checkbox) => checkbox.value);
   }
 
-  function updateCheckboxStatesFromUrl() {
-    const urlParams = getUrlParams();
+  function setCheckboxStatesFromUrl() {
+    const urlParams = getCurrentUrlParams();
     const filters = urlParams.filters ? urlParams.filters.split(",") : [];
 
     document.querySelectorAll(".filter-checkbox").forEach((checkbox) => {
@@ -125,7 +123,16 @@ jQuery(document).ready(function ($) {
     });
   }
 
-  function fetchMembershipData(column, order, filters = []) {
+  function setSearchFromUrl() {
+    const search = getCurrentUrlParams().search || "";
+    $("#search").val(search);
+  };
+
+  function fetchMembershipData(column, order, filters = [], search = "") {
+    $("#membership-table-body").html(
+      '<td class="loading-spinner" style="visibility: visible"></td>',
+    );
+
     jQuery.ajax({
       url: avf_ajax_admin.ajaxurl,
       method: "POST",
@@ -134,6 +141,7 @@ jQuery(document).ready(function ($) {
         column,
         order,
         filters,
+        search,
         _ajax_nonce: avf_ajax_admin.nonce,
       },
       success: function (response) {
@@ -146,156 +154,192 @@ jQuery(document).ready(function ($) {
               $(this).addClass(order).removeClass("inactive");
             }
           });
+        $(".membership-checkbox").on("change", function () {
+          updateButtons();
+        });
       },
     });
   }
 
-  document.querySelectorAll(".table-header-link").forEach((a) => {
-    a.addEventListener("click", function (e) {
-      e.preventDefault();
-      let column = this.getAttribute("data-column");
-      let order = "asc";
-      const currentParams = getUrlParams();
-      if (currentParams.column === column && currentParams.order === "asc") {
-        order = "desc";
-      }
+  function init() {
+    setCheckboxStatesFromUrl();
+    setSearchFromUrl();
 
-      const filters = getSelectedFilters();
-      fetchMembershipData(column, order, filters);
-      setUrlParams({ column, order, filters });
-    });
-  });
+    const urlParams = getCurrentUrlParams();
+    fetchMembershipData(
+      urlParams.column,
+      urlParams.order,
+      urlParams.filters ? urlParams.filters.split(",") : getSelectedFilters(),
+      urlParams.search || "",
+    );
 
-  document.querySelectorAll(".filter-checkbox").forEach((checkbox) => {
-    checkbox.addEventListener("change", function () {
-      const filters = getSelectedFilters();
-      const urlParams = getUrlParams();
-      fetchMembershipData(urlParams.column, urlParams.order, filters);
-      setUrlParams({ ...urlParams, filters });
-    });
-  });
-
-  /* Initialize */
-  updateCheckboxStatesFromUrl();
-
-  const urlParams = getUrlParams();
-  fetchMembershipData(
-    urlParams.column,
-    urlParams.order,
-    urlParams.filters ? urlParams.filters.split(",") : getSelectedFilters(),
-  );
-
-  checkboxes.on("change", function () {
     updateButtons();
-  });
+    updateFields();
 
-  selectAll.on("change", function () {
-    checkboxes.prop("checked", this.checked);
-    updateButtons();
-  });
+    // Event listeners for sorting, filtering, searching and bulk actions
+    document.querySelectorAll(".table-header-link").forEach((a) => {
+      a.addEventListener("click", function (e) {
+        e.preventDefault();
+        const column = this.getAttribute("data-column");
+        const currentParams = getCurrentUrlParams();
+        let order =
+          currentParams.column === column && currentParams.order === "asc"
+            ? "desc"
+            : "asc";
 
-  updateButtons();
-  updateFields();
+        const filters = getSelectedFilters();
+        fetchMembershipData(column, order, filters, currentParams.search || "");
+        updateUrlParams({ column, order, filters });
+      });
+    });
 
-  deleteButton.on("click", function (e) {
-    e.preventDefault();
+    document.querySelectorAll(".filter-checkbox").forEach((checkbox) => {
+      checkbox.addEventListener("change", function () {
+        const filters = getSelectedFilters();
+        const urlParams = getCurrentUrlParams();
+        fetchMembershipData(
+          urlParams.column,
+          urlParams.order,
+          filters,
+          urlParams.search || "",
+        );
+        updateUrlParams({ ...urlParams, filters });
+      });
+    });
 
-    const selectedIds = checkboxes
-      .filter(":checked")
-      .map(function () {
-        return $(this).val();
-      })
-      .get();
-
-    if (selectedIds.length === 0) {
-      alert("Bitte wähle mindestens einen Eintrag zum Löschen aus.");
-      return;
+    // Debounce function for search input delay
+    function debounce(func, delay) {
+      let debounceTimer;
+      return function (...args) {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => func.apply(this, args), delay);
+      };
     }
 
-    if (
-      confirm("Möchtest Du die ausgewählten Mitgliedschaften wirklich löschen?")
-    ) {
+    $("#search").on(
+      "input",
+      debounce(function () {
+        const filters = getSelectedFilters();
+        const urlParams = getCurrentUrlParams();
+        fetchMembershipData(
+          urlParams.column,
+          urlParams.order,
+          filters,
+          this.value,
+        );
+        updateUrlParams({ ...urlParams, search: this.value });
+      }, 300),
+    );
+
+    selectAll.on("change", function () {
+      $(".membership-checkbox").prop("checked", this.checked);
+      updateButtons();
+    });
+
+    deleteButton.on("click", function (e) {
+      e.preventDefault();
+
+      const selectedIds = $(".membership-checkbox")
+        .filter(":checked")
+        .map(function () {
+          return $(this).val();
+        })
+        .get();
+
+      if (selectedIds.length === 0) {
+        alert("Bitte wähle mindestens einen Eintrag zum Löschen aus.");
+        return;
+      }
+
+      if (
+        confirm(
+          "Möchtest Du die ausgewählten Mitgliedschaften wirklich löschen?",
+        )
+      ) {
+        let formData = {
+          action_type: "bulk_delete",
+          action: "avf_membership_action",
+          ids: selectedIds,
+          _ajax_nonce: avf_ajax_admin.nonce,
+        };
+
+        $.post(avf_ajax_admin.ajaxurl, formData, function (response) {
+          let data = JSON.parse(response);
+          if (data.status === "success") {
+            location.reload();
+          } else {
+            alert("Error: " + data.message);
+          }
+        });
+      }
+    });
+
+    deleteButtonSingle.on("click", function (e) {
+      e.preventDefault();
+      if (confirm("Möchtest Du die Mitgliedschaft wirklich löschen?")) {
+        let formData = {
+          action_type: "delete",
+          action: "avf_membership_action",
+          id: $(this).data("id"),
+          _ajax_nonce: avf_ajax_admin.nonce,
+        };
+
+        $.post(avf_ajax_admin.ajaxurl, formData, function (response) {
+          let data = JSON.parse(response);
+          if (data.status === "success") {
+            window.history.back();
+          } else {
+            alert("Error: " + data.message);
+          }
+        });
+      }
+    });
+
+    exportCsvButton.on("click", function (e) {
+      e.preventDefault();
+      const selectedIds = $(".membership-checkbox")
+        .filter(":checked")
+        .map(function () {
+          return $(this).val();
+        })
+        .get();
+      if (selectedIds.length === 0) {
+        alert("Bitte wähle mindestens einen Eintrag zum Exportieren aus.");
+        return;
+      }
       let formData = {
-        action_type: "bulk_delete",
+        action_type: "export_csv",
         action: "avf_membership_action",
         ids: selectedIds,
         _ajax_nonce: avf_ajax_admin.nonce,
       };
 
-      $.post(avf_ajax_admin.ajaxurl, formData, function (response) {
-        let data = JSON.parse(response);
-        if (data.status === "success") {
-          location.reload();
-        } else {
-          alert("Error: " + data.message);
-        }
-      });
-    }
-  });
+      $.post(
+        avf_ajax_admin.ajaxurl,
+        formData,
+        function (response) {
+          if (response.success) {
+            window.location.href = response.data.download_url;
+          } else {
+            alert("Error: " + response.data.message);
+          }
+        },
+        "json",
+      );
+    });
 
-  deleteButtonSingle.on("click", function (e) {
-    e.preventDefault();
-    if (confirm("Möchtest Du die Mitgliedschaft wirklich löschen?")) {
-      let formData = {
-        action_type: "delete",
-        action: "avf_membership_action",
-        id: $(this).data("id"),
-        _ajax_nonce: avf_ajax_admin.nonce,
-      };
+    goBackButton.on("click", function (e) {
+      e.preventDefault();
+      window.history.back();
+    });
 
-      $.post(avf_ajax_admin.ajaxurl, formData, function (response) {
-        let data = JSON.parse(response);
-        if (data.status === "success") {
-          window.history.back();
-        } else {
-          alert("Error: " + data.message);
-        }
-      });
-    }
-  });
+    cancelButton.on("click", function (e) {
+      e.preventDefault();
+      window.history.back();
+    });
 
-  exportCsvButton.on("click", function (e) {
-    e.preventDefault();
-    const selectedIds = checkboxes
-      .filter(":checked")
-      .map(function () {
-        return $(this).val();
-      })
-      .get();
-    if (selectedIds.length === 0) {
-      alert("Bitte wähle mindestens einen Eintrag zum Exportieren aus.");
-      return;
-    }
-    let formData = {
-      action_type: "export_csv",
-      action: "avf_membership_action",
-      ids: selectedIds,
-      _ajax_nonce: avf_ajax_admin.nonce,
-    };
+    mitgliedschaftArt.on("change", updateFields);
+  }
 
-    $.post(
-      avf_ajax_admin.ajaxurl,
-      formData,
-      function (response) {
-        if (response.success) {
-          window.location.href = response.data.download_url;
-        } else {
-          alert("Error: " + response.data.message);
-        }
-      },
-      "json",
-    );
-  });
-
-  goBackButton.on("click", function (e) {
-    e.preventDefault();
-    window.history.back();
-  });
-
-  cancelButton.on("click", function (e) {
-    e.preventDefault();
-    window.history.back();
-  });
-
-  mitgliedschaftArt.on("change", updateFields);
+  init();
 });

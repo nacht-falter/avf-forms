@@ -25,12 +25,14 @@ function Avf_Display_memberships()
         </div>
         <div id="filter-list">
             <span><strong>Anzeigen:&nbsp;</strong></span>
+            <div>
             <?php foreach ($filters as $filter_key => $filter_label) { ?>
                 <label>
                     <input type="checkbox" class="filter-checkbox" name="filter" value="<?php echo $filter_key; ?>" />
                     <?php echo $filter_label; ?>
                 </label>
             <?php } ?>
+            </div>
         </div>
 
         <form id="membership-form" method="post" action="">
@@ -54,6 +56,7 @@ function Avf_Display_memberships()
                         </tr>
                     </thead>
                     <tbody id="membership-table-body">
+                        <td class="loading-spinner" style="visibility: visible"></td>
                     </tbody>
                 </table>
             </div>

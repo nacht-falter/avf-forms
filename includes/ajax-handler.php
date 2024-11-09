@@ -222,6 +222,7 @@ function Fetch_Membership_data()
     $column = isset($_POST['column']) ? sanitize_text_field($_POST['column']) : 'mitgliedschaft_art';
     $order = isset($_POST['order']) ? sanitize_text_field($_POST['order']) : 'ASC';
     $filters = isset($_POST['filters']) ? (array)$_POST['filters'] : [];
+    $search = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
 
     if (is_array($filters)) {
         $filters = array_map('sanitize_text_field', $filters);
@@ -254,13 +255,32 @@ function Fetch_Membership_data()
         }
     }
 
-    $where_in_clause = $active_filters ? implode(', ', array_fill(0, count($active_filters), '%s')) : 'NULL';
-    $query = $wpdb->prepare(
-        "SELECT * FROM $table_name WHERE mitgliedschaft_art IN ($where_in_clause) ORDER BY $column $order",
-        ...$active_filters
-    );
+    $search_clause = '';
+    if ($search) {
+        $search_columns = ['vorname', 'nachname', 'email', 'kontoinhaber', 'notizen'];
+        $like_clauses = array_map(
+            function ($column) {
+                return "$column LIKE %s";
+            }, $search_columns
+        );
+        $search_clause = $wpdb->prepare(
+            ' AND (' . implode(' OR ', $like_clauses) . ')',
+            ...array_fill(0, count($search_columns), '%' . $search . '%')
+        );
+    }
 
-    $results = $wpdb->get_results($query, ARRAY_A);
+    $where_in_clause = '';
+    if ($active_filters) {
+        $where_in_clause = implode(', ', array_fill(0, count($active_filters), '%s'));
+    }
+
+    $query = "SELECT * FROM $table_name WHERE 1=1"; // Always true to allow additional conditions
+    if ($where_in_clause) {
+        $query .= " AND mitgliedschaft_art IN ($where_in_clause)";
+    }
+    $query .= " $search_clause ORDER BY $column $order";
+
+    $results = $wpdb->get_results($wpdb->prepare($query, ...$active_filters), ARRAY_A);
 
     $html = '';
     if (empty($results)) {
