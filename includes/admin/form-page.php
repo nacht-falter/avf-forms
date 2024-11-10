@@ -35,49 +35,79 @@ function Avf_Display_Membership_form()
                     ?>
                 </select>
 
-                <label for="vorname">Vorname</label>
-                <input id="vorname" type="text" name="vorname" value="<?php echo esc_attr($record->vorname ?? ''); ?>" required>
+                <div class="form-group">
+                    <div>
+                        <label for="vorname">Vorname</label>
+                        <input id="vorname" type="text" name="vorname" value="<?php echo esc_attr($record->vorname ?? ''); ?>" required>
+                    </div>
+                    <div>
+                        <label for="nachname">Nachname</label>
+                        <input id="nachname" type="text" name="nachname" value="<?php echo esc_attr($record->nachname ?? ''); ?>" required>
+                    </div>
+                </div>
 
-                <label for="nachname">Nachname</label>
-                <input id="nachname" type="text" name="nachname" value="<?php echo esc_attr($record->nachname ?? ''); ?>" required>
+                <div class="form-group">
+                    <div>
+                        <label for="vorname_eltern">Vorname der Eltern</label>
+                        <input id="vorname_eltern" type="text" name="vorname_eltern" value="<?php echo esc_attr($record->vorname_eltern ?? ''); ?>">
+                    </div>
+                    <div>
+                        <label for="nachname_eltern">Nachname der Eltern</label>
+                        <input id="nachname_eltern" type="text" name="nachname_eltern" value="<?php echo esc_attr($record->nachname_eltern ?? ''); ?>">
+                    </div>
+                </div>
 
-                <label for="vorname_eltern">Vorname der Eltern</label>
-                <input id="vorname_eltern" type="text" name="vorname_eltern" value="<?php echo esc_attr($record->vorname_eltern ?? ''); ?>">
+                <div class="form-group">
+                    <div>
+                        <label for="email">E-Mail</label>
+                        <input id="email" type="email" name="email" value="<?php echo esc_attr($record->email ?? ''); ?>" required>
+                    </div>
+                    <div>
+                        <label for="telefon">Telefon</label>
+                        <input id="telefon" type="tel" name="telefon" value="<?php echo esc_attr($record->telefon ?? ''); ?>">
+                    </div>
+                </div>
 
-                <label for="nachname_eltern">Nachname der Eltern</label>
-                <input id="nachname_eltern" type="text" name="nachname_eltern" value="<?php echo esc_attr($record->nachname_eltern ?? ''); ?>">
+                <label for="geburtsdatum">Geburtsdatum</label>
+                <input id="geburtsdatum" type="date" name="geburtsdatum" value="<?php echo esc_attr($record->geburtsdatum ?? ''); ?>" required>
 
                 <div class="form-group">
                     <label for="geschwisterkind">Geschwisterkind</label>
                     <input id="geschwisterkind" type="checkbox" name="geschwisterkind" value="1" <?php checked($record->geschwisterkind ?? 0, 1); ?>>
                 </div>
 
-                <label for="email">E-Mail</label>
-                <input id="email" type="email" name="email" value="<?php echo esc_attr($record->email ?? ''); ?>" required>
+                <div class="form-group">
+                    <div>
+                        <label for="strasse">Straße</label>
+                        <input id="strasse" type="text" name="strasse" value="<?php echo esc_attr($record->strasse ?? ''); ?>" required>
+                    </div>
+                    <div>
+                        <label for="hausnummer">Hausnummer</label>
+                        <input id="hausnummer" type="text" name="hausnummer" value="<?php echo esc_attr($record->hausnummer ?? ''); ?>" required>
+                    </div>
+                </div>
 
-                <label for="telefon">Telefon</label>
-                <input id="telefon" type="tel" name="telefon" value="<?php echo esc_attr($record->telefon ?? ''); ?>">
+                <div class="form-group">
+                    <div>
+                        <label for="plz">PLZ</label>
+                        <input id="plz" type="text" name="plz" value="<?php echo esc_attr($record->plz ?? ''); ?>" required>
+                    </div>
+                    <div>
+                        <label for="ort">Ort</label>
+                        <input id="ort" type="text" name="ort" value="<?php echo esc_attr($record->ort ?? ''); ?>" required>
+                    </div>
+                </div>
 
-                <label for="geburtsdatum">Geburtsdatum</label>
-                <input id="geburtsdatum" type="date" name="geburtsdatum" value="<?php echo esc_attr($record->geburtsdatum ?? ''); ?>" required>
-
-                <label for="strasse">Straße</label>
-                <input id="strasse" type="text" name="strasse" value="<?php echo esc_attr($record->strasse ?? ''); ?>" required>
-
-                <label for="hausnummer">Hausnummer</label>
-                <input id="hausnummer" type="text" name="hausnummer" value="<?php echo esc_attr($record->hausnummer ?? ''); ?>" required>
-
-                <label for="plz">PLZ</label>
-                <input id="plz" type="text" name="plz" value="<?php echo esc_attr($record->plz ?? ''); ?>" required>
-
-                <label for="ort">Ort</label>
-                <input id="ort" type="text" name="ort" value="<?php echo esc_attr($record->ort ?? ''); ?>" required>
-
-                <label for="beitrittsdatum">Beitrittsdatum</label>
-                <input id="beitrittsdatum" type="date" name="beitrittsdatum" value="<?php echo esc_attr($record->beitrittsdatum ?? ''); ?>" required>
-
-                <label for="austrittsdatum">Austrittsdatum</label>
-                <input id="austrittsdatum" type="date" name="austrittsdatum" value="<?php echo esc_attr($record->austrittsdatum ?? ''); ?>">
+                <div class="form-group">
+                    <div>
+                        <label for="beitrittsdatum">Beitrittsdatum</label>
+                        <input id="beitrittsdatum" type="date" name="beitrittsdatum" value="<?php echo esc_attr($record->beitrittsdatum ?? ''); ?>" required>
+                    </div>
+                    <div>
+                        <label for="austrittsdatum">Austrittsdatum</label>
+                        <input id="austrittsdatum" type="date" name="austrittsdatum" value="<?php echo esc_attr($record->austrittsdatum ?? ''); ?>">
+                    </div>
+                </div>
 
                 <div class="form-group">
                     <input id="starterpaket" type="checkbox" name="starterpaket" value="1" <?php checked($record->starterpaket ?? 0, 1); ?>>
@@ -89,11 +119,16 @@ function Avf_Display_Membership_form()
                     <label for="spende">Spende</label>
                 </div>
 
-                <label for="spende_monatlich">Monatliche Spende</label>
-                <input id="spende_monatlich" type="number" name="spende_monatlich" value="<?php echo esc_attr($record->spende_monatlich ?? ''); ?>" step="0.01">
-
-                <label for="spende_einmalig">Einmalige Spende</label>
-                <input id="spende_einmalig" type="number" name="spende_einmalig" value="<?php echo esc_attr($record->spende_einmalig ?? ''); ?>" step="0.01">
+                <div class="form-group">
+                    <div>
+                        <label for="spende_monatlich">Monatliche Spende</label>
+                        <input id="spende_monatlich" type="number" name="spende_monatlich" value="<?php echo esc_attr($record->spende_monatlich ?? ''); ?>" step="0.01">
+                    </div>
+                    <div>
+                        <label for="spende_einmalig">Einmalige Spende</label>
+                        <input id="spende_einmalig" type="number" name="spende_einmalig" value="<?php echo esc_attr($record->spende_einmalig ?? ''); ?>" step="0.01">
+                    </div>
+                </div>
 
                 <div class="form-group">
                     <input id="satzung_datenschutz" type="checkbox" name="satzung_datenschutz" value="1" <?php checked($record->satzung_datenschutz ?? 0, 1); ?> required>
@@ -110,17 +145,27 @@ function Avf_Display_Membership_form()
                     <label for="sepa">SEPA-Lastschrift zugestimmt</label>
                 </div>
 
-                <label for="kontoinhaber">Kontoinhaber</label>
-                <input id="kontoinhaber" type="text" name="kontoinhaber" value="<?php echo esc_attr($record->kontoinhaber ?? ''); ?>" required>
+                <div class="form-group">
+                    <div>
+                        <label for="kontoinhaber">Kontoinhaber</label>
+                        <input id="kontoinhaber" type="text" name="kontoinhaber" value="<?php echo esc_attr($record->kontoinhaber ?? ''); ?>" required>
+                    </div>
+                    <div>
+                        <label for="iban">IBAN</label>
+                        <input id="iban" type="text" name="iban" value="<?php echo esc_attr($record->iban ?? ''); ?>" required>
+                    </div>
+                </div>
 
-                <label for="iban">IBAN</label>
-                <input id="iban" type="text" name="iban" value="<?php echo esc_attr($record->iban ?? ''); ?>" required>
-
-                <label for="iban">BIC</label>
-                <input id="bic" type="text" name="bic" value="<?php echo esc_attr($record->bic ?? ''); ?>" required>
-
-                <label for="iban">Bank</label>
-                <input id="bank" type="text" name="bank" value="<?php echo esc_attr($record->bank ?? ''); ?>" required>
+                <div class="form-group">
+                    <div>
+                        <label for="bic">BIC</label>
+                        <input id="bic" type="text" name="bic" value="<?php echo esc_attr($record->bic ?? ''); ?>" required>
+                    </div>
+                    <div>
+                        <label for="bank">Bank</label>
+                        <input id="bank" type="text" name="bank" value="<?php echo esc_attr($record->bank ?? ''); ?>" required>
+                    </div>
+                </div>
 
                 <label for="beitrag">Mitgliedsbeitrag</label>
                 <input id="beitrag" type="number" name="beitrag" value="<?php echo esc_attr($record->beitrag ?? ''); ?>" step="1" required>
@@ -137,14 +182,19 @@ function Avf_Display_Membership_form()
                     ?>
                 </table>
 
-                <label for="wiedervorlage-datum">Wiedervorlage-Datum</label>
-                <input id="wiedervorlage-datum" type="date" name="wiedervorlage" value="<?php echo esc_attr($record->wiedervorlage ?? ''); ?>">
-
-                <label for="wiedervorlage">Wiedervorlage-Grund</label>
-                <input id="wiedervorlage" type="text" name="wiedervorlage_grund" value="<?php echo esc_attr($record->wiedervorlage_grund ?? ''); ?>">
+                <div class="form-group">
+                    <div>
+                        <label for="wiedervorlage-datum">Wiedervorlage-Datum</label>
+                        <input id="wiedervorlage-datum" type="date" name="wiedervorlage" value="<?php echo esc_attr($record->wiedervorlage ?? ''); ?>">
+                    </div>
+                    <div>
+                        <label for="wiedervorlage">Wiedervorlage-Grund</label>
+                        <textarea id="wiedervorlage" name="wiedervorlage_grund" maxlength="255" rows="1"><?php echo esc_attr($record->wiedervorlage_grund ?? ''); ?></textarea>
+                    </div>
+                </div>
 
                 <label for="notizen">Notizen</label>
-                <textarea id="notzien" name="notizen"><?php echo esc_textarea($record->notizen ?? ''); ?></textarea>
+                <textarea id="notizen" name="notizen"><?php echo esc_textarea($record->notizen ?? ''); ?></textarea>
 
             </div>
             <button type="submit" class="button button-primary">Mitgliedschaft <?php echo $id ? 'aktualisieren' : 'hinzufügen'; ?></button>
