@@ -46,6 +46,8 @@ function Avf_Handle_Ajax_requests()
             'bic' => sanitize_text_field($_POST['bic']),
             'bank' => sanitize_text_field($_POST['bank']),
             'beitrag' => isset($_POST['beitrag']) ? floatval($_POST['beitrag']) : null,
+            'wiedervorlage' => !empty($_POST['wiedervorlage']) ? sanitize_text_field($_POST['wiedervorlage']) : null,
+            'wiedervorlage_grund' => !empty($_POST['wiedervorlage_grund']) ? sanitize_text_field($_POST['wiedervorlage_grund']) : null,
             'notizen' => sanitize_textarea_field($_POST['notizen']),
             'submission_date' => current_time('mysql'), // Capture the current timestamp
         ];
@@ -219,7 +221,7 @@ function Fetch_Membership_data()
     global $wpdb;
     $table_name = $wpdb->prefix . 'avf_memberships';
 
-    $column = isset($_POST['column']) ? sanitize_text_field($_POST['column']) : 'mitgliedschaft_art';
+    $column = isset($_POST['column']) ? sanitize_text_field($_POST['column']) : 'init';
     $order = isset($_POST['order']) ? sanitize_text_field($_POST['order']) : 'ASC';
     $filters = isset($_POST['filters']) ? (array)$_POST['filters'] : [];
     $search = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
@@ -243,7 +245,7 @@ function Fetch_Membership_data()
         'kind' => ['jugend'],
     ];
 
-    if (!defined('COLUMN_HEADERS') || !array_key_exists($column, COLUMN_HEADERS)) {
+    if ($column != 'init' && (!defined('COLUMN_HEADERS') || !array_key_exists($column, COLUMN_HEADERS))) {
         wp_send_json_error('Invalid column: ' . esc_html($column));
     }
 
@@ -286,11 +288,18 @@ function Fetch_Membership_data()
         );
     }
 
+    $order_clause = '';
+    if ($column === 'init') {
+        $order_clause .= 'wiedervorlage DESC, mitgliedschaft_art ASC';
+    } else {
+        $order_clause .= $column . ' ' . $order;
+    }
+
     $query = "SELECT * FROM $table_name WHERE 1=1"; // Always true to allow additional conditions
     if ($where_in_clause) {
         $query .= " AND mitgliedschaft_art IN ($where_in_clause)";
     }
-    $query .= " $search_clause ORDER BY $column $order";
+    $query .= " $search_clause ORDER BY $order_clause";
 
     $results = $wpdb->get_results($wpdb->prepare($query, ...$active_filters), ARRAY_A);
 
@@ -299,31 +308,48 @@ function Fetch_Membership_data()
         $html .= '<td colspan="5" class="no-memberships-msg">Keine Mitgliedschaften gefunden.</td>';
     } else {
         foreach ($results as $row) {
+            $classes = [];
+            $titleParts = [];
+
+            $age = date_diff(date_create($row['geburtsdatum']), date_create('now'))->y;
             $checkAge = false;
             $markInactive = false;
-            $markCustomBeitrag = false;
-            $age = date_diff(date_create($row['geburtsdatum']), date_create('now'))->y;
+            $markWiedervorlage = false;
+
             if (($age < 14 && $row['mitgliedschaft_art'] != 'kind')) {
                 $checkAge = true;
+                $classes[] = 'highlight-red';
+                $titleParts[] = 'Mitgliedschaftsart prüfen (Alter)';
             } elseif ($age >= 14 && $age < 18 && $row['mitgliedschaft_art'] != 'jugend') {
                 $checkAge = true;
+                $classes[] = 'highlight-red';
+                $titleParts[] = 'Mitgliedschaftsart prüfen (Alter)';
             } elseif ($age >= 18 && ($row['mitgliedschaft_art'] == 'kind' || $row['mitgliedschaft_art'] == 'jugend')) {
                 $checkAge = true;
+                $classes[] = 'highlight-red';
+                $titleParts[] = 'Mitgliedschaftsart prüfen (Alter)';
             }
 
             if (!empty($row['austrittsdatum'])) {
+                $classes[] = 'highlight-yellow';
+                $titleParts[] = 'Ausgetreten';
                 $markInactive = true;
             }
+
             if (BEITRAEGE[$row['mitgliedschaft_art']] != $row['beitrag']) {
                 $markCustomBeitrag = true;
             }
 
-            $html .= '<tr class="table-row-link';
-            $html .= $checkAge ? ' highlight-red' : '';
-            $html .= $markInactive ? ' highlight-yellow' : '';
-            $html .= '"';
-            $html .= $checkAge ? ' title="Mitgliedschaftsart prüfen"' : '';
-            $html .= $markInactive ? ' title="Ausgetreten"' : '';
+            if (!empty($row['wiedervorlage']) && strtotime($row['wiedervorlage']) <= strtotime('now')) {
+                $classes[] = 'highlight-light-blue';
+                $titleParts[] = 'Wiedervorlage: ' . esc_html($row['wiedervorlage_grund']);
+                $markWiedervorlage = true;
+            }
+
+            $rowClasses = implode(' ', $classes);
+            $rowTitle = implode(' | ', $titleParts);
+
+            $html .= '<tr class="table-row-link ' . $rowClasses . '" title="' . esc_attr($rowTitle) . '"';
             $html .= ' onclick="handleRowClick(event, ' . esc_attr($row['id']) . ')">';
 
             $html .= <<<HTML
@@ -337,6 +363,7 @@ function Fetch_Membership_data()
             $html .= htmlspecialchars(MITGLIEDSCHAFTSARTEN[$row['mitgliedschaft_art']] ?? 'Unbekannt');
             $html .= $checkAge ? '&nbsp;<span class="dashicons dashicons-warning" style="color: red;" title="Alter stimmt nicht mit Mitgliedschaftsart überein."></span>' : '';
             $html .= $markInactive ? '&nbsp;<span class="dashicons dashicons-warning" style="color: orange;" title="Austritt zum ' . date('d.m.Y', strtotime($row['austrittsdatum'])) . '"></span>' : '';
+            $html .= $markWiedervorlage ? '&nbsp;<span class="dashicons dashicons-warning" style="color: #3498db;" title="Wiedervorlage: ' . esc_html($row['wiedervorlage_grund']) . '"></span>' : '';
 
             $html .= <<<HTML
                 </td>
@@ -365,7 +392,7 @@ function Fetch_Membership_data()
 
             $html .= '<td class="' . ($markCustomBeitrag ? 'highlight-blue' : '') . '" title="' . ($markCustomBeitrag ? 'Beitrag angepasst' : '') . '">';
             $html .= isset($row['beitrag']) ? esc_html($row['beitrag']) . ' €' : '';
-            $html .= $markCustomBeitrag ? '&nbsp;<span class="dashicons dashicons-edit" style="color: #2271b1;"></span>' : '';
+            $html .= $markCustomBeitrag ? '&nbsp;<span class="dashicons dashicons-edit" style="color: #3498db;"></span>' : '';
             $html .= '</td>';
 
             $html .= <<<HTML

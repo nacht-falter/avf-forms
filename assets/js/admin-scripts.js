@@ -1,19 +1,4 @@
 jQuery(document).ready(function ($) {
-  $("#avf-membership-admin-form").on("submit", function (e) {
-    e.preventDefault();
-
-    let formData = $(this).serialize();
-
-    $.post(avf_ajax_admin.ajaxurl, formData, function (response) {
-      let data = JSON.parse(response);
-      if (data.status === "success") {
-        window.history.back();
-      } else {
-        alert("Error: " + data.message);
-      }
-    });
-  });
-
   const selectAll = $("#select-all");
   const deleteButton = $("#delete-membership");
   const deleteButtonSingle = $("#delete-membership-single");
@@ -126,7 +111,7 @@ jQuery(document).ready(function ($) {
   function setSearchFromUrl() {
     const search = getCurrentUrlParams().search || "";
     $("#search").val(search);
-  };
+  }
 
   function fetchMembershipData(column, order, filters = [], search = "") {
     $("#membership-table-body").html(
@@ -234,6 +219,22 @@ jQuery(document).ready(function ($) {
     selectAll.on("change", function () {
       $(".membership-checkbox").prop("checked", this.checked);
       updateButtons();
+    });
+
+    $("#avf-membership-admin-form").on("submit", function (e) {
+      e.preventDefault();
+
+      let formData = $(this).serialize();
+
+      $.post(avf_ajax_admin.ajaxurl, formData, function (response) {
+        console.log(response);
+        let data = JSON.parse(response);
+        if (data.status === "success") {
+          window.history.back();
+        } else {
+          alert("Error: " + data.message);
+        }
+      });
     });
 
     deleteButton.on("click", function (e) {

@@ -38,6 +38,8 @@ class Avf_Forms_Activator
                 bic varchar(11) NULL,
                 bank varchar(255) NULL,
                 beitrag float NULL,
+                wiedervorlage date NULL,
+                wiedervorlage_grund varchar(255) NULL,
                 notizen text NULL,
                 submission_date datetime DEFAULT CURRENT_TIMESTAMP,
                 

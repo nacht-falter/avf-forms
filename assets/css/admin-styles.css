@@ -1,10 +1,6 @@
-#update-membership {
-  margin-top: 1rem;
-  margin-right: 0.5rem;
-}
-
 #delete-membership,
-#export-csv {
+#export-csv,
+#set-reminder {
   margin-top: 1rem;
 }
 
@@ -87,7 +83,24 @@
 .form-group {
   margin-top: 1rem;
   display: flex;
-  align-items: center; /* Aligns checkbox and label vertically */
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-group div {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .form-group {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.form-group div {
+  display: flex;
+  flex-direction: column;
 }
 
 #avf-membership-admin-form .form-group label {
@@ -95,7 +108,7 @@
 }
 
 .form-group input[type="checkbox"] {
-  margin-right: 10px;
+  margin-top: 0;
   order: -1;
 }
 
@@ -212,9 +225,14 @@ label:has(+ input:required)::after {
   background-color: #ffffdd !important;
 }
 
-.highlight-blue:hover {
-  background-color: #cceeff !important;
+.highlight-light-blue {
+  background-color: #e6f7ff !important;
 }
+
+.highlight-blue:hover {
+  background-color: #e6f7ff !important;
+}
+
 .notizen-col {
   text-wrap: wrap;
   min-width: 250px;

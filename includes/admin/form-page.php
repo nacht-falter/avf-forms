@@ -137,8 +137,15 @@ function Avf_Display_Membership_form()
                     ?>
                 </table>
 
+                <label for="wiedervorlage-datum">Wiedervorlage-Datum</label>
+                <input id="wiedervorlage-datum" type="date" name="wiedervorlage" value="<?php echo esc_attr($record->wiedervorlage ?? ''); ?>">
+
+                <label for="wiedervorlage">Wiedervorlage-Grund</label>
+                <input id="wiedervorlage" type="text" name="wiedervorlage_grund" value="<?php echo esc_attr($record->wiedervorlage_grund ?? ''); ?>">
+
                 <label for="notizen">Notizen</label>
                 <textarea id="notzien" name="notizen"><?php echo esc_textarea($record->notizen ?? ''); ?></textarea>
+
             </div>
             <button type="submit" class="button button-primary">Mitgliedschaft <?php echo $id ? 'aktualisieren' : 'hinzufügen'; ?></button>
             <button type="button" class="button button-secondary" id="cancel">Abbrechen</button>

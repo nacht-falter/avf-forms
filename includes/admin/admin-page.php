@@ -56,6 +56,7 @@ function Avf_Display_memberships()
                         </tr>
                     </thead>
                     <tbody id="membership-table-body">
+                        <td colspan="5" class="no-memberships-msg">Keine Mitgliedschaften gefunden.</td>
                         <td class="loading-spinner" style="visibility: visible"></td>
                     </tbody>
                 </table>
@@ -63,6 +64,7 @@ function Avf_Display_memberships()
             <div id="legend">
                 <ul>
                     <li><span class="dashicons dashicons-warning" style="color: red;"></span> Alter stimmt nicht mit Mitgliedschaftsart überein</li>
+                    <li><span class="dashicons dashicons-warning" style="color: #3498db;"></span> Wiedervorlage</li>
                     <li><span class="dashicons dashicons-warning" style="color: orange;"></span> Ausgetreten</li>
                     <li><span class="dashicons dashicons-edit" style="color: #2271b1;"></span> Beitrag angepasst</li>
                 </ul>
