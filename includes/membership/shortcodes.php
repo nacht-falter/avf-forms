@@ -98,11 +98,11 @@ class Avf_Forms_Membership_Shortcodes
                 <div>
                     <input class="d-inline align-top mt-1" type="checkbox" name="satzung_datenschutz" id="satzung_datenschutz" required>
                     <label class="d-inline align-top" for="satzung_datenschutz">Ich habe die 
-                        <a href="https://www.aikido-freiburg.de/wp-content/uploads/2024/05/Satzung-2022.pdf" title="Satzung" target="_blank">
+                        <a href="https://cloud.aikido-freiburg.de/index.php/s/DsBpZENjktxBknH" title="Satzung" target="_blank">
                             <strong>Satzung</strong>
                         </a> 
                         und die 
-                        <a href="https://www.aikido-freiburg.de/wp-content/uploads/2021/07/Datenschutzordnung_1.0.pdf" title="Datenschutzerklärung" target="_blank">
+                        <a href="https://cloud.aikido-freiburg.de/index.php/s/yjK6ErBwtYXBBga" title="Datenschutzordnung" target="_blank">
                             <strong>Datenschutzordnung</strong>
                         </a> 
                         des Aikido-Verein Freiburg e.V. gelesen und erkenne diese hiermit an.
@@ -288,11 +288,11 @@ class Avf_Forms_Membership_Shortcodes
                 <div>
                     <input class="d-inline align-top mt-1" type="checkbox" name="satzung_datenschutz" id="satzung_datenschutz" required>
                     <label class="d-inline align-top" for="satzung_datenschutz">Ich habe die 
-                        <a href="https://www.aikido-freiburg.de/wp-content/uploads/2024/05/Satzung-2022.pdf" title="Satzung" target="_blank">
+                        <a href="https://cloud.aikido-freiburg.de/index.php/s/DsBpZENjktxBknH" title="Satzung" target="_blank">
                             <strong>Satzung</strong>
                         </a> 
                         und die 
-                        <a href="https://www.aikido-freiburg.de/wp-content/uploads/2021/07/Datenschutzordnung_1.0.pdf" title="Datenschutzerklärung" target="_blank">
+                        <a href="https://cloud.aikido-freiburg.de/index.php/s/yjK6ErBwtYXBBga" title="Datenschutzordnung" target="_blank">
                             <strong>Datenschutzordnung</strong>
                         </a> 
                         des Aikido-Verein Freiburg e.V. gelesen und erkenne diese hiermit an.
