@@ -160,17 +160,19 @@ class Avf_Forms_Plugin
             'manage_memberships', // Capability
             'avf-membership-admin', // Menu slug
             'Avf_Display_memberships', // Callback function
-            'dashicons-feedback', // Icon URL
+            'dashicons-feedback' // Icon URL
         );
+
         add_submenu_page(
-            'avf-membership-page',             // Parent slug
-            'Mitgliedschaft bearbeiten',  // Page title
-            'Neue Mitgliedschaft',              // Menu title
-            'manage_memberships',              // Capability
-            'avf-membership-form-page',        // Slug for the new membership page
-            'Avf_Display_Membership_form',      // Function to display the new membership form
+            'avf-membership-admin',           // Parent slug (must match the menu slug from add_menu_page)
+            'Mitgliedschaft bearbeiten',      // Page title
+            'Neue Mitgliedschaft hinzufügen',            // Menu title
+            'manage_memberships',             // Capability
+            'avf-membership-form-page',       // Slug for the new membership page
+            'Avf_Display_Membership_form'     // Function to display the new membership form
         );
     }
+
 }
 
 Avf_Forms_Plugin::init();
