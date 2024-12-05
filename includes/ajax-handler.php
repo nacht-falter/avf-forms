@@ -290,7 +290,7 @@ function Fetch_Membership_data()
 
     $order_clause = '';
     if ($column === 'init') {
-        $order_clause .= 'wiedervorlage DESC, mitgliedschaft_art ASC';
+        $order_clause .= 'CASE WHEN wiedervorlage <= CURRENT_DATE THEN 1 ELSE 2 END, mitgliedschaft_art ASC';
     } else {
         $order_clause .= $column . ' ' . $order;
     }
