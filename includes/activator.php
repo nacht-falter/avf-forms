@@ -6,10 +6,10 @@ class Avf_Forms_Activator
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
 
-        $table_name = "{$wpdb->prefix}avf_memberships";
+        $memberships_table = "{$wpdb->prefix}avf_memberships";
 
-        $sql = "
-            CREATE TABLE IF NOT EXISTS $table_name (
+        $membership_sql = "
+            CREATE TABLE IF NOT EXISTS $memberships_table (
                 id mediumint(9) NOT NULL AUTO_INCREMENT,
                 mitgliedschaft_art varchar(255) NOT NULL,
                 vorname varchar(255) NOT NULL,
@@ -42,11 +42,33 @@ class Avf_Forms_Activator
                 wiedervorlage_grund varchar(255) NULL,
                 notizen text NULL,
                 submission_date datetime DEFAULT CURRENT_TIMESTAMP,
-                
+
                 PRIMARY KEY  (id)
             ) $charset_collate;";
 
-        $wpdb->query($sql);
+        $wpdb->query($membership_sql);
+
+
+        $schnupperkurs_table = "{$wpdb->prefix}avf_schnupperkurse";
+
+        $schnupperkurs_sql = "
+            CREATE TABLE IF NOT EXISTS $schnupperkurs_table (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            vorname varchar(255) NOT NULL,
+            nachname varchar(255) NOT NULL,
+            email varchar(255) NOT NULL,
+            telefon varchar(20),
+            geburtsdatum date NOT NULL,
+            beginn date NOT NULL,
+            ende date NULL,
+            wie_erfahren varchar(255),
+            notizen text NULL,
+            submission_date datetime DEFAULT CURRENT_TIMESTAMP,
+
+            PRIMARY KEY  (id)
+            ) $charset_collate;";
+
+        $wpdb->query($schnupperkurs_sql);
 
         // Add treasurer role
         $editor = get_role('editor');
