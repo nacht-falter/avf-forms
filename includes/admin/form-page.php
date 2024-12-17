@@ -13,7 +13,7 @@ function Avf_Display_Membership_form()
     ?>
     <div class="wrap">
         <h1><?php echo $id ? 'Mitgliedschaft bearbeiten' : 'Neue Mitgliedschaft hinzufügen'; ?></h1>
-        
+
         <?php if ($id) : ?>
             <button type="button" class="button button-secondary" id="go-back">Zurück zur Übersicht</button>
         <?php else : ?>
@@ -202,8 +202,132 @@ function Avf_Display_Membership_form()
 
             </div>
             <button type="submit" class="button button-primary">Mitgliedschaft <?php echo $id ? 'aktualisieren' : 'hinzufügen'; ?></button>
-            <button type="button" class="button button-secondary" id="cancel">Abbrechen</button>
-            <button type="button" id="delete-membership-single" class="button button-secondary btn-warning" data-id="<?php echo esc_attr($record->id ?? ''); ?>">Mitgliedschaft löschen</button>
+            <?php if ($id) : ?>
+                <button type="button" class="button button-secondary" id="cancel">Abbrechen</button>
+                <button type="button" id="delete-single" class="button button-secondary btn-warning" data-id="<?php echo esc_attr($record->id ?? ''); ?>" data-type="membership">Mitgliedschaft löschen</button>
+            <?php else : ?>
+                <a href="admin.php?page=avf-membership-admin" class="button button-secondary">Abbrechen</a>
+            <?php endif; ?>
+        </form>
+    </div>
+    <?php
+}
+
+function Avf_Display_Schnupperkurs_form()
+{
+    if (!current_user_can('manage_memberships')) {
+        wp_die(__('You do not have sufficient permissions to access this page.'));
+    }
+
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'avf_schnupperkurse';
+
+    $id = isset($_GET['edit']) ? intval($_GET['edit']) : null;
+    $record = $id ? $wpdb->get_row("SELECT * FROM $table_name WHERE id = $id") : null;
+
+    ?>
+    <div class="wrap">
+        <h1><?php echo $id ? 'Schnupperkurs-Anmeldung bearbeiten' : 'Neue Schnupperkurs-Anmeldung hinzufügen'; ?></h1>
+
+        <?php if ($id) : ?>
+            <button type="button" class="button button-secondary" id="go-back">Zurück zur Übersicht</button>
+        <?php else : ?>
+            <a href="admin.php?page=avf-schnupperkurs-admin" class="button button-secondary">Zur Übersicht</a>
+        <?php endif; ?>
+        <form id="avf-schnupperkurs-admin-form">
+            <div id="admin-form-container">
+                <?php wp_nonce_field('avf_membership_action', '_ajax_nonce'); ?>
+                <input type="hidden" name="action" value="avf_schnupperkurs_action">
+                <input type="hidden" name="action_type" value="<?php echo $id ? 'update' : 'create'; ?>">
+                <input type="hidden" name="id" value="<?php echo $id; ?>">
+
+                <label for="schnupperkurs_art">Art des Schnupperkurses</label>
+                <select id="schnupperkurs_art" name="schnupperkurs_art" required>
+                    <?php
+                    foreach (SCHNUPPERKURSARTEN as $value => $display) {
+                        $selected = selected($record->schnupperkurs_art ?? '', $value, false);
+                        echo "<option value=\"{$value}\" {$selected}>{$display}</option>";
+                    }
+                    ?>
+                </select>
+
+                <div class="form-group">
+                    <div>
+                        <label for="vorname">Vorname</label>
+                        <input id="vorname" type="text" name="vorname" value="<?php echo esc_attr($record->vorname ?? ''); ?>" required>
+                    </div>
+                    <div>
+                        <label for="nachname">Nachname</label>
+                        <input id="nachname" type="text" name="nachname" value="<?php echo esc_attr($record->nachname ?? ''); ?>" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div>
+                        <label for="email">E-Mail</label>
+                        <input id="email" type="email" name="email" value="<?php echo esc_attr($record->email ?? ''); ?>" required>
+                    </div>
+                    <div>
+                        <label for="telefon">Telefon</label>
+                        <input id="telefon" type="tel" name="telefon" value="<?php echo esc_attr($record->telefon ?? ''); ?>">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div>
+                        <label for="geburtsdatum">Geburtsdatum</label>
+                        <input id="geburtsdatum" type="date" name="geburtsdatum" value="<?php echo esc_attr($record->geburtsdatum ?? ''); ?>" required>
+                    </div>
+
+                    <div>
+                        <label for="beginn">Beginn des Schnupperkurses</label>
+                        <input id="beginn" type="date" name="beginn" value="<?php echo esc_attr($record->beginn ?? ''); ?>" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div>
+                        <label for="wie_erfahren">Wie vom Aikido Verein Freiburg erfahren?</label>
+                        <select id="wie_erfahren" name="wie_erfahren" required>
+                            <?php
+                            $current_value = $record->wie_erfahren ?? '';
+                            $is_custom_value = !empty($current_value) && !array_key_exists($current_value, WIE_ERFAHREN);
+
+                            echo '<option value="" ' . selected($current_value, '', false) . '>Bitte auswählen</option>';
+
+                            foreach (WIE_ERFAHREN as $value => $display) {
+                                $selected = selected($current_value, $value, false);
+                                if ($value === 'sonstiges' && $is_custom_value) {
+                                    $selected = 'selected';
+                                }
+                                echo "<option value=\"{$value}\" {$selected}>{$display}</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="wie_erfahren_sonstiges" style="display: none;">Sonstiges</label>
+                        <input id="wie_erfahren_sonstiges"
+                               type="text"
+                               name="wie_erfahren_sonstiges"
+                               value="<?php echo esc_attr($is_custom_value ? $current_value : ''); ?>"
+                               <?php echo $is_custom_value ? 'required' : 'style="display: none;"'; ?>
+                               placeholder="Sonstiges">
+                    </div>
+                </div>
+
+
+                <label for="notizen">Notizen</label>
+                <textarea id="notizen" name="notizen"><?php echo esc_textarea($record->notizen ?? ''); ?></textarea>
+
+            </div>
+            <button type="submit" class="button button-primary">Schnupperkurs-Anmeldung <?php echo $id ? 'aktualisieren' : 'hinzufügen'; ?></button>
+            <?php if ($id) : ?>
+                <button type="button" class="button button-secondary" id="cancel">Abbrechen</button>
+                <button type="button" id="delete-single" class="button button-secondary btn-warning" data-id="<?php echo esc_attr($record->id ?? ''); ?>" data-type="schnupperkurs">Schnupperkurs-Anmeldung löschen</button>
+            <?php else : ?>
+                <a href="admin.php?page=avf-schnupperkurs-admin" class="button button-secondary">Abbrechen</a>
+            <?php endif; ?>
         </form>
     </div>
     <?php

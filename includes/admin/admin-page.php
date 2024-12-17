@@ -44,7 +44,7 @@ function Avf_Display_memberships()
                                 <input type="checkbox" id="select-all" title="Alle Einträge auswählen" />
                             </th>
                             <?php
-                            foreach (COLUMN_HEADERS as $column_key => $column_label) {
+                            foreach (COLUMN_HEADERS_MEMBERSHIPS as $column_key => $column_label) {
                                 $title = esc_attr('Sortieren nach ' . $column_label);
 
                                 echo '<th scope="col">';
@@ -71,7 +71,7 @@ function Avf_Display_memberships()
             </div>
             <div class="bulk-actions">
                 <button type="button" id="export-csv" class="button button-primary" disabled>Ausgewählte Mitgliedschaften als CSV exportieren</button>
-                <button type="button" id="delete-membership" class="button button-secondary" disabled>Ausgewählte Mitgliedschaften löschen</button>
+                <button type="button" id="delete-bulk" class="button button-secondary" disabled>Ausgewählte Mitgliedschaften löschen</button>
             </div>
         </form>
 
@@ -91,6 +91,66 @@ function Avf_Display_memberships()
         function handleRowClick(event, id) {
             if (event.target.tagName != 'INPUT' && event.target.tagName != 'TH') {
                 window.location.href = 'admin.php?page=avf-membership-form-page&edit=' + id;
+            }
+        }
+        </script>
+    </div>
+    <?php
+}
+
+function Avf_Display_schnupperkurse()
+{
+    if (!current_user_can('manage_memberships')) {
+        wp_die(__('You do not have sufficient permissions to access this page.'));
+    }
+
+    ?>
+    <div class="wrap">
+        <h1>Schnupperkurse</h1>
+        <div id="admin-page-header">
+            <a href="admin.php?page=avf-schnupperkurs-form-page" class="button button-primary">Neuen Schnupperkurs hinzufügen</a>
+        </div>
+
+        <form id="schnupperkurs-form" method="post" action="">
+            <div id="schnupperkurs-list-container" class="list-container">
+                <table class="wp-list-table widefat striped">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="check-column">
+                                <input type="checkbox" id="select-all" title="Alle Einträge auswählen" />
+                            </th>
+                            <?php
+                            foreach (COLUMN_HEADERS_SCHNUPPERKURSE as $column_key => $column_label) {
+                                $title = esc_attr('Sortieren nach ' . $column_label);
+
+                                echo '<th scope="col">';
+                                echo '<a href="#" title="' . $title . '" class="table-header-link" data-column="' . $column_key . '">';
+                                echo $column_label . ' ';
+                                echo '</a></th>';
+                            }
+                            ?>
+                        </tr>
+                    </thead>
+                    <tbody id="schnupperkurs-table-body">
+                        <td colspan="5" class="no-memberships-msg">Keine Schnupperkurse gefunden.</td>
+                        <td class="loading-spinner" style="visibility: visible"></td>
+                    </tbody>
+                </table>
+            </div>
+            <div id="legend">
+                <ul>
+                    <li><span class="dashicons dashicons-warning" style="color: red;"></span> Schnupperkurs ist vorbei.</li>
+                </ul>
+            </div>
+            <div class="bulk-actions">
+                <button type="button" id="delete-bulk" class="button button-secondary" disabled>Ausgewählte Schnupperkurse löschen</button>
+            </div>
+        </form>
+
+        <script>
+        function handleRowClick(event, id) {
+            if (event.target.tagName != 'INPUT' && event.target.tagName != 'TH') {
+                window.location.href = 'admin.php?page=avf-schnupperkurs-form-page&edit=' + id;
             }
         }
         </script>

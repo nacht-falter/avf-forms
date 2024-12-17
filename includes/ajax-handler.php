@@ -1,5 +1,5 @@
 <?php
-function Avf_Handle_Ajax_requests()
+function Avf_Handle_Ajax_membership_requests()
 {
     if (!current_user_can('manage_memberships')) {
         wp_send_json_error('You do not have permission to perform this action.');
@@ -100,7 +100,80 @@ function Avf_Handle_Ajax_requests()
     wp_die(); // Important to close the AJAX call
 }
 
-add_action('wp_ajax_avf_membership_action', 'Avf_Handle_Ajax_requests');
+add_action('wp_ajax_avf_membership_action', 'Avf_Handle_Ajax_membership_requests');
+
+function Avf_Handle_Ajax_schnupperkurs_requests()
+{
+    if (!current_user_can('manage_memberships')) {
+        wp_send_json_error('You do not have permission to perform this action.');
+        wp_die();
+    }
+
+    if (!check_ajax_referer('avf_membership_action', 'nonce', false)) {
+        wp_send_json_error('Invalid nonce');
+        wp_die();
+    }
+
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'avf_schnupperkurse';
+
+    $action_type = $_POST['action_type'];
+    $response = array('status' => 'error', 'message' => 'Invalid action');
+
+    if ($action_type === 'create' || $action_type === 'update') {
+        $beginn = sanitize_text_field($_POST['beginn']);
+        $beginn_date = new DateTime($beginn);
+        $ende_date = $beginn_date->modify('+2 months');
+
+        $data = [
+            'vorname' => sanitize_text_field($_POST['vorname']),
+            'nachname' => sanitize_text_field($_POST['nachname']),
+            'email' => sanitize_email($_POST['email']),
+            'telefon' => sanitize_text_field($_POST['telefon']),
+            'geburtsdatum' => sanitize_text_field($_POST['geburtsdatum']),
+            'beginn' => $beginn,
+            'ende' => $ende_date->format('Y-m-d'),
+            'wie_erfahren' => sanitize_text_field($_POST['wie_erfahren']) === 'sonstiges'
+                ? sanitize_text_field($_POST['wie_erfahren_sonstiges'])
+                : sanitize_text_field($_POST['wie_erfahren']),
+            'notizen' => sanitize_textarea_field($_POST['notizen']),
+            'submission_date' => current_time('mysql'),
+        ];
+
+        if ($action_type === 'update') {
+            $id = intval($_POST['id']);
+            $wpdb->update($table_name, $data, ['id' => $id]);
+            $response = array('status' => 'success', 'message' => 'Schnupperkurs erfolgreich aktualisiert');
+        } else {
+            $wpdb->insert($table_name, $data);
+            $response = array('status' => 'success', 'message' => 'Schnupperkurs erfolgreich angelegt', 'redirect_url' => admin_url('admin.php?page=avf-schnupperkurs-admin'));
+        }
+
+    } elseif ($action_type === 'delete') {
+        $id = intval($_POST['id']);
+        $wpdb->delete($table_name, ['id' => $id]);
+        $response = array('status' => 'success', 'message' => 'Schnupperkurs erfolgreich entfernt');
+
+    } elseif ($action_type === 'bulk_delete' && isset($_POST['ids']) && is_array($_POST['ids'])) {
+        $ids = array_map('intval', $_POST['ids']);
+
+        $placeholders = implode(',', array_fill(0, count($ids), '%d'));
+        $query = "DELETE FROM $table_name WHERE id IN ($placeholders)";
+
+        $deleted = $wpdb->query($wpdb->prepare($query, ...$ids));
+
+        if ($deleted) {
+            $response = array('status' => 'success', 'message' => "$deleted Schnupperkurs(e) erfolgreich gelöscht.");
+        } else {
+            $response = array('status' => 'error', 'message' => 'Fehler beim Löschen der Einträge.');
+        }
+    }
+
+    echo json_encode($response);
+    wp_die(); // Important to close the AJAX call
+}
+
+add_action('wp_ajax_avf_schnupperkurs_action', 'Avf_Handle_Ajax_schnupperkurs_requests');
 
 function Generate_Csv_download()
 {
@@ -245,7 +318,7 @@ function Fetch_Membership_data()
         'kind' => ['jugend'],
     ];
 
-    if ($column != 'init' && (!defined('COLUMN_HEADERS') || !array_key_exists($column, COLUMN_HEADERS))) {
+    if ($column != 'init' && (!defined('COLUMN_HEADERS_MEMBERSHIPS') || !array_key_exists($column, COLUMN_HEADERS_MEMBERSHIPS))) {
         wp_send_json_error('Invalid column: ' . esc_html($column));
     }
 
@@ -307,7 +380,21 @@ function Fetch_Membership_data()
     if (empty($results)) {
         $html .= '<td colspan="5" class="no-memberships-msg">Keine Mitgliedschaften gefunden.</td>';
     } else {
+        $dateColumns = ['geburtsdatum', 'beitrittsdatum', 'austrittsdatum', 'wiedervorlage'];
         foreach ($results as $row) {
+            foreach (array_keys($row) as $key) {
+                ${'column_' . $key} = esc_html($row[$key]);
+                if ($key === 'id') {
+                    ${'column_' . $key . '_attr'} = esc_attr($row[$key]);
+                }
+                if (in_array($key, $dateColumns, true)) {
+                    $date = DateTime::createFromFormat('Y-m-d', $row[$key]);
+                    if ($date) {
+                        ${'column_' . $key} = esc_html($date->format('d.m.Y'));
+                    }
+                }
+            }
+
             $classes = [];
             $titleParts = [];
 
@@ -342,62 +429,60 @@ function Fetch_Membership_data()
 
             if (!empty($row['wiedervorlage']) && strtotime($row['wiedervorlage']) <= strtotime('now')) {
                 $classes[] = 'highlight-light-blue';
-                $titleParts[] = 'Wiedervorlage: ' . esc_html($row['wiedervorlage_grund']);
+                $titleParts[] = 'Wiedervorlage: ' . $column_wiedervorlage_grund;
                 $markWiedervorlage = true;
             }
 
             $rowClasses = implode(' ', $classes);
             $rowTitle = implode(' | ', $titleParts);
 
-            $html .= '<tr class="table-row-link ' . $rowClasses . '" title="' . esc_attr($rowTitle) . '"';
-            $html .= ' onclick="handleRowClick(event, ' . esc_attr($row['id']) . ')">';
+            $html .= '<tr class="table-row-link ' . esc_attr($rowClasses) . '" title="' . esc_attr($rowTitle) . '"';
+            $html .= ' onclick="handleRowClick(event, ' . $column_id_attr . ')">';
 
             $html .= <<<HTML
                 <th scope="row" class="check-column" style="cursor: initial;">
-                <input type="checkbox" class="membership-checkbox" value="{$row['id']}">
+                <input type="checkbox" class="membership-checkbox" value="{$column_id_attr}">
                 </th>
-                <td>{$row['id']}</td>
+                <td>{$column_id}</td>
                 <td>
                 HTML;
 
-            $html .= htmlspecialchars(MITGLIEDSCHAFTSARTEN[$row['mitgliedschaft_art']] ?? 'Unbekannt');
+            $html .= esc_html(MITGLIEDSCHAFTSARTEN[$row['mitgliedschaft_art']] ?? 'Unbekannt');
             $html .= $checkAge ? '&nbsp;<span class="dashicons dashicons-warning" style="color: red;" title="Alter stimmt nicht mit Mitgliedschaftsart überein."></span>' : '';
-            $html .= $markInactive ? '&nbsp;<span class="dashicons dashicons-warning" style="color: orange;" title="Austritt zum ' . date('d.m.Y', strtotime($row['austrittsdatum'])) . '"></span>' : '';
-            $html .= $markWiedervorlage ? '&nbsp;<span class="dashicons dashicons-warning" style="color: #3498db;" title="Wiedervorlage: ' . esc_html($row['wiedervorlage_grund']) . '"></span>' : '';
+            $html .= $markInactive ? '&nbsp;<span class="dashicons dashicons-warning" style="color: orange;" title="Austritt zum ' . esc_attr(date('d.m.Y', strtotime($row['austrittsdatum']))) . '"></span>' : '';
+            $html .= $markWiedervorlage ? '&nbsp;<span class="dashicons dashicons-warning" style="color: #3498db;" title="Wiedervorlage: ' . $column_wiedervorlage_grund . '"></span>' : '';
 
             $html .= <<<HTML
                 </td>
-                <td>{$row['vorname']}</td>
-                <td>{$row['nachname']}</td>
-                <td>{$row['email']}</td>
-                <td>{$row['geburtsdatum']}</td>
-                <td>{$row['beitrittsdatum']}</td>
-                <td>{$row['austrittsdatum']}</td>
-                <td>{$row['starterpaket']}</td>
-                <td>{$row['spende']}</td>
-                <td>{$row['spende_monatlich']}</td>
-                <td>{$row['spende_einmalig']}</td>
-                <td>
+                <td>{$column_vorname}</td>
+                <td>{$column_nachname}</td>
+                <td>{$column_email}</td>
+                <td>{$column_geburtsdatum}</td>
+                <td>{$column_beitrittsdatum}</td>
+                <td>{$column_austrittsdatum}</td>
                 HTML;
 
-            $html .= $row['sepa'] ? 'Erteilt' : 'Nicht erteilt';
+            $html .= $column_starterpaket ? '<td>&#10003;</td>' : '<td></td>';
+            $html .= $column_spende ? '<td>&#10003;</td>' : '<td></td>';
+            $html .= $column_spende_monatlich ? '<td>' . $column_spende_monatlich . ' €</td>' : '<td></td>';
+            $html .= $column_spende_einmalig ? '<td>' . $column_spende_einmalig . ' €</td>' : '<td></td>';
+            $html .= $column_sepa ? '<td>&#10003</td>' : '<td></td>';
 
             $html .= <<<HTML
-                </td>
-                <td>{$row['kontoinhaber']}</td>
-                <td>{$row['iban']}</td>
-                <td>{$row['bic']}</td>
-                <td>{$row['bank']}</td>
+                <td>{$column_kontoinhaber}</td>
+                <td>{$column_iban}</td>
+                <td>{$column_bic}</td>
+                <td>{$column_bank}</td>
                 HTML;
 
             $html .= '<td class="' . ($markCustomBeitrag ? 'highlight-blue' : '') . '" title="' . ($markCustomBeitrag ? 'Beitrag angepasst' : '') . '">';
-            $html .= isset($row['beitrag']) ? esc_html($row['beitrag']) . ' €' : '';
+            $html .= $column_beitrag . ' €';
             $html .= $markCustomBeitrag ? '&nbsp;<span class="dashicons dashicons-edit" style="color: #3498db;"></span>' : '';
             $html .= '</td>';
 
             $html .= <<<HTML
-                <td class="notizen-col">{$row['notizen']}</td>
-                <td>{$row['submission_date']}</td>
+                <td class="notizen-col">{$column_notizen}</td>
+                <td>{$column_submission_date}</td>
                 </tr>
                 HTML;
         }
@@ -407,3 +492,108 @@ function Fetch_Membership_data()
 }
 
 add_action('wp_ajax_avf_fetch_memberships', 'Fetch_Membership_data');
+
+function Fetch_Schnupperkurs_data()
+{
+    if (!current_user_can('manage_memberships')) {
+        wp_send_json_error('You do not have permission to perform this action.');
+        wp_die();
+    }
+
+    if (!check_ajax_referer('avf_membership_action', 'nonce', false)) {
+        wp_send_json_error('Invalid nonce');
+        wp_die();
+    }
+
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'avf_schnupperkurse';
+
+    $column = isset($_POST['column']) ? sanitize_text_field($_POST['column']) : 'init';
+    $order = isset($_POST['order']) ? sanitize_text_field($_POST['order']) : 'ASC';
+
+    if ($column != 'init' && (!defined('COLUMN_HEADERS_SCHNUPPERKURSE') || !array_key_exists($column, COLUMN_HEADERS_SCHNUPPERKURSE))) {
+        wp_send_json_error('Invalid column: ' . esc_html($column));
+        wp_die();
+    }
+
+    if (!in_array(strtoupper($order), ['ASC', 'DESC'])) {
+        wp_send_json_error('Invalid order: ' . esc_html($order));
+        wp_die();
+    }
+
+    if ($column === 'init') {
+        $order_clause = 'beginn ASC';
+    } else {
+        $order_clause = $column . ' ' . $order;
+    };
+
+    $query = "SELECT * FROM $table_name ORDER BY $order_clause";
+
+    $results = $wpdb->get_results($query, ARRAY_A);
+
+    $html = '';
+    if (empty($results)) {
+        $html .= '<td colspan="5" class="no-memberships-msg">Keine Schnupperkurse gefunden.</td>';
+    } else {
+        $dateColumns = ['geburtsdatum', 'beginn', 'ende'];
+        foreach ($results as $row) {
+            foreach (array_keys($row) as $key) {
+                ${'column_' . $key} = esc_html($row[$key]);
+                if ($key === 'id') {
+                    ${'column_' . $key . '_attr'} = esc_attr($row[$key]);
+                }
+                if (in_array($key, $dateColumns, true)) {
+                    $date = DateTime::createFromFormat('Y-m-d', $row[$key]);
+                    if ($date) {
+                        ${'column_' . $key} = esc_html($date->format('d.m.Y'));
+                    }
+                }
+            }
+
+            $rowClasses = '';
+            $rowTitle = '';
+
+            $markOver = false;
+            $beginn = strtotime($row['beginn']);
+            if ($beginn && $beginn < strtotime('-2 months')) {
+                $rowClasses = 'highlight-red';
+                $rowTitle = 'Schnupperkurs ist vorbei';
+                $markOver = true;
+            }
+
+            $html .= '<tr class="table-row-link ' . esc_attr($rowClasses) . '" title="' . esc_attr($rowTitle) . '"';
+            $html .= ' onclick="handleRowClick(event, ' . esc_attr($row['id']) . ')">';
+
+            $html .= <<<HTML
+                <th scope="row" class="check-column" style="cursor: initial;">
+                <input type="checkbox" class="membership-checkbox" value="{$column_id_attr}">
+                </th>
+                <td>{$column_id}</td>
+                <td>{$column_vorname}</td>
+                <td>{$column_nachname}</td>
+                <td>{$column_email}</td>
+                <td>{$column_telefon}</td>
+                <td>{$column_geburtsdatum}</td>
+                <td>
+                HTML;
+
+            $html .= $column_beginn;
+            $html .= $markOver ? '&nbsp;<span class="dashicons dashicons-warning" style="color: red;" title="Schnupperkurs ist vorbei."></span>' : '';
+
+            $wie_erfahren_display = WIE_ERFAHREN[$column_wie_erfahren] ?? $column_wie_erfahren;
+
+            $html .= <<<HTML
+                </td>
+                <td>{$column_ende}</td>
+                <td>{$wie_erfahren_display}</td>
+                <td class="notizen-col">{$column_notizen}</td>
+                <td>{$column_submission_date}</td>
+                </tr>
+                HTML;
+        }
+    }
+
+    wp_send_json_success($html);
+}
+
+add_action('wp_ajax_avf_fetch_schnupperkurse', 'Fetch_Schnupperkurs_data');

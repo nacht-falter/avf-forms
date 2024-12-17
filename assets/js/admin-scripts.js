@@ -1,17 +1,13 @@
 jQuery(document).ready(function ($) {
   const selectAll = $("#select-all");
-  const deleteButton = $("#delete-membership");
-  const deleteButtonSingle = $("#delete-membership-single");
+  const deleteButton = $("#delete-bulk");
+  const deleteButtonSingle = $("#delete-single");
   const exportCsvButton = $("#export-csv");
   const goBackButton = $("#go-back");
   const cancelButton = $("#cancel");
   const mitgliedschaftArt = $("#mitgliedschaft_art");
   const vornameEltern = $("#vorname_eltern");
-  const labelVornameEltern = $('label[for="' + vornameEltern.attr("id") + '"]');
   const nachnameEltern = $("#nachname_eltern");
-  const labelNachnameEltern = $(
-    'label[for="' + nachnameEltern.attr("id") + '"]',
-  );
   const geschwisterkind = $("#geschwisterkind");
   const starterpaket = $("#starterpaket");
   const spende = $("#spende");
@@ -23,6 +19,9 @@ jQuery(document).ready(function ($) {
   const labelSpendeEinmalig = $(
     'label[for="' + spendeEinmalig.attr("id") + '"]',
   );
+  const wieErfahren = $("#wie_erfahren");
+  const wieErfahrenSonstiges = $("#wie_erfahren_sonstiges");
+  const wieErfahrenSonstigesLabel = $('label[for="wie_erfahren_sonstiges"]');
 
   function updateButtons() {
     const selectedCheckboxes = $(".membership-checkbox").filter(":checked");
@@ -31,10 +30,7 @@ jQuery(document).ready(function ($) {
   }
 
   const chieldFields = [
-    vornameEltern,
-    labelVornameEltern,
-    nachnameEltern,
-    labelNachnameEltern,
+    vornameEltern.parent().parent(),
     geschwisterkind.parent(),
   ];
 
@@ -113,8 +109,19 @@ jQuery(document).ready(function ($) {
     $("#search").val(search);
   }
 
-  function fetchMembershipData(column, order, filters = [], search = "") {
-    $("#membership-table-body").html(
+  function fetchData(
+    column,
+    order,
+    filters = [],
+    search = "",
+    dataType = "memberships",
+  ) {
+    const tableBodyId =
+      dataType === "memberships"
+        ? "#membership-table-body"
+        : "#schnupperkurs-table-body";
+
+    $(tableBodyId).html(
       '<td class="loading-spinner" style="visibility: visible"></td>',
     );
 
@@ -122,7 +129,10 @@ jQuery(document).ready(function ($) {
       url: avf_ajax_admin.ajaxurl,
       method: "POST",
       data: {
-        action: "avf_fetch_memberships",
+        action:
+          dataType === "memberships"
+            ? "avf_fetch_memberships"
+            : "avf_fetch_schnupperkurse",
         column,
         order,
         filters,
@@ -130,7 +140,8 @@ jQuery(document).ready(function ($) {
         _ajax_nonce: avf_ajax_admin.nonce,
       },
       success: function (response) {
-        $("#membership-table-body").html(response.data);
+        $(tableBodyId).html(response.data);
+
         $(".table-header-link")
           .removeClass("asc desc")
           .addClass("inactive")
@@ -139,6 +150,7 @@ jQuery(document).ready(function ($) {
               $(this).addClass(order).removeClass("inactive");
             }
           });
+
         $(".membership-checkbox").on("change", function () {
           updateButtons();
         });
@@ -150,12 +162,20 @@ jQuery(document).ready(function ($) {
     setCheckboxStatesFromUrl();
     setSearchFromUrl();
 
+    const isSchnupperkursPage = $("#schnupperkurs-form").length > 0;
+
+    let dataType = "memberships";
+    if (isSchnupperkursPage) {
+      dataType = "schnupperkurse";
+    }
+
     const urlParams = getCurrentUrlParams();
-    fetchMembershipData(
+    fetchData(
       urlParams.column,
       urlParams.order,
       urlParams.filters ? urlParams.filters.split(",") : getSelectedFilters(),
       urlParams.search || "",
+      dataType,
     );
 
     updateButtons();
@@ -173,7 +193,7 @@ jQuery(document).ready(function ($) {
             : "asc";
 
         const filters = getSelectedFilters();
-        fetchMembershipData(column, order, filters, currentParams.search || "");
+        fetchData(column, order, filters, currentParams.search || "", dataType);
         updateUrlParams({ column, order, filters });
       });
     });
@@ -182,11 +202,12 @@ jQuery(document).ready(function ($) {
       checkbox.addEventListener("change", function () {
         const filters = getSelectedFilters();
         const urlParams = getCurrentUrlParams();
-        fetchMembershipData(
+        fetchData(
           urlParams.column,
           urlParams.order,
           filters,
           urlParams.search || "",
+          dataType,
         );
         updateUrlParams({ ...urlParams, filters });
       });
@@ -206,11 +227,12 @@ jQuery(document).ready(function ($) {
       debounce(function () {
         const filters = getSelectedFilters();
         const urlParams = getCurrentUrlParams();
-        fetchMembershipData(
+        fetchData(
           urlParams.column,
           urlParams.order,
           filters,
           this.value,
+          dataType,
         );
         updateUrlParams({ ...urlParams, search: this.value });
       }, 300),
@@ -227,10 +249,32 @@ jQuery(document).ready(function ($) {
       let formData = $(this).serialize();
 
       $.post(avf_ajax_admin.ajaxurl, formData, function (response) {
-        console.log(response);
         let data = JSON.parse(response);
         if (data.status === "success") {
-          window.history.back();
+          if (data.redirect_url) {
+            window.location.href = data.redirect_url;
+          } else {
+            window.history.back();
+          }
+        } else {
+          alert("Error: " + data.message);
+        }
+      });
+    });
+
+    $("#avf-schnupperkurs-admin-form").on("submit", function (e) {
+      e.preventDefault();
+
+      let formData = $(this).serialize();
+
+      $.post(avf_ajax_admin.ajaxurl, formData, function (response) {
+        let data = JSON.parse(response);
+        if (data.status === "success") {
+          if (data.redirect_url) {
+            window.location.href = data.redirect_url;
+          } else {
+            window.history.back();
+          }
         } else {
           alert("Error: " + data.message);
         }
@@ -252,14 +296,11 @@ jQuery(document).ready(function ($) {
         return;
       }
 
-      if (
-        confirm(
-          "Möchtest Du die ausgewählten Mitgliedschaften wirklich löschen?",
-        )
-      ) {
+      if (confirm("Möchtest Du die ausgewählten Einträge wirklich löschen?")) {
+        let dataType = isSchnupperkursPage ? "schnupperkurs" : "membership";
         let formData = {
           action_type: "bulk_delete",
-          action: "avf_membership_action",
+          action: `avf_${dataType}_action`,
           ids: selectedIds,
           _ajax_nonce: avf_ajax_admin.nonce,
         };
@@ -277,10 +318,11 @@ jQuery(document).ready(function ($) {
 
     deleteButtonSingle.on("click", function (e) {
       e.preventDefault();
-      if (confirm("Möchtest Du die Mitgliedschaft wirklich löschen?")) {
+      if (confirm("Möchtest Du den Eintrag wirklich löschen?")) {
+        let dataType = $(this).data("type");
         let formData = {
           action_type: "delete",
-          action: "avf_membership_action",
+          action: `avf_${dataType}_action`,
           id: $(this).data("id"),
           _ajax_nonce: avf_ajax_admin.nonce,
         };
