@@ -579,17 +579,17 @@ function Fetch_Schnupperkurs_data()
                 <td>{$column_email}</td>
                 <td>{$column_telefon}</td>
                 <td>{$column_geburtsdatum}</td>
+                <td>{$column_beginn}</td>
                 <td>
                 HTML;
 
-            $html .= $column_beginn;
-            $html .= $markOver ? '&nbsp;<span class="dashicons dashicons-warning" style="color: red;" title="Schnupperkurs ist vorbei."></span>' : '';
+            $html .= $column_ende;
+            $html .= $markOver ? '&nbsp;<span class="dashicons dashicons-warning" style="color: red;" title="Schnupperkurs ist vorbei"></span>' : '';
 
             $wie_erfahren_display = WIE_ERFAHREN[$column_wie_erfahren] ?? $column_wie_erfahren;
 
             $html .= <<<HTML
                 </td>
-                <td>{$column_ende}</td>
                 <td>{$wie_erfahren_display}</td>
                 <td class="notizen-col">{$column_notizen}</td>
                 <td>{$column_submission_date}</td>
