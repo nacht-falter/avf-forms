@@ -58,7 +58,7 @@ function Avf_Handle_Ajax_membership_requests()
             $response = array('status' => 'success', 'message' => 'Mitgliedschaft erfolgreich aktualisiert');
         } else {
             $wpdb->insert($table_name, $data);
-            $response = array('status' => 'success', 'message' => 'Mitgliedschaft erfolgreich angelegt');
+            $response = array('status' => 'success', 'message' => 'Mitgliedschaft erfolgreich angelegt', 'redirect_url' => admin_url('admin.php?page=avf-membership-admin'));
         }
 
     } elseif ($action_type === 'delete') {
@@ -402,6 +402,7 @@ function Fetch_Membership_data()
             $checkAge = false;
             $markInactive = false;
             $markWiedervorlage = false;
+            $markCustomBeitrag = false;
 
             if (($age < 14 && $row['mitgliedschaft_art'] != 'kind')) {
                 $checkAge = true;
