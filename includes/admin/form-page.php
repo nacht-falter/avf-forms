@@ -135,17 +135,17 @@ function Avf_Display_Membership_form()
                 </div>
 
                 <div class="form-group">
-                    <input id="satzung_datenschutz" type="checkbox" name="satzung_datenschutz" value="1" <?php checked($record->satzung_datenschutz ?? 0, 1); ?> required>
+                    <input id="satzung_datenschutz" type="checkbox" name="satzung_datenschutz" value="1" <?php checked($record->satzung_datenschutz ?? 0, 1); ?>>
                     <label for="satzung_datenschutz">Satzung und Datenschutz akzeptiert</label>
                 </div>
 
                 <div class="form-group">
-                    <input id="hinweise" type="checkbox" name="hinweise" value="1" <?php checked($record->hinweise ?? 0, 1); ?> required>
+                    <input id="hinweise" type="checkbox" name="hinweise" value="1" <?php checked($record->hinweise ?? 0, 1); ?>>
                     <label for="hinweise">Hinweise gelesen</label>
                 </div>
 
                 <div class="form-group">
-                    <input id="sepa" type="checkbox" name="sepa" value="1" <?php checked($record->sepa ?? 0, 1); ?> required>
+                    <input id="sepa" type="checkbox" name="sepa" value="1" <?php checked($record->sepa ?? 0, 1); ?>>
                     <label for="sepa">SEPA-Lastschrift zugestimmt</label>
                 </div>
 
