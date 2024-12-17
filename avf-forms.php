@@ -31,15 +31,21 @@ define('AVF_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('AVF_PLUGIN_URL', plugin_dir_url(__FILE__));
 define(
     'MITGLIEDSCHAFTSARTEN', [
-    'aktiv' => 'Aktives Mitglied',
-    'aktiv_ermaessigt' => 'Aktives Mitglied (ermäßigt)',
-    'familie' => 'Familienmitglied',
-    'foerder' => 'Fördermitglied',
-    'sonder' => 'Sondermitglied',
-    'passiv' => 'Passives Mitglied',
-    'kind' => 'Kind',
-    'jugend' => 'Jugend',
-    'geschwisterkind_discount' => 'Geschwisterkind-Rabatt',
+        'aktiv' => 'Aktives Mitglied',
+        'aktiv_ermaessigt' => 'Aktives Mitglied (ermäßigt)',
+        'familie' => 'Familienmitglied',
+        'foerder' => 'Fördermitglied',
+        'sonder' => 'Sondermitglied',
+        'passiv' => 'Passives Mitglied',
+        'kind' => 'Kind',
+        'jugend' => 'Jugend',
+        'geschwisterkind_discount' => 'Geschwisterkind-Rabatt',
+    ]
+);
+define(
+    'SCHNUPPERKURSARTEN', [
+        'kind' => 'Kind/Jugend',
+        'erwachsene' => 'Erwachsene',
     ]
 );
 define(
@@ -56,27 +62,58 @@ define(
     ]
 );
 define(
-    'COLUMN_HEADERS', [
-    'id'                 => 'ID',
-    'mitgliedschaft_art' => 'Art der Mitgliedschaft',
-    'vorname'            => 'Vorname',
-    'nachname'           => 'Nachname',
-    'email'              => 'E-Mail',
-    'geburtsdatum'       => 'Geburtsdatum',
-    'beitrittsdatum'     => 'Beitrittsdatum',
-    'austrittsdatum'     => 'Austrittsdatum',
-    'starterpaket'       => 'Starterpaket',
-    'spende'             => 'Spende',
-    'spende_monatlich'   => 'Spende mtl.',
-    'spende_einmalig'    => 'Spende einm.',
-    'sepa'               => 'SEPA-Mandat',
-    'kontoinhaber'       => 'Kontoinhaber',
-    'iban'               => 'IBAN',
-    'bic'                => 'BIC',
-    'bank'               => 'Bank',
-    'beitrag'            => 'Beitrag',
-    'notizen'            => 'Notizen',
-    'submission_date'    => 'Eingangsdatum'
+    'SCHNUPPERKURSPREISE', [
+        'kind' => 20,
+        'erwachsene' => 30,
+    ]
+);
+define(
+    'COLUMN_HEADERS_MEMBERSHIPS', [
+        'id'                 => 'ID',
+        'mitgliedschaft_art' => 'Art der Mitgliedschaft',
+        'vorname'            => 'Vorname',
+        'nachname'           => 'Nachname',
+        'email'              => 'E-Mail',
+        'geburtsdatum'       => 'Geburtsdatum',
+        'beitrittsdatum'     => 'Beitrittsdatum',
+        'austrittsdatum'     => 'Austrittsdatum',
+        'starterpaket'       => 'Starterpaket',
+        'spende'             => 'Spende',
+        'spende_monatlich'   => 'Spende mtl.',
+        'spende_einmalig'    => 'Spende einm.',
+        'sepa'               => 'SEPA-Mandat',
+        'kontoinhaber'       => 'Kontoinhaber',
+        'iban'               => 'IBAN',
+        'bic'                => 'BIC',
+        'bank'               => 'Bank',
+        'beitrag'            => 'Beitrag',
+        'notizen'            => 'Notizen',
+        'submission_date'    => 'Eingangsdatum'
+    ]
+);
+define(
+    'COLUMN_HEADERS_SCHNUPPERKURSE', [
+        'id'              => 'ID',
+        'vorname'         => 'Vorname',
+        'nachname'        => 'Nachname',
+        'email'           => 'E-Mail',
+        'telefon'         => 'Telefon',
+        'geburtsdatum'    => 'Geburtsdatum',
+        'beginn'          => 'Beginn',
+        'ende'            => 'Ende',
+        'wie_erfahren'    => 'Wie vom AVF erfahren?',
+        'notizen'         => 'Notizen',
+        'submission_date' => 'Eingangsdatum'
+    ]
+);
+define(
+    'WIE_ERFAHREN', [
+        'webseite' => 'Webseite',
+        'social_media' => 'Soziale Medien',
+        'Plakat' => 'Plakat',
+        'flyer' => 'Flyer',
+        'empfehlung' => 'Empfehlung',
+        'sonstiges' => 'Sonstiges',
     ]
 );
 
@@ -165,11 +202,29 @@ class Avf_Forms_Plugin
 
         add_submenu_page(
             'avf-membership-admin',           // Parent slug (must match the menu slug from add_menu_page)
-            'Mitgliedschaft bearbeiten',      // Page title
+            'Mitgliedschaft hinzufügen/bearbeiten',      // Page title
             'Neue Mitgliedschaft hinzufügen',            // Menu title
             'manage_memberships',             // Capability
             'avf-membership-form-page',       // Slug for the new membership page
             'Avf_Display_Membership_form'     // Function to display the new membership form
+        );
+
+        add_submenu_page(
+            'avf-membership-admin',           // Parent slug (must match the menu slug from add_menu_page)
+            'Schnupperkurs-Verwaltung',      // Page title
+            'Schnupperkurs-Verwaltung',      // Menu title
+            'manage_memberships',             // Capability
+            'avf-schnupperkurs-admin',       // Slug for the new membership page
+            'Avf_Display_schnupperkurse'     // Function to display the new membership form
+        );
+
+        add_submenu_page(
+            'avf-membership-admin',
+            'Schnupperkurs hinzufügen/bearbeiten',
+            'Neuen Schnupperkurs hinzuügen',
+            'manage_memberships',
+            'avf-schnupperkurs-form-page',
+            'Avf_Display_Schnupperkurs_form'
         );
     }
 
