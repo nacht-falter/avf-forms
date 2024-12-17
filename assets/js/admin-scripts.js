@@ -382,6 +382,18 @@ jQuery(document).ready(function ($) {
     });
 
     mitgliedschaftArt.on("change", updateFields);
+
+    wieErfahren.on("change", function () {
+      if (this.value === "sonstiges") {
+        wieErfahrenSonstiges.show();
+        wieErfahrenSonstigesLabel.show();
+        wieErfahrenSonstiges.prop("required", true);
+      } else {
+        wieErfahrenSonstiges.hide();
+        wieErfahrenSonstigesLabel.hide();
+        wieErfahrenSonstiges.prop("required", false);
+      }
+    });
   }
 
   init();
