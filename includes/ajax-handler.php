@@ -126,6 +126,7 @@ function Avf_Handle_Ajax_schnupperkurs_requests()
         $ende_date = $beginn_date->modify('+2 months');
 
         $data = [
+            'schnupperkurs_art' => sanitize_text_field($_POST['schnupperkurs_art']),
             'vorname' => sanitize_text_field($_POST['vorname']),
             'nachname' => sanitize_text_field($_POST['nachname']),
             'email' => sanitize_email($_POST['email']),
@@ -565,11 +566,14 @@ function Fetch_Schnupperkurs_data()
             $html .= '<tr class="table-row-link ' . esc_attr($rowClasses) . '" title="' . esc_attr($rowTitle) . '"';
             $html .= ' onclick="handleRowClick(event, ' . esc_attr($row['id']) . ')">';
 
+            $schnupperkurs_art_display = SCHNUPPERKURSARTEN[$column_schnupperkurs_art] ?? $column_schnupperkurs_art;
+
             $html .= <<<HTML
                 <th scope="row" class="check-column" style="cursor: initial;">
                 <input type="checkbox" class="membership-checkbox" value="{$column_id_attr}">
                 </th>
                 <td>{$column_id}</td>
+                <td>{$schnupperkurs_art_display}</td>
                 <td>{$column_vorname}</td>
                 <td>{$column_nachname}</td>
                 <td>{$column_email}</td>

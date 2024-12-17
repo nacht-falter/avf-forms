@@ -54,6 +54,7 @@ class Avf_Forms_Activator
         $schnupperkurs_sql = "
             CREATE TABLE IF NOT EXISTS $schnupperkurs_table (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
+            schnupperkurs_art varchar(255) NOT NULL,
             vorname varchar(255) NOT NULL,
             nachname varchar(255) NOT NULL,
             email varchar(255) NOT NULL,

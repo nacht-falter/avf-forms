@@ -94,6 +94,7 @@ define(
 define(
     'COLUMN_HEADERS_SCHNUPPERKURSE', [
         'id'              => 'ID',
+        'schnupperkurs_art' => 'Art des Schnupperkurses',
         'vorname'         => 'Vorname',
         'nachname'        => 'Nachname',
         'email'           => 'E-Mail',

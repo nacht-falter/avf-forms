@@ -20,8 +20,10 @@ jQuery(document).ready(function ($) {
     'label[for="' + spendeEinmalig.attr("id") + '"]',
   );
   const wieErfahren = $("#wie_erfahren");
+  const wieErfahrenLabel = $('label[for="wie_erfahren"]');
   const wieErfahrenSonstiges = $("#wie_erfahren_sonstiges");
   const wieErfahrenSonstigesLabel = $('label[for="wie_erfahren_sonstiges"]');
+  const schnupperkursArt = $("#schnupperkurs_art");
 
   function updateButtons() {
     const selectedCheckboxes = $(".membership-checkbox").filter(":checked");
@@ -29,7 +31,7 @@ jQuery(document).ready(function ($) {
     exportCsvButton.prop("disabled", selectedCheckboxes.length === 0);
   }
 
-  const chieldFields = [
+  const childFields = [
     vornameEltern.parent().parent(),
     geschwisterkind.parent(),
   ];
@@ -43,17 +45,13 @@ jQuery(document).ready(function ($) {
     labelSpendeEinmalig,
   ];
 
+  const wieErfahrenFields = [wieErfahren, wieErfahrenLabel];
+
   function showHideFields(fields, show) {
-    fields.forEach((field) => {
-      if (show) {
-        field.show();
-      } else {
-        field.hide();
-      }
-    });
+    fields.forEach((field) => field.toggle(show));
   }
 
-  function updateFields() {
+  function updateMembershipFields() {
     const isChildOrYouth =
       mitgliedschaftArt.val() === "kind" ||
       mitgliedschaftArt.val() === "jugend";
@@ -61,9 +59,25 @@ jQuery(document).ready(function ($) {
     vornameEltern.prop("required", isChildOrYouth);
     nachnameEltern.prop("required", isChildOrYouth);
 
-    showHideFields(chieldFields, isChildOrYouth);
+    showHideFields(childFields, isChildOrYouth);
     showHideFields(adultFields, !isChildOrYouth);
   }
+
+  function updateSchnupperkursFields() {
+    const isChild = schnupperkursArt.val() === "kind";
+
+    showHideFields(wieErfahrenFields, !isChild);
+    toggleWieErfahrenSonstiges();
+  }
+
+  function toggleWieErfahrenSonstiges() {
+    const isSonstiges = wieErfahren.val() === "sonstiges";
+    const isChild = schnupperkursArt.val() === "kind";
+    wieErfahrenSonstiges
+      .toggle(isSonstiges && !isChild)
+    wieErfahrenSonstigesLabel.toggle(isSonstiges && !isChild);
+  }
+
   function getCurrentUrlParams() {
     const urlParams = new URLSearchParams(window.location.search);
     return Object.fromEntries(urlParams.entries());
@@ -179,7 +193,8 @@ jQuery(document).ready(function ($) {
     );
 
     updateButtons();
-    updateFields();
+    updateMembershipFields();
+    updateSchnupperkursFields();
 
     // Event listeners for sorting, filtering, searching and bulk actions
     document.querySelectorAll(".table-header-link").forEach((a) => {
@@ -381,19 +396,11 @@ jQuery(document).ready(function ($) {
       window.history.back();
     });
 
-    mitgliedschaftArt.on("change", updateFields);
+    mitgliedschaftArt.on("change", updateMembershipFields);
 
-    wieErfahren.on("change", function () {
-      if (this.value === "sonstiges") {
-        wieErfahrenSonstiges.show();
-        wieErfahrenSonstigesLabel.show();
-        wieErfahrenSonstiges.prop("required", true);
-      } else {
-        wieErfahrenSonstiges.hide();
-        wieErfahrenSonstigesLabel.hide();
-        wieErfahrenSonstiges.prop("required", false);
-      }
-    });
+    schnupperkursArt.on("change", updateSchnupperkursFields);
+
+    wieErfahren.on("change", toggleWieErfahrenSonstiges);
   }
 
   init();

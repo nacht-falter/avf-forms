@@ -244,8 +244,11 @@ function Avf_Display_Schnupperkurs_form()
                 <label for="schnupperkurs_art">Art des Schnupperkurses</label>
                 <select id="schnupperkurs_art" name="schnupperkurs_art" required>
                     <?php
+                    $current_value = $record->schnupperkurs_art ?? '';
+                    echo '<option value="" ' . selected($current_value, '', false) . '>Bitte auswählen</option>';
+
                     foreach (SCHNUPPERKURSARTEN as $value => $display) {
-                        $selected = selected($record->schnupperkurs_art ?? '', $value, false);
+                        $selected = selected($current_value, $value, false);
                         echo "<option value=\"{$value}\" {$selected}>{$display}</option>";
                     }
                     ?>
@@ -288,7 +291,7 @@ function Avf_Display_Schnupperkurs_form()
                 <div class="form-group">
                     <div>
                         <label for="wie_erfahren">Wie vom Aikido Verein Freiburg erfahren?</label>
-                        <select id="wie_erfahren" name="wie_erfahren" required>
+                        <select id="wie_erfahren" name="wie_erfahren">
                             <?php
                             $current_value = $record->wie_erfahren ?? '';
                             $is_custom_value = !empty($current_value) && !array_key_exists($current_value, WIE_ERFAHREN);
@@ -311,7 +314,6 @@ function Avf_Display_Schnupperkurs_form()
                                type="text"
                                name="wie_erfahren_sonstiges"
                                value="<?php echo esc_attr($is_custom_value ? $current_value : ''); ?>"
-                               <?php echo $is_custom_value ? 'required' : 'style="display: none;"'; ?>
                                placeholder="Sonstiges">
                     </div>
                 </div>
