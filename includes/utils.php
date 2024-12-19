@@ -62,7 +62,7 @@ class Avf_Forms_Utils
 
         $query = $wpdb->prepare(
             "SELECT * FROM {$table_name}
-        WHERE DATE(ende) <= CURDATE()"
+            WHERE DATE(ende) = CURDATE()"
         );
 
         $results = $wpdb->get_results($query);
