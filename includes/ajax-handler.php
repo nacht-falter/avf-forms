@@ -389,7 +389,9 @@ function Fetch_Membership_data()
                     ${'column_' . $key . '_attr'} = esc_attr($row[$key]);
                 }
                 if (in_array($key, $dateColumns, true)) {
-                    $date = DateTime::createFromFormat('Y-m-d', $row[$key]);
+                    $dateString = $row[$key] ?? '';
+                    $date = $dateString ? DateTime::createFromFormat('Y-m-d', $dateString) : null;
+
                     if ($date) {
                         ${'column_' . $key} = esc_html($date->format('d.m.Y'));
                     }

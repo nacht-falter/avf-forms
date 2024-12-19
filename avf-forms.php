@@ -222,7 +222,7 @@ class Avf_Forms_Plugin
         add_submenu_page(
             'avf-membership-admin',
             'Schnupperkurs hinzufügen/bearbeiten',
-            'Neuen Schnupperkurs hinzuügen',
+            'Neuen Schnupperkurs hinzufügen',
             'manage_memberships',
             'avf-schnupperkurs-form-page',
             'Avf_Display_Schnupperkurs_form'
