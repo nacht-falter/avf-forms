@@ -134,6 +134,14 @@ foreach ($includes as $file) {
 }
 
 register_activation_hook(__FILE__, 'Activate_Avf_forms');
+
+function Avf_Clear_Cron_job()
+{
+    wp_clear_scheduled_hook('avf_schnupperkurs_notification');
+}
+
+register_deactivation_hook(__FILE__, 'Avf_Clear_Cron_job');
+
 function Activate_Avf_forms()
 {
     Avf_Forms_Activator::activate();
@@ -150,6 +158,7 @@ class Avf_Forms_Plugin
         add_action('wp_enqueue_scripts', [__CLASS__, 'enqueue_public_assets']);
         add_action('admin_enqueue_scripts', [__CLASS__, 'enqueue_admin_assets']);
         add_action('admin_menu', [__CLASS__, 'add_admin_menu']);
+        add_action('avf_schnupperkurs_notification', ['Avf_Forms_Utils', 'avf_schnupperkurs_notification']);
     }
 
     public static function enqueue_public_assets()

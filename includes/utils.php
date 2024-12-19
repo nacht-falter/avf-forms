@@ -54,4 +54,96 @@ class Avf_Forms_Utils
         }
         return '';
     }
+
+    public static function avf_schnupperkurs_notification()
+    {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'avf_schnupperkurse';
+
+        $query = $wpdb->prepare(
+            "SELECT * FROM {$table_name}
+        WHERE DATE(ende) <= CURDATE()"
+        );
+
+        $results = $wpdb->get_results($query);
+
+        if (empty($results)) {
+            error_log('Keine beendeten Schnupperkurse gefunden');
+            return;
+        }
+
+        foreach ($results as $result) {
+            $is_member = $wpdb->get_var(
+                $wpdb->prepare(
+                    "SELECT COUNT(*) FROM {$wpdb->prefix}avf_memberships
+                    WHERE vorname = %s AND nachname = %s AND email = %s",
+                    $result->vorname, $result->nachname, $result->email
+                )
+            );
+
+            if ($is_member > 0) {
+                error_log("Schnupperkurs von $result->vorname $result->nachname beendet, aber Mitgliedschaft bereits vorhanden. Keine Benachrichtigung versendet.");
+                continue;
+            }
+
+            // Send notification
+            $vorname = sanitize_text_field($result->vorname);
+            $nachname = sanitize_text_field($result->nachname);
+            $email = sanitize_email($result->email);
+            $telefon = sanitize_text_field($result->telefon);
+
+            $to = get_option('admin_email');
+            $subject = sprintf(
+                '[%s] Schnupperkurs von %s %s endet heute',
+                get_bloginfo('name'),
+                $vorname,
+                $nachname
+            );
+
+            $message = sprintf(
+                "Hallo,\n\n" .
+                "Der Schnupperkurs von %s %s endet heute.\n\n" .
+                "E-Mail: %s\n" .
+                "Telefon: %s\n\n" .
+                "Bitte erinnere %s daran, einen Mitgliedsantrag zu stellen.\n\n" .
+                "Diese E-Mail wurde automatisch generiert.",
+                $vorname,
+                $nachname,
+                $email,
+                $telefon,
+                $vorname
+            );
+
+            $headers = array(
+            'Content-Type: text/plain; charset=UTF-8',
+            'From: ' . get_bloginfo('name') . ' <' . get_option('admin_email') . '>'
+            );
+
+            try {
+                $sent = wp_mail($to, $subject, $message, $headers);
+
+                if ($sent) {
+                    error_log(
+                        sprintf(
+                            'Schnupperkurs-Benachrichtigung wurde am %s an %s %s gesendet',
+                            current_time('mysql'),
+                            $vorname,
+                            $nachname
+                        )
+                    );
+                } else {
+                    error_log(
+                        sprintf(
+                            'Fehler beim Senden der Schnupperkurs-Benachrichtigung am %s an %s %s',
+                            current_time('mysql'),
+                            $vorname,
+                            $nachname
+                        )
+                    );
+                }
+            } catch (Exception $e) {
+                error_log("Fehler beim Senden der Schnupperkurs-Benachrichtigung: " . $e->getMessage());
+            }
+        }
+    }
 }
