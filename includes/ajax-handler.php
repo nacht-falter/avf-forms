@@ -381,20 +381,20 @@ function generate_membership_html($results)
 
         if (($age < 14 && $row['mitgliedschaft_art'] != 'kind')) {
             $checkAge = true;
-            $classes[] = 'highlight-red';
+            $classes[] = 'highlight-yellow';
             $titleParts[] = 'Mitgliedschaftsart prüfen (Alter)';
         } elseif ($age >= 14 && $age < 18 && $row['mitgliedschaft_art'] != 'jugend') {
             $checkAge = true;
-            $classes[] = 'highlight-red';
+            $classes[] = 'highlight-yellow';
             $titleParts[] = 'Mitgliedschaftsart prüfen (Alter)';
         } elseif ($age >= 18 && ($row['mitgliedschaft_art'] == 'kind' || $row['mitgliedschaft_art'] == 'jugend')) {
             $checkAge = true;
-            $classes[] = 'highlight-red';
+            $classes[] = 'highlight-yellow';
             $titleParts[] = 'Mitgliedschaftsart prüfen (Alter)';
         }
 
         if (!empty($row['austrittsdatum'])) {
-            $classes[] = 'highlight-yellow';
+            $classes[] = 'highlight-red';
             $titleParts[] = 'Ausgetreten';
             $markInactive = true;
         }
@@ -424,9 +424,9 @@ function generate_membership_html($results)
             HTML;
 
         $html .= esc_html(MITGLIEDSCHAFTSARTEN[$row['mitgliedschaft_art']] ?? 'Unbekannt');
-        $html .= $checkAge ? '&nbsp;<span class="dashicons dashicons-warning" style="color: red;" title="Alter stimmt nicht mit Mitgliedschaftsart überein."></span>' : '';
-        $html .= $markInactive ? '&nbsp;<span class="dashicons dashicons-warning" style="color: orange;" title="Austritt zum ' . esc_attr(date('d.m.Y', strtotime($row['austrittsdatum']))) . '"></span>' : '';
-        $html .= $markWiedervorlage ? '&nbsp;<span class="dashicons dashicons-warning" style="color: #3498db;" title="Wiedervorlage: ' . $column_wiedervorlage_grund . '"></span>' : '';
+        $html .= $checkAge ? '&nbsp;<span class="dashicons dashicons-warning" style="color: orange;" title="Alter stimmt nicht mit Mitgliedschaftsart überein."></span>' : '';
+        $html .= $markInactive ? '&nbsp;<span class="dashicons dashicons-dismiss" style="color: red;" title="Austritt zum ' . esc_attr(date('d.m.Y', strtotime($row['austrittsdatum']))) . '"></span>' : '';
+        $html .= $markWiedervorlage ? '&nbsp;<span class="dashicons dashicons-info" style="color: #3498db;" title="Wiedervorlage: ' . $column_wiedervorlage_grund . '"></span>' : '';
 
         $html .= <<<HTML
             </td>
@@ -438,11 +438,11 @@ function generate_membership_html($results)
             <td>{$column_austrittsdatum}</td>
             HTML;
 
-        $html .= $column_starterpaket ? '<td>&#10003;</td>' : '<td></td>';
-        $html .= $column_spende ? '<td>&#10003;</td>' : '<td></td>';
+        $html .= $column_starterpaket ? '<td><span class="dashicons dashicons-yes"></span></td>' : '<td></td>';
+        $html .= $column_spende ? '<td><span class="dashicons dashicons-yes"></span></td>' : '<td></td>';
         $html .= $column_spende_monatlich ? '<td>' . $column_spende_monatlich . ' €</td>' : '<td></td>';
         $html .= $column_spende_einmalig ? '<td>' . $column_spende_einmalig . ' €</td>' : '<td></td>';
-        $html .= $column_sepa ? '<td>&#10003</td>' : '<td></td>';
+        $html .= $column_sepa ? '<td><span class="dashicons dashicons-yes"></span></td>' : '<td></td>';
 
         $html .= <<<HTML
             <td>{$column_kontoinhaber}</td>

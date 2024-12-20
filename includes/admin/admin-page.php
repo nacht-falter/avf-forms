@@ -63,9 +63,9 @@ function Avf_Display_memberships()
             </div>
             <div id="legend">
                 <ul>
-                    <li><span class="dashicons dashicons-warning" style="color: red;"></span> Alter stimmt nicht mit Mitgliedschaftsart überein</li>
-                    <li><span class="dashicons dashicons-warning" style="color: #3498db;"></span> Wiedervorlage</li>
-                    <li><span class="dashicons dashicons-warning" style="color: orange;"></span> Ausgetreten</li>
+                    <li><span class="dashicons dashicons-info" style="color: #3498db;"></span> Wiedervorlage</li>
+                    <li><span class="dashicons dashicons-warning" style="color: orange;"></span> Alter stimmt nicht mit Mitgliedschaftsart überein</li>
+                    <li><span class="dashicons dashicons-dismiss" style="color: red;"></span> Ausgetreten</li>
                     <li><span class="dashicons dashicons-edit" style="color: #2271b1;"></span> Beitrag angepasst</li>
                 </ul>
             </div>
