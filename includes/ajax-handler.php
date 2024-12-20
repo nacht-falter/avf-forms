@@ -1,15 +1,66 @@
 <?php
-function Avf_Handle_Ajax_membership_requests()
+
+add_action('wp_ajax_avf_membership_action', 'Avf_Handle_Ajax_membership_requests');
+add_action('wp_ajax_avf_schnupperkurs_action', 'Avf_Handle_Ajax_schnupperkurs_requests');
+add_action('wp_ajax_avf_download_csv', 'Generate_Csv_download');
+add_action('wp_ajax_avf_fetch_memberships', 'Fetch_Membership_data');
+add_action('wp_ajax_avf_fetch_schnupperkurse', 'Fetch_Schnupperkurs_data');
+
+function validate_user_and_nonce()
 {
     if (!current_user_can('manage_memberships')) {
         wp_send_json_error('You do not have permission to perform this action.');
         wp_die();
     }
-
     if (!check_ajax_referer('avf_membership_action', 'nonce', false)) {
         wp_send_json_error('Invalid nonce');
         wp_die();
     }
+}
+
+function handle_insert_update($table_name, $data, $action_type, $id = null)
+{
+    global $wpdb;
+    if ($action_type === 'update' && $id) {
+        $wpdb->update($table_name, $data, ['id' => $id]);
+        return array('status' => 'success', 'message' => 'Data successfully updated');
+    } else {
+        $wpdb->insert($table_name, $data);
+        return array('status' => 'success', 'message' => 'Data successfully created');
+    }
+}
+
+function handle_delete($table_name, $id)
+{
+    global $wpdb;
+    $id = intval($id);
+
+    $deleted = $wpdb->delete($table_name, ['id' => $id]);
+
+    if ($deleted) {
+        return array('status' => 'success', 'message' => 'Record successfully deleted');
+    } else {
+        return array('status' => 'error', 'message' => 'Error deleting record');
+    }
+}
+
+function handle_bulk_delete($table_name, $ids)
+{
+    global $wpdb;
+    $placeholders = implode(',', array_fill(0, count($ids), '%d'));
+    $query = "DELETE FROM $table_name WHERE id IN ($placeholders)";
+    $deleted = $wpdb->query($wpdb->prepare($query, ...$ids));
+
+    if ($deleted) {
+        return array('status' => 'success', 'message' => "$deleted record(s) successfully deleted.");
+    } else {
+        return array('status' => 'error', 'message' => 'Error deleting records.');
+    }
+}
+
+function Avf_Handle_Ajax_membership_requests()
+{
+    validate_user_and_nonce();
 
     global $wpdb;
     $table_name = $wpdb->prefix . 'avf_memberships';
@@ -18,101 +69,47 @@ function Avf_Handle_Ajax_membership_requests()
     $response = array('status' => 'error', 'message' => 'Invalid action');
 
     if ($action_type === 'create' || $action_type === 'update') {
-        $data = [
-            'mitgliedschaft_art' => sanitize_text_field($_POST['mitgliedschaft_art']),
-            'vorname' => sanitize_text_field($_POST['vorname']),
-            'nachname' => sanitize_text_field($_POST['nachname']),
-            'vorname_eltern' => sanitize_text_field($_POST['vorname_eltern']),
-            'nachname_eltern' => sanitize_text_field($_POST['nachname_eltern']),
-            'geschwisterkind' => isset($_POST['geschwisterkind']) ? 1 : 0,
-            'email' => sanitize_email($_POST['email']),
-            'telefon' => sanitize_text_field($_POST['telefon']),
-            'geburtsdatum' => sanitize_text_field($_POST['geburtsdatum']),
-            'strasse' => sanitize_text_field($_POST['strasse']),
-            'hausnummer' => sanitize_text_field($_POST['hausnummer']),
-            'plz' => sanitize_text_field($_POST['plz']),
-            'ort' => sanitize_text_field($_POST['ort']),
-            'beitrittsdatum' => sanitize_text_field($_POST['beitrittsdatum']),
-            'austrittsdatum' => !empty($_POST['austrittsdatum']) ? sanitize_text_field($_POST['austrittsdatum']) : null,
+        $data_fields = [
+            'mitgliedschaft_art' => $_POST['mitgliedschaft_art'],
+            'vorname' => $_POST['vorname'],
+            'nachname' => $_POST['nachname'],
+            'email' => $_POST['email'],
+            'telefon' => $_POST['telefon'],
+            'geburtsdatum' => $_POST['geburtsdatum'],
+            'strasse' => $_POST['strasse'],
+            'plz' => $_POST['plz'],
+            'ort' => $_POST['ort'],
+            'beitrittsdatum' => $_POST['beitrittsdatum'],
+            'austrittsdatum' => $_POST['austrittsdatum'] ?? null,
             'starterpaket' => isset($_POST['starterpaket']) ? 1 : 0,
             'spende' => isset($_POST['spende']) ? 1 : 0,
-            'spende_monatlich' => isset($_POST['spende_monatlich']) ? floatval($_POST['spende_monatlich']) : null,
-            'spende_einmalig' => isset($_POST['spende_einmalig']) ? floatval($_POST['spende_einmalig']) : null,
-            'satzung_datenschutz' => isset($_POST['satzung_datenschutz']) ? 1 : 0,
-            'hinweise' => isset($_POST['hinweise']) ? 1 : 0,
-            'sepa' => isset($_POST['sepa']) ? 1 : 0,
-            'kontoinhaber' => sanitize_text_field($_POST['kontoinhaber']),
-            'iban' => sanitize_text_field($_POST['iban']),
-            'bic' => sanitize_text_field($_POST['bic']),
-            'bank' => sanitize_text_field($_POST['bank']),
-            'beitrag' => isset($_POST['beitrag']) ? floatval($_POST['beitrag']) : null,
-            'wiedervorlage' => !empty($_POST['wiedervorlage']) ? sanitize_text_field($_POST['wiedervorlage']) : null,
-            'wiedervorlage_grund' => !empty($_POST['wiedervorlage_grund']) ? sanitize_text_field($_POST['wiedervorlage_grund']) : null,
-            'notizen' => sanitize_textarea_field($_POST['notizen']),
-            'submission_date' => current_time('mysql'), // Capture the current timestamp
+            'kontoinhaber' => $_POST['kontoinhaber'],
+            'iban' => $_POST['iban'],
+            'bic' => $_POST['bic'],
+            'bank' => $_POST['bank'],
+            'beitrag' => $_POST['beitrag'] ?? null,
+            'wiedervorlage' => $_POST['wiedervorlage'] ?? null,
+            'notizen' => $_POST['notizen'],
+            'submission_date' => current_time('mysql'),
         ];
 
-        if ($action_type === 'update') {
-            $id = intval($_POST['id']);
-            $wpdb->update($table_name, $data, ['id' => $id]);
-            $response = array('status' => 'success', 'message' => 'Mitgliedschaft erfolgreich aktualisiert');
-        } else {
-            $wpdb->insert($table_name, $data);
-            $response = array('status' => 'success', 'message' => 'Mitgliedschaft erfolgreich angelegt', 'redirect_url' => admin_url('admin.php?page=avf-membership-admin'));
-        }
+        $data = array_map('sanitize_text_field', $data_fields);
+
+        $response = handle_insert_update($table_name, $data, $action_type, $_POST['id'] ?? null);
 
     } elseif ($action_type === 'delete') {
-        $id = intval($_POST['id']);
-        $wpdb->delete($table_name, ['id' => $id]);
-        $response = array('status' => 'success', 'message' => 'Mitgliedschaft erfolgreich entfernt');
-
+        $response = handle_delete($table_name, $_POST['id']);
     } elseif ($action_type === 'bulk_delete' && isset($_POST['ids']) && is_array($_POST['ids'])) {
-        $ids = array_map('intval', $_POST['ids']);
-
-        $placeholders = implode(',', array_fill(0, count($ids), '%d'));
-        $query = "DELETE FROM $table_name WHERE id IN ($placeholders)";
-
-        $deleted = $wpdb->query($wpdb->prepare($query, ...$ids));
-
-        if ($deleted) {
-            $response = array('status' => 'success', 'message' => "$deleted Mitgliedschaft(en) erfolgreich gelöscht.");
-        } else {
-            $response = array('status' => 'error', 'message' => 'Fehler beim Löschen der Einträge.');
-        }
-    } elseif ($action_type === 'export_csv' && isset($_POST['ids']) && is_array($_POST['ids'])) {
-        if (empty($_POST['ids'])) {
-            wp_send_json_error('No data selected for export');
-        } else {
-            $ids = implode(',', array_map('intval', $_POST['ids']));
-
-            $download_url = add_query_arg(
-                [
-                'action' => 'avf_download_csv',
-                'ids' => $ids,
-                '_ajax_nonce' => $_POST['_ajax_nonce'],
-                ], admin_url('admin-ajax.php')
-            );
-            wp_send_json_success(['download_url' => $download_url]);
-        }
+        $response = handle_bulk_delete($table_name, array_map('intval', $_POST['ids']));
     }
 
     echo json_encode($response);
-    wp_die(); // Important to close the AJAX call
+    wp_die();
 }
-
-add_action('wp_ajax_avf_membership_action', 'Avf_Handle_Ajax_membership_requests');
 
 function Avf_Handle_Ajax_schnupperkurs_requests()
 {
-    if (!current_user_can('manage_memberships')) {
-        wp_send_json_error('You do not have permission to perform this action.');
-        wp_die();
-    }
-
-    if (!check_ajax_referer('avf_membership_action', 'nonce', false)) {
-        wp_send_json_error('Invalid nonce');
-        wp_die();
-    }
+    validate_user_and_nonce();
 
     global $wpdb;
     $table_name = $wpdb->prefix . 'avf_schnupperkurse';
@@ -125,64 +122,37 @@ function Avf_Handle_Ajax_schnupperkurs_requests()
         $beginn_date = new DateTime($beginn);
         $ende_date = $beginn_date->modify('+2 months');
 
-        $data = [
-            'schnupperkurs_art' => sanitize_text_field($_POST['schnupperkurs_art']),
-            'vorname' => sanitize_text_field($_POST['vorname']),
-            'nachname' => sanitize_text_field($_POST['nachname']),
-            'email' => sanitize_email($_POST['email']),
-            'telefon' => sanitize_text_field($_POST['telefon']),
-            'geburtsdatum' => sanitize_text_field($_POST['geburtsdatum']),
+        $data_fields = [
+            'schnupperkurs_art' => $_POST['schnupperkurs_art'],
+            'vorname' => $_POST['vorname'],
+            'nachname' => $_POST['nachname'],
+            'email' => $_POST['email'],
+            'telefon' => $_POST['telefon'],
+            'geburtsdatum' => $_POST['geburtsdatum'],
             'beginn' => $beginn,
             'ende' => $ende_date->format('Y-m-d'),
-            'wie_erfahren' => sanitize_text_field($_POST['wie_erfahren']) === 'sonstiges'
-                ? sanitize_text_field($_POST['wie_erfahren_sonstiges'])
-                : sanitize_text_field($_POST['wie_erfahren']),
+            'wie_erfahren' => $_POST['wie_erfahren'] === 'sonstiges' ? sanitize_text_field($_POST['wie_erfahren_sonstiges']) : sanitize_text_field($_POST['wie_erfahren']),
             'notizen' => sanitize_textarea_field($_POST['notizen']),
             'submission_date' => current_time('mysql'),
         ];
 
-        if ($action_type === 'update') {
-            $id = intval($_POST['id']);
-            $wpdb->update($table_name, $data, ['id' => $id]);
-            $response = array('status' => 'success', 'message' => 'Schnupperkurs erfolgreich aktualisiert');
-        } else {
-            $wpdb->insert($table_name, $data);
-            $response = array('status' => 'success', 'message' => 'Schnupperkurs erfolgreich angelegt', 'redirect_url' => admin_url('admin.php?page=avf-schnupperkurs-admin'));
-        }
+        $data = array_map('sanitize_text_field', $data_fields);
+
+        $response = handle_insert_update($table_name, $data, $action_type, $_POST['id'] ?? null);
 
     } elseif ($action_type === 'delete') {
-        $id = intval($_POST['id']);
-        $wpdb->delete($table_name, ['id' => $id]);
-        $response = array('status' => 'success', 'message' => 'Schnupperkurs erfolgreich entfernt');
-
+        $response = handle_delete($table_name, $_POST['id']);
     } elseif ($action_type === 'bulk_delete' && isset($_POST['ids']) && is_array($_POST['ids'])) {
-        $ids = array_map('intval', $_POST['ids']);
-
-        $placeholders = implode(',', array_fill(0, count($ids), '%d'));
-        $query = "DELETE FROM $table_name WHERE id IN ($placeholders)";
-
-        $deleted = $wpdb->query($wpdb->prepare($query, ...$ids));
-
-        if ($deleted) {
-            $response = array('status' => 'success', 'message' => "$deleted Schnupperkurs(e) erfolgreich gelöscht.");
-        } else {
-            $response = array('status' => 'error', 'message' => 'Fehler beim Löschen der Einträge.');
-        }
+        $response = handle_bulk_delete($table_name, array_map('intval', $_POST['ids']));
     }
 
     echo json_encode($response);
-    wp_die(); // Important to close the AJAX call
+    wp_die();
 }
-
-add_action('wp_ajax_avf_schnupperkurs_action', 'Avf_Handle_Ajax_schnupperkurs_requests');
 
 function Generate_Csv_download()
 {
-    check_ajax_referer('avf_membership_action', '_ajax_nonce');
-
-    if (!current_user_can('manage_memberships')) {
-        wp_die('You do not have permission to perform this action.');
-    }
+    validate_user_and_nonce();
 
     $ids = isset($_GET['ids']) ? explode(',', $_GET['ids']) : [];
 
@@ -278,19 +248,10 @@ function Generate_Csv_download()
     }
 }
 
-add_action('wp_ajax_avf_download_csv', 'Generate_Csv_download');
 
 function Fetch_Membership_data()
 {
-    if (!current_user_can('manage_memberships')) {
-        wp_send_json_error('You do not have permission to perform this action.');
-        wp_die();
-    }
-
-    if (!check_ajax_referer('avf_membership_action', 'nonce', false)) {
-        wp_send_json_error('Invalid nonce');
-        wp_die();
-    }
+    validate_user_and_nonce();
 
     global $wpdb;
     $table_name = $wpdb->prefix . 'avf_memberships';
@@ -495,19 +456,10 @@ function Fetch_Membership_data()
     wp_send_json_success($html);
 }
 
-add_action('wp_ajax_avf_fetch_memberships', 'Fetch_Membership_data');
 
 function Fetch_Schnupperkurs_data()
 {
-    if (!current_user_can('manage_memberships')) {
-        wp_send_json_error('You do not have permission to perform this action.');
-        wp_die();
-    }
-
-    if (!check_ajax_referer('avf_membership_action', 'nonce', false)) {
-        wp_send_json_error('Invalid nonce');
-        wp_die();
-    }
+    validate_user_and_nonce();
 
     global $wpdb;
     $table_name = $wpdb->prefix . 'avf_schnupperkurse';
@@ -603,4 +555,3 @@ function Fetch_Schnupperkurs_data()
     wp_send_json_success($html);
 }
 
-add_action('wp_ajax_avf_fetch_schnupperkurse', 'Fetch_Schnupperkurs_data');
