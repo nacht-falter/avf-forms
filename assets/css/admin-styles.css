@@ -241,6 +241,14 @@ label:has(+ input:required)::after {
   background-color: #e6f7ff !important;
 }
 
+.highlight-green {
+  background-color: #ccffcc !important;
+}
+
+.highlight-green:hover {
+  background-color: #ddffdd !important;
+}
+
 .notizen-col {
   text-wrap: wrap;
   min-width: 250px;

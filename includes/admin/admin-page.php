@@ -140,6 +140,7 @@ function Avf_Display_schnupperkurse()
             <div id="legend">
                 <ul>
                     <li><span class="dashicons dashicons-warning" style="color: red;"></span> Schnupperkurs ist vorbei.</li>
+                    <li><span class="dashicons dashicons-yes-alt" style="color: green;"></span> Beigetreten.</li>
                 </ul>
             </div>
             <div class="bulk-actions">

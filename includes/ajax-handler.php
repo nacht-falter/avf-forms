@@ -488,6 +488,7 @@ function generate_schnupperkurs_html($results)
         $rowTitle = '';
 
         $markOver = false;
+        $markMember = false;
         $beginn = strtotime($row['beginn']);
         if ($beginn && $beginn < strtotime('-2 months')) {
             $rowClasses = 'highlight-red';
@@ -495,17 +496,29 @@ function generate_schnupperkurs_html($results)
             $markOver = true;
         }
 
+        if ($row['is_member']) {
+            $rowClasses .= ' highlight-green';
+            $rowTitle .= ' | Mitglied seit ' . date('d.m.Y', strtotime($row['member_since']));
+            $markMember = true;
+        }
+
         $html .= '<tr class="table-row-link ' . esc_attr($rowClasses) . '" title="' . esc_attr($rowTitle) . '"';
         $html .= ' onclick="handleRowClick(event, ' . esc_attr($row['id']) . ')">';
-
-        $schnupperkurs_art_display = SCHNUPPERKURSARTEN[$column_schnupperkurs_art] ?? $column_schnupperkurs_art;
 
         $html .= <<<HTML
             <th scope="row" class="check-column" style="cursor: initial;">
             <input type="checkbox" class="membership-checkbox" value="{$column_id_attr}">
             </th>
             <td>{$column_id}</td>
-            <td>{$schnupperkurs_art_display}</td>
+            <td>
+            HTML;
+
+        $schnupperkurs_art_display = SCHNUPPERKURSARTEN[$column_schnupperkurs_art] ?? $column_schnupperkurs_art;
+        $html .= $schnupperkurs_art_display;
+        $html .= $markMember ? '&nbsp;<span class="dashicons dashicons-yes-alt" style="color: green;" title="Mitglied seit ' . esc_attr(date('d.m.Y', strtotime($row['member_since']))) . '"></span>' : '';
+
+        $html .= <<<HTML
+            </td>
             <td>{$column_vorname}</td>
             <td>{$column_nachname}</td>
             <td>{$column_email}</td>
@@ -516,7 +529,7 @@ function generate_schnupperkurs_html($results)
             HTML;
 
         $html .= $column_ende;
-        $html .= $markOver ? '&nbsp;<span class="dashicons dashicons-warning" style="color: red;" title="Schnupperkurs ist vorbei"></span>' : '';
+        $html .= $markOver && !$markMember ? '&nbsp;<span class="dashicons dashicons-warning" style="color: red;" title="Schnupperkurs ist vorbei"></span>' : '';
 
         $wie_erfahren_display = WIE_ERFAHREN[$column_wie_erfahren] ?? $column_wie_erfahren;
 
@@ -530,6 +543,34 @@ function generate_schnupperkurs_html($results)
     }
 
     return $html;
+}
+
+function check_membership_status($schnupperkurs_results)
+{
+    global $wpdb;
+    $memberships_table = $wpdb->prefix . 'avf_memberships';
+
+    foreach ($schnupperkurs_results as &$result) {
+        if (isset($result['vorname'], $result['nachname'], $result['email'])) {
+            $query = $wpdb->prepare(
+                "SELECT id, beitrittsdatum FROM $memberships_table
+                WHERE vorname = %s AND nachname = %s AND email = %s",
+                $result['vorname'],
+                $result['nachname'],
+                $result['email']
+            );
+
+            $membership = $wpdb->get_row($query);
+
+            $result['is_member'] = !empty($membership);
+            if ($result['is_member']) {
+                $result['member_since'] = $membership->beitrittsdatum;
+                $result['member_id'] = $membership->id;
+            }
+        }
+    }
+
+    return $schnupperkurs_results;
 }
 
 function Fetch_Membership_data()
@@ -577,7 +618,8 @@ function Fetch_Schnupperkurs_data()
     if (empty($results)) {
         $html = '<td colspan="5" class="no-memberships-msg">Keine Schnupperkurse gefunden.</td>';
     } else {
-        $html = generate_schnupperkurs_html($results);
+        $enriched_results = check_membership_status($results);
+        $html = generate_schnupperkurs_html($enriched_results);
     }
 
     wp_send_json_success($html);
