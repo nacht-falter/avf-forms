@@ -16,7 +16,7 @@ class Avf_Forms_Utils
         $admin_email = get_option('treasurer_email');
         $admin_subject = 'Neuer Mitgliedschaftsantrag eingegangen';
         $admin_message = "Neuer Mitgliedschaftsantrag von $vorname $nachname eingegangen.\n\n";
-        $admin_message .= "Zur Migliedschaftsverwaltung: " . home_url('/wp-admin/admin.php?page=avf-membership-admin') . "\n";
+        $admin_message .= "Zur Mitgliedschaftsverwaltung: " . home_url('/wp-admin/admin.php?page=avf-membership-admin') . "\n";
         wp_mail($admin_email, $admin_subject, $admin_message);
     }
 
@@ -68,7 +68,7 @@ class Avf_Forms_Utils
         $results = $wpdb->get_results($query);
 
         if (empty($results)) {
-            error_log('Keine beendeten Schnupperkurse gefunden');
+            error_log('AVF-Mitgliedschaftsverwaltung: Keine beendeten Schnupperkurse gefunden');
             return;
         }
 
@@ -82,7 +82,7 @@ class Avf_Forms_Utils
             );
 
             if ($is_member > 0) {
-                error_log("Schnupperkurs von $result->vorname $result->nachname beendet, aber Mitgliedschaft bereits vorhanden. Keine Benachrichtigung versendet.");
+                error_log("AVF-Mitgliedschaftsverwaltung: Schnupperkurs von $result->vorname $result->nachname beendet, aber Mitgliedschaft bereits vorhanden. Keine Benachrichtigung versendet.");
                 continue;
             }
 
@@ -125,7 +125,7 @@ class Avf_Forms_Utils
                 if ($sent) {
                     error_log(
                         sprintf(
-                            'Schnupperkurs-Benachrichtigung wurde am %s an %s %s gesendet',
+                            'AVF-Mitgliedschaftsverwaltung: Schnupperkurs-Benachrichtigung wurde am %s an %s %s gesendet',
                             current_time('mysql'),
                             $vorname,
                             $nachname
@@ -134,7 +134,7 @@ class Avf_Forms_Utils
                 } else {
                     error_log(
                         sprintf(
-                            'Fehler beim Senden der Schnupperkurs-Benachrichtigung am %s an %s %s',
+                            'AVF-Mitgliedschaftsverwaltung: Fehler beim Senden der Schnupperkurs-Benachrichtigung am %s an %s %s',
                             current_time('mysql'),
                             $vorname,
                             $nachname
