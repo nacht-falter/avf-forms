@@ -554,7 +554,9 @@ function check_membership_status($schnupperkurs_results)
         if (isset($result['vorname'], $result['nachname'], $result['email'])) {
             $query = $wpdb->prepare(
                 "SELECT id, beitrittsdatum FROM $memberships_table
-                WHERE vorname = %s AND nachname = %s AND email = %s",
+                WHERE LOWER(vorname) = LOWER(%s)
+                AND LOWER(nachname) = LOWER(%s)
+                AND LOWER(email) = LOWER(%s)",
                 $result['vorname'],
                 $result['nachname'],
                 $result['email']

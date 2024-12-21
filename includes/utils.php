@@ -72,11 +72,15 @@ class Avf_Forms_Utils
             return;
         }
 
+        $memberships_table = $wpdb->prefix . 'avf_memberships';
+
         foreach ($results as $result) {
             $is_member = $wpdb->get_var(
                 $wpdb->prepare(
-                    "SELECT COUNT(*) FROM {$wpdb->prefix}avf_memberships
-                    WHERE vorname = %s AND nachname = %s AND email = %s",
+                    "SELECT COUNT(*) FROM $memberships_table
+                    WHERE LOWER(vorname) = LOWER(%s)
+                    AND LOWER(nachname) = LOWER(%s)
+                    AND LOWER(email) = LOWER(%s)",
                     $result->vorname, $result->nachname, $result->email
                 )
             );
