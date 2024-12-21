@@ -69,31 +69,39 @@ function Avf_Handle_Ajax_membership_requests()
     $response = array('status' => 'error', 'message' => 'Invalid action');
 
     if ($action_type === 'create' || $action_type === 'update') {
-        $data_fields = [
-            'mitgliedschaft_art' => $_POST['mitgliedschaft_art'],
-            'vorname' => $_POST['vorname'],
-            'nachname' => $_POST['nachname'],
-            'email' => $_POST['email'],
-            'telefon' => $_POST['telefon'],
-            'geburtsdatum' => $_POST['geburtsdatum'],
-            'strasse' => $_POST['strasse'],
-            'plz' => $_POST['plz'],
-            'ort' => $_POST['ort'],
-            'beitrittsdatum' => $_POST['beitrittsdatum'],
-            'austrittsdatum' => $_POST['austrittsdatum'] ?? null,
+        $data = [
+            'mitgliedschaft_art' => sanitize_text_field($_POST['mitgliedschaft_art']),
+            'vorname' => sanitize_text_field($_POST['vorname']),
+            'nachname' => sanitize_text_field($_POST['nachname']),
+            'vorname_eltern' => sanitize_text_field($_POST['vorname_eltern']),
+            'nachname_eltern' => sanitize_text_field($_POST['nachname_eltern']),
+            'geschwisterkind' => isset($_POST['geschwisterkind']) ? 1 : 0,
+            'email' => sanitize_email($_POST['email']),
+            'telefon' => sanitize_text_field($_POST['telefon']),
+            'geburtsdatum' => sanitize_text_field($_POST['geburtsdatum']),
+            'strasse' => sanitize_text_field($_POST['strasse']),
+            'hausnummer' => sanitize_text_field($_POST['hausnummer']),
+            'plz' => sanitize_text_field($_POST['plz']),
+            'ort' => sanitize_text_field($_POST['ort']),
+            'beitrittsdatum' => sanitize_text_field($_POST['beitrittsdatum']),
+            'austrittsdatum' => !empty($_POST['austrittsdatum']) ? sanitize_text_field($_POST['austrittsdatum']) : null,
             'starterpaket' => isset($_POST['starterpaket']) ? 1 : 0,
             'spende' => isset($_POST['spende']) ? 1 : 0,
-            'kontoinhaber' => $_POST['kontoinhaber'],
-            'iban' => $_POST['iban'],
-            'bic' => $_POST['bic'],
-            'bank' => $_POST['bank'],
-            'beitrag' => $_POST['beitrag'] ?? null,
-            'wiedervorlage' => $_POST['wiedervorlage'] ?? null,
-            'notizen' => $_POST['notizen'],
-            'submission_date' => current_time('mysql'),
+            'spende_monatlich' => isset($_POST['spende_monatlich']) ? floatval($_POST['spende_monatlich']) : null,
+            'spende_einmalig' => isset($_POST['spende_einmalig']) ? floatval($_POST['spende_einmalig']) : null,
+            'satzung_datenschutz' => isset($_POST['satzung_datenschutz']) ? 1 : 0,
+            'hinweise' => isset($_POST['hinweise']) ? 1 : 0,
+            'sepa' => isset($_POST['sepa']) ? 1 : 0,
+            'kontoinhaber' => sanitize_text_field($_POST['kontoinhaber']),
+            'iban' => sanitize_text_field($_POST['iban']),
+            'bic' => sanitize_text_field($_POST['bic']),
+            'bank' => sanitize_text_field($_POST['bank']),
+            'beitrag' => isset($_POST['beitrag']) ? floatval($_POST['beitrag']) : null,
+            'wiedervorlage' => !empty($_POST['wiedervorlage']) ? sanitize_text_field($_POST['wiedervorlage']) : null,
+            'wiedervorlage_grund' => !empty($_POST['wiedervorlage_grund']) ? sanitize_text_field($_POST['wiedervorlage_grund']) : null,
+            'notizen' => sanitize_textarea_field($_POST['notizen']),
+            'submission_date' => current_time('mysql'), // Capture the current timestamp
         ];
-
-        $data = array_map('sanitize_text_field', $data_fields);
 
         $response = handle_insert_update($table_name, $data, $action_type, $_POST['id'] ?? null);
 
@@ -122,21 +130,21 @@ function Avf_Handle_Ajax_schnupperkurs_requests()
         $beginn_date = new DateTime($beginn);
         $ende_date = $beginn_date->modify('+2 months');
 
-        $data_fields = [
-            'schnupperkurs_art' => $_POST['schnupperkurs_art'],
-            'vorname' => $_POST['vorname'],
-            'nachname' => $_POST['nachname'],
-            'email' => $_POST['email'],
-            'telefon' => $_POST['telefon'],
-            'geburtsdatum' => $_POST['geburtsdatum'],
+        $data = [
+            'schnupperkurs_art' => sanitize_text_field($_POST['schnupperkurs_art']),
+            'vorname' => sanitize_text_field($_POST['vorname']),
+            'nachname' => sanitize_text_field($_POST['nachname']),
+            'email' => sanitize_email($_POST['email']),
+            'telefon' => sanitize_text_field($_POST['telefon']),
+            'geburtsdatum' => sanitize_text_field($_POST['geburtsdatum']),
             'beginn' => $beginn,
             'ende' => $ende_date->format('Y-m-d'),
-            'wie_erfahren' => $_POST['wie_erfahren'] === 'sonstiges' ? sanitize_text_field($_POST['wie_erfahren_sonstiges']) : sanitize_text_field($_POST['wie_erfahren']),
+            'wie_erfahren' => sanitize_text_field($_POST['wie_erfahren']) === 'sonstiges'
+                ? sanitize_text_field($_POST['wie_erfahren_sonstiges'])
+                : sanitize_text_field($_POST['wie_erfahren']),
             'notizen' => sanitize_textarea_field($_POST['notizen']),
             'submission_date' => current_time('mysql'),
         ];
-
-        $data = array_map('sanitize_text_field', $data_fields);
 
         $response = handle_insert_update($table_name, $data, $action_type, $_POST['id'] ?? null);
 
