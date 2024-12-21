@@ -20,13 +20,19 @@ function validate_user_and_nonce()
 
 function handle_insert_update($table_name, $data, $action_type, $id = null)
 {
+    if (str_contains($table_name, 'avf_memberships')) {
+        $redirect_url = admin_url('admin.php?page=avf-membership-admin');
+    } elseif (str_contains($table_name, 'avf_schnupperkurse')) {
+        $redirect_url = admin_url('admin.php?page=avf-schnupperkurs-admin');
+    }
+
     global $wpdb;
     if ($action_type === 'update' && $id) {
         $wpdb->update($table_name, $data, ['id' => $id]);
-        return array('status' => 'success', 'message' => 'Data successfully updated');
+        return array('status' => 'success', 'message' => 'Die Einträge wurden erfolgreich aktualisiert');
     } else {
         $wpdb->insert($table_name, $data);
-        return array('status' => 'success', 'message' => 'Data successfully created');
+        return array('status' => 'success', 'message' => 'Die Einträge wurden erfolgreich hinzugefügt', 'redirect_url' => $redirect_url);
     }
 }
 
