@@ -513,7 +513,8 @@ function generate_schnupperkurs_html($results)
 
         if ($row['is_member']) {
             $rowClasses .= ' highlight-green';
-            $rowTitle .= ' | Mitglied seit ' . date('d.m.Y', strtotime($row['member_since']));
+            $rowTitle .= $markOver ? ' | ' : '';
+            $rowTitle .= 'Mitglied seit ' . date('d.m.Y', strtotime($row['member_since']));
             $markMember = true;
         }
 
