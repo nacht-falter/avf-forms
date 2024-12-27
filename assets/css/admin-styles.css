@@ -276,3 +276,11 @@ label:has(+ input:required)::after {
     transform: rotate(360deg);
   }
 }
+
+#total-beitraege-container {
+  font-size: 0.9rem;
+  border: 1px solid #a0a0a0;
+  margin-top: 1rem;
+  padding: 0.5rem;
+  background-color: #c3c4c7;
+}

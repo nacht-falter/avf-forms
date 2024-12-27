@@ -5,6 +5,7 @@ add_action('wp_ajax_avf_schnupperkurs_action', 'Avf_Handle_Ajax_schnupperkurs_re
 add_action('wp_ajax_avf_download_csv', 'Generate_Csv_download');
 add_action('wp_ajax_avf_fetch_memberships', 'Fetch_Membership_data');
 add_action('wp_ajax_avf_fetch_schnupperkurse', 'Fetch_Schnupperkurs_data');
+add_action('wp_ajax_avf_get_total_membership_fees', 'Get_Total_Membership_fees');
 
 function validate_user_and_nonce()
 {
@@ -639,5 +640,20 @@ function Fetch_Schnupperkurs_data()
     }
 
     wp_send_json_success($html);
+}
+
+function Get_Total_Membership_fees()
+{
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'avf_memberships';
+
+    $query = "SELECT SUM(beitrag) FROM $table_name";
+    $result = $wpdb->get_var($query);
+
+    if ($result) {
+        wp_send_json_success($result);
+    } else {
+        wp_send_json_error('Error fetching total membership fees.');
+    }
 }
 

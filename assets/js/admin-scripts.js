@@ -73,8 +73,7 @@ jQuery(document).ready(function ($) {
   function toggleWieErfahrenSonstiges() {
     const isSonstiges = wieErfahren.val() === "sonstiges";
     const isChild = schnupperkursArt.val() === "kind";
-    wieErfahrenSonstiges
-      .toggle(isSonstiges && !isChild)
+    wieErfahrenSonstiges.toggle(isSonstiges && !isChild);
     wieErfahrenSonstigesLabel.toggle(isSonstiges && !isChild);
   }
 
@@ -168,6 +167,21 @@ jQuery(document).ready(function ($) {
         $(".membership-checkbox").on("change", function () {
           updateButtons();
         });
+      },
+    });
+  }
+
+  function get_total_membership_fees() {
+    jQuery.ajax({
+      url: avf_ajax_admin.ajaxurl,
+      method: "POST",
+      data: {
+        action: "avf_get_total_membership_fees",
+        _ajax_nonce: avf_ajax_admin.nonce,
+      },
+      success: function (response) {
+        console.log(response);
+        $("#total-beitraege").html(response.data);
       },
     });
   }
@@ -401,6 +415,8 @@ jQuery(document).ready(function ($) {
     schnupperkursArt.on("change", updateSchnupperkursFields);
 
     wieErfahren.on("change", toggleWieErfahrenSonstiges);
+
+    get_total_membership_fees();
   }
 
   init();
