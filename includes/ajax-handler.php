@@ -648,7 +648,7 @@ function Get_Total_Membership_fees()
     global $wpdb;
     $table_name = $wpdb->prefix . 'avf_memberships';
 
-    $query = "SELECT SUM(beitrag) FROM $table_name";
+    $query = "SELECT SUM(beitrag) FROM $table_name WHERE austrittsdatum IS NULL OR austrittsdatum > CURRENT_DATE";
     $result = $wpdb->get_var($query);
 
     if ($result) {
