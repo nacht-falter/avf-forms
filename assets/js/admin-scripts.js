@@ -153,7 +153,7 @@ jQuery(document).ready(function ($) {
         _ajax_nonce: avf_ajax_admin.nonce,
       },
       success: function (response) {
-        $(tableBodyId).html(response.data);
+        $(tableBodyId).html(response.data.html);
 
         $(".table-header-link")
           .removeClass("asc desc")
@@ -167,6 +167,8 @@ jQuery(document).ready(function ($) {
         $(".membership-checkbox").on("change", function () {
           updateButtons();
         });
+
+        $("#record-count").html(response.data.count);
       },
     });
   }

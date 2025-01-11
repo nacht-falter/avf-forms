@@ -34,6 +34,9 @@ function Avf_Display_memberships()
             <?php } ?>
             </div>
         </div>
+        <div>
+            <span>Gefunden: <span id="record-count">0</span></span>
+        </div>
 
         <form id="membership-form" method="post" action="">
             <div id="membership-list-container" class="list-container">
@@ -69,7 +72,9 @@ function Avf_Display_memberships()
                     <li><span class="dashicons dashicons-edit" style="color: #2271b1;"></span> Beitrag angepasst</li>
                 </ul>
             </div>
+
             <div id="total-beitraege-container"><strong>Mitgliedsbeiträge gesamt pro Quartal: <span id="total-beitraege"></span> €</strong></div>
+
             <div class="bulk-actions">
                 <button type="button" id="export-csv" class="button button-primary" disabled>Ausgewählte Mitgliedschaften als CSV exportieren</button>
                 <button type="button" id="delete-bulk" class="button button-secondary" disabled>Ausgewählte Mitgliedschaften löschen</button>
@@ -110,6 +115,9 @@ function Avf_Display_schnupperkurse()
         <h1>Schnupperkurse</h1>
         <div id="admin-page-header">
             <a href="admin.php?page=avf-schnupperkurs-form-page" class="button button-primary">Neuen Schnupperkurs hinzufügen</a>
+        </div>
+        <div>
+            <span>Gefunden: <span id="record-count">0</span></span>
         </div>
 
         <form id="schnupperkurs-form" method="post" action="">

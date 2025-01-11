@@ -618,7 +618,12 @@ function Fetch_Membership_data()
         $html = generate_membership_html($results);
     }
 
-    wp_send_json_success($html);
+    wp_send_json_success(
+        [
+        'html' => $html,
+        'count' => count($results),
+        ]
+    );
 }
 
 function Fetch_Schnupperkurs_data()
@@ -640,7 +645,12 @@ function Fetch_Schnupperkurs_data()
         $html = generate_schnupperkurs_html($enriched_results);
     }
 
-    wp_send_json_success($html);
+    wp_send_json_success(
+        [
+        'html' => $html,
+        'count' => count($results),
+        ]
+    );
 }
 
 function Get_Total_Membership_fees()
