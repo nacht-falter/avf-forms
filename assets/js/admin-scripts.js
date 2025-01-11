@@ -197,7 +197,7 @@ jQuery(document).ready(function ($) {
       },
       success: function (response) {
         $("#membership_stats_by_type").html(response.data.membership_stats_by_type)
-        $("#new_members_resignations").html(response.data.new_members_resignations)
+        $("#new_members_resignations").html(response.data.yearly_membership_stats)
       },
     });
   }

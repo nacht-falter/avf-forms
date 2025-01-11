@@ -676,17 +676,35 @@ function Get_Membership_stats()
     $current_year = date('Y');
     $previous_year = $current_year - 1;
 
-    function get_count_for_year($year, $field, $table_name)
+    function get_count_for_year_and_type($year, $field, $table_name)
     {
         global $wpdb;
         $query = $wpdb->prepare(
-            "SELECT COUNT(*) as count FROM $table_name WHERE YEAR($field) = %d",
+            "SELECT mitgliedschaft_art, COUNT(*) as count FROM $table_name WHERE YEAR($field) = %d GROUP BY mitgliedschaft_art",
             $year
         );
-        return $wpdb->get_var($query);
+        return $wpdb->get_results($query, ARRAY_A);
     }
 
-    $results = $wpdb->get_results(
+    function format_stats_by_type($results)
+    {
+        $html = '<ul>';
+        foreach ($results as $row) {
+            $membership_type = esc_html(MITGLIEDSCHAFTSARTEN_PLURAL[$row['mitgliedschaft_art']] ?? $row['mitgliedschaft_art']);
+            $html .= sprintf(
+                '<li><span>%s: </span><span>%d</span></li>',
+                $membership_type,
+                intval($row['count'])
+            );
+        }
+        $html .= '</ul>';
+        if (empty($results)) {
+            $html = '<p>-</p>';
+        }
+        return $html;
+    }
+
+    $membership_stats = $wpdb->get_results(
         $wpdb->prepare(
             "SELECT mitgliedschaft_art, COUNT(*) as count 
         FROM $table_name 
@@ -697,34 +715,33 @@ function Get_Membership_stats()
         ARRAY_A
     );
 
+    $new_members_current_year = get_count_for_year_and_type($current_year, 'beitrittsdatum', $table_name);
+    $resignations_current_year = get_count_for_year_and_type($current_year, 'austrittsdatum', $table_name);
+    $new_members_previous_year = get_count_for_year_and_type($previous_year, 'beitrittsdatum', $table_name);
+    $resignations_previous_year = get_count_for_year_and_type($previous_year, 'austrittsdatum', $table_name);
 
-    $new_members_count = get_count_for_year($current_year, 'beitrittsdatum', $table_name);
-    $resignations_count = get_count_for_year($current_year, 'austrittsdatum', $table_name);
-    $new_members_last_year_count = get_count_for_year($previous_year, 'beitrittsdatum', $table_name);
-    $resignations_last_year_count = get_count_for_year($previous_year, 'austrittsdatum', $table_name);
+    if ($membership_stats) {
+        $html1 = format_stats_by_type($membership_stats);
+        $html1 .= '<li><span><strong>Gesamt: </strong></span><span><strong>' . array_sum(array_column($membership_stats, 'count')) . '</strong></span></li>';
 
-    if ($results) {
-        $html1 = '';
-        foreach ($results as $row) {
-            $html1 .= sprintf(
-                '<li><span>%s: </span><span>%d</span></li>',
-                esc_html(MITGLIEDSCHAFTSARTEN[$row['mitgliedschaft_art']] ?? $row['mitgliedschaft_art']),
-                intval($row['count'])
-            );
-        }
-        $html1 .= '<hr>';
-        $html1 .= '<li><span><strong>Gesamt: </strong></span><span><strong>' . array_sum(array_column($results, 'count')) . '</strong></span></li>';
+        $html2 = '<h4><i>Beitritte ' . $current_year . '</i></h4>';
+        $html2 .= format_stats_by_type($new_members_current_year);
+        $html2 .= '<li><span><strong>Gesamt: </strong></span><span><strong>' . array_sum(array_column($new_members_current_year, 'count')) . '</strong></span></li>';
+        $html2 .= '<h4><i>Austritte ' . $current_year . '</i></h4>';
+        $html2 .= format_stats_by_type($resignations_current_year);
+        $html2 .= '<li><span><strong>Gesamt: </strong></span><span><strong>' . array_sum(array_column($resignations_current_year, 'count')) . '</strong></span></li>';
 
-        $html2 = '<li><span>Beitritte ' . $current_year . ': </span><span>' . intval($new_members_count) . '</span></li>';
-        $html2 .= '<li><span>Austritte ' . $current_year . ': </span><span>' . intval($resignations_count) . '</span></li>';
-        $html2 .= '<hr>';
-        $html2 .= '<li><span>Beitritte ' . $previous_year . ': </span><span>' . intval($new_members_last_year_count) . '</span></li>';
-        $html2 .= '<li><span>Austritte ' . $previous_year . ': </span><span>' . intval($resignations_last_year_count) . '</span></li>';
+        $html2 .= '<hr><h4><i>Beitritte ' . $previous_year . '</i></h4>';
+        $html2 .= format_stats_by_type($new_members_previous_year);
+        $html2 .= '<li><span><strong>Gesamt: </strong></span><span><strong>' . array_sum(array_column($new_members_previous_year, 'count')) . '</strong></span></li>';
+        $html2 .= '<h4><i>Austritte ' . $previous_year . '</i></h4>';
+        $html2 .= format_stats_by_type($resignations_previous_year);
+        $html2 .= '<li><span><strong>Gesamt: </strong></span><span><strong>' . array_sum(array_column($resignations_previous_year, 'count')) . '</strong></span></li>';
 
         wp_send_json_success(
             [
                 'membership_stats_by_type' => $html1,
-                'new_members_resignations' => $html2
+                'yearly_membership_stats' => $html2
             ]
         );
     } else {

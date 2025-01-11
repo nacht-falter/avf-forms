@@ -43,6 +43,18 @@ define(
     ]
 );
 define(
+    'MITGLIEDSCHAFTSARTEN_PLURAL', [
+        'aktiv' => 'Aktive Mitglieder',
+        'aktiv_ermaessigt' => 'Aktive Mitglieder (ermäßigt)',
+        'familie' => 'Familienmitglieder',
+        'foerder' => 'Fördermitglieder',
+        'sonder' => 'Sondermitglieder',
+        'passiv' => 'Passive Mitglieder',
+        'kind' => 'Kinder',
+        'jugend' => 'Jugendliche',
+    ]
+);
+define(
     'SCHNUPPERKURSARTEN', [
         'kind' => 'Kind/Jugend',
         'erwachsene' => 'Erwachsene',
