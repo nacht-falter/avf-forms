@@ -81,6 +81,14 @@ function Avf_Display_memberships()
             </div>
         </form>
 
+        <div id="membership-stats">
+            <h3>Mitglieder-Statistik</h3>
+            <h4>Anzahl Mitglieder</h4>
+            <ul id="membership_stats_by_type"></ul>
+            <h4>Eintritte/Austritte</h4>
+            <ul id="new_members_resignations"></ul>
+        </div>
+
         <table class="beitragsliste">
             <tr>
                 <th>Beiträge</th>

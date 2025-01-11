@@ -6,6 +6,7 @@ add_action('wp_ajax_avf_download_csv', 'Generate_Csv_download');
 add_action('wp_ajax_avf_fetch_memberships', 'Fetch_Membership_data');
 add_action('wp_ajax_avf_fetch_schnupperkurse', 'Fetch_Schnupperkurs_data');
 add_action('wp_ajax_avf_get_total_membership_fees', 'Get_Total_Membership_fees');
+add_action('wp_ajax_avf_get_membership_stats', 'Get_Membership_stats');
 
 function validate_user_and_nonce()
 {
@@ -668,3 +669,55 @@ function Get_Total_Membership_fees()
     }
 }
 
+function Get_Membership_stats()
+{
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'avf_memberships';
+    $current_year = date('Y');
+    $previous_year = $current_year - 1;
+
+    function get_count_for_year($year, $field, $table_name)
+    {
+        global $wpdb;
+        $query = $wpdb->prepare(
+            "SELECT COUNT(*) as count FROM $table_name WHERE YEAR($field) = %d",
+            $year
+        );
+        return $wpdb->get_var($query);
+    }
+
+    $results = $wpdb->get_results("SELECT mitgliedschaft_art, COUNT(*) as count FROM $table_name GROUP BY mitgliedschaft_art", ARRAY_A);
+
+    $new_members_count = get_count_for_year($current_year, 'beitrittsdatum', $table_name);
+    $resignations_count = get_count_for_year($current_year, 'austrittsdatum', $table_name);
+    $new_members_last_year_count = get_count_for_year($previous_year, 'beitrittsdatum', $table_name);
+    $resignations_last_year_count = get_count_for_year($previous_year, 'austrittsdatum', $table_name);
+
+    if ($results) {
+        $html1 = '';
+        foreach ($results as $row) {
+            $html1 .= sprintf(
+                '<li><span>%s: </span><span>%d</span></li>',
+                esc_html(MITGLIEDSCHAFTSARTEN[$row['mitgliedschaft_art']] ?? $row['mitgliedschaft_art']),
+                intval($row['count'])
+            );
+        }
+        $html1 .= '<hr>';
+        $html1 .= '<li><span><strong>Gesamt: </strong></span><span><strong>' . array_sum(array_column($results, 'count')) . '</strong></span></li>';
+
+        $html2 = '<li><span>Beigetreten im Jahr ' . $current_year . ': </span><span>' . intval($new_members_count) . '</span></li>';
+        $html2 .= '<li><span>Ausgetreten im Jahr ' . $current_year . ': </span><span>' . intval($resignations_count) . '</span></li>';
+        $html2 .= '<hr>';
+        $html2 .= '<li><span>Beigetreten im Jahr ' . $previous_year . ': </span><span>' . intval($new_members_last_year_count) . '</span></li>';
+        $html2 .= '<li><span>Ausgetreten im Jahr ' . $previous_year . ': </span><span>' . intval($resignations_last_year_count) . '</span></li>';
+
+        wp_send_json_success(
+            [
+                'membership_stats_by_type' => $html1,
+                'new_members_resignations' => $html2
+            ]
+        );
+    } else {
+        wp_send_json_error('Error fetching membership stats.');
+    }
+}

@@ -182,8 +182,22 @@ jQuery(document).ready(function ($) {
         _ajax_nonce: avf_ajax_admin.nonce,
       },
       success: function (response) {
-        console.log(response);
         $("#total-beitraege").html(response.data);
+      },
+    });
+  }
+
+  function get_membership_stats() {
+    jQuery.ajax({
+      url: avf_ajax_admin.ajaxurl,
+      method: "POST",
+      data: {
+      action: "avf_get_membership_stats",
+      _ajax_nonce: avf_ajax_admin.nonce,
+      },
+      success: function (response) {
+        $("#membership_stats_by_type").html(response.data.membership_stats_by_type)
+        $("#new_members_resignations").html(response.data.new_members_resignations)
       },
     });
   }
@@ -419,6 +433,7 @@ jQuery(document).ready(function ($) {
     wieErfahren.on("change", toggleWieErfahrenSonstiges);
 
     get_total_membership_fees();
+    get_membership_stats();
   }
 
   init();
