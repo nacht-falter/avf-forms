@@ -705,11 +705,11 @@ function Get_Membership_stats()
         $html1 .= '<hr>';
         $html1 .= '<li><span><strong>Gesamt: </strong></span><span><strong>' . array_sum(array_column($results, 'count')) . '</strong></span></li>';
 
-        $html2 = '<li><span>Beigetreten im Jahr ' . $current_year . ': </span><span>' . intval($new_members_count) . '</span></li>';
-        $html2 .= '<li><span>Ausgetreten im Jahr ' . $current_year . ': </span><span>' . intval($resignations_count) . '</span></li>';
+        $html2 = '<li><span>Beitritte ' . $current_year . ': </span><span>' . intval($new_members_count) . '</span></li>';
+        $html2 .= '<li><span>Austritte ' . $current_year . ': </span><span>' . intval($resignations_count) . '</span></li>';
         $html2 .= '<hr>';
-        $html2 .= '<li><span>Beigetreten im Jahr ' . $previous_year . ': </span><span>' . intval($new_members_last_year_count) . '</span></li>';
-        $html2 .= '<li><span>Ausgetreten im Jahr ' . $previous_year . ': </span><span>' . intval($resignations_last_year_count) . '</span></li>';
+        $html2 .= '<li><span>Beitritte ' . $previous_year . ': </span><span>' . intval($new_members_last_year_count) . '</span></li>';
+        $html2 .= '<li><span>Austritte ' . $previous_year . ': </span><span>' . intval($resignations_last_year_count) . '</span></li>';
 
         wp_send_json_success(
             [
