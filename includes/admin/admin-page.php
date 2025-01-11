@@ -81,14 +81,6 @@ function Avf_Display_memberships()
             </div>
         </form>
 
-        <div id="membership-stats">
-            <h3>Mitglieder-Statistik</h3>
-            <h4>Anzahl Mitglieder</h4>
-            <ul id="membership_stats_by_type"></ul>
-            <h4>Beitritte/Austritte</h4>
-            <ul id="new_members_resignations"></ul>
-        </div>
-
         <table class="beitragsliste">
             <tr>
                 <th>Beiträge</th>
@@ -173,6 +165,32 @@ function Avf_Display_schnupperkurse()
             }
         }
         </script>
+    </div>
+    <?php
+}
+
+function Avf_Display_Membership_stats()
+{
+    if (!current_user_can('manage_memberships')) {
+        wp_die(__('You do not have sufficient permissions to access this page.'));
+    }
+
+    ?>
+    <div class="wrap">
+        <div id="membership-stats">
+            <h1>Mitglieder-Statistik</h1>
+            <h2>Anzahl Mitglieder aktuell</h2>
+            <table class="wp-list-table widefat striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Mitgliedschaftsart</th>
+                        <th scope="col">Anzahl</th>
+                    </tr>
+                </thead>
+                <tbody id="membership_stats_by_type"></tbody>
+            </table>
+            <div id="membership_stats_by_year"></div>
+        </div>
     </div>
     <?php
 }

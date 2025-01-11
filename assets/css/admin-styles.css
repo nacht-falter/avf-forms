@@ -285,16 +285,21 @@ label:has(+ input:required)::after {
   background-color: #c3c4c7;
 }
 
-#membership-stats {
-  max-width: 250px;
-  margin: 1rem 0;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #a0a0a0;
-  border-radius: 5px;
-  background-color: #f8f8f8;
-}
-
-#membership-stats li {
+#membership-stats table thead tr, #membership-stats table tbody tr {
   display: flex;
   justify-content: space-between;
+  width: 100%;
+}
+
+#membership-stats table thead tr {
+  border-bottom: 1px solid #c3c4c7;
+}
+
+#membership-stats h2 {
+  margin-top: 1.5rem;
+  font-size: 1.3rem;
+}
+
+#membership-stats table thead th {
+  border: none;
 }

@@ -248,6 +248,15 @@ class Avf_Forms_Plugin
             'avf-schnupperkurs-form-page',
             'Avf_Display_Schnupperkurs_form'
         );
+
+        add_submenu_page(
+            'avf-membership-admin',
+            'Mitglieder-Statisik',
+            'Mitglieder-Statistik',
+            'manage_memberships',
+            'avf-membership-stats',
+            'Avf_Display_Membership_stats'
+        );
     }
 
 }
