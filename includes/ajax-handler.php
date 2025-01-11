@@ -686,7 +686,17 @@ function Get_Membership_stats()
         return $wpdb->get_var($query);
     }
 
-    $results = $wpdb->get_results("SELECT mitgliedschaft_art, COUNT(*) as count FROM $table_name GROUP BY mitgliedschaft_art", ARRAY_A);
+    $results = $wpdb->get_results(
+        $wpdb->prepare(
+            "SELECT mitgliedschaft_art, COUNT(*) as count 
+        FROM $table_name 
+        WHERE austrittsdatum IS NULL OR austrittsdatum > %s 
+        GROUP BY mitgliedschaft_art",
+            date('Y-m-d') // Today's date
+        ),
+        ARRAY_A
+    );
+
 
     $new_members_count = get_count_for_year($current_year, 'beitrittsdatum', $table_name);
     $resignations_count = get_count_for_year($current_year, 'austrittsdatum', $table_name);
