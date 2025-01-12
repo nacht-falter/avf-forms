@@ -753,7 +753,7 @@ function Get_Membership_stats()
         }
 
         $html .= sprintf(
-            '<tr><td><strong>Gesamt:</strong></td><td><strong>%d</strong></td><td><strong>%d €</strong></td></tr>',
+            '<tr class="total"><td><strong>Gesamt:</strong></td><td><strong>%d</strong></td><td><strong>%d €</strong></td></tr>',
             $total_count,
             $total_fees
         );
@@ -785,7 +785,7 @@ function Get_Membership_stats()
         }
 
         $html .= sprintf(
-            '<tr><td><strong>Gesamt:</strong></td><td><strong>%d</strong></td><td><strong>%d</strong></td></tr>',
+            '<tr class="total"><td><strong>Gesamt:</strong></td><td><strong>%d</strong></td><td><strong>%d</strong></td></tr>',
             $total_beitritte,
             $total_austritte
         );

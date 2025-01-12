@@ -277,14 +277,6 @@ label:has(+ input:required)::after {
   }
 }
 
-#total-beitraege-container {
-  font-size: 0.9rem;
-  border: 1px solid #a0a0a0;
-  margin-top: 1rem;
-  padding: 0.5rem;
-  background-color: #c3c4c7;
-}
-
 #membership-stats {
   max-width: 700px;
 }
@@ -317,3 +309,10 @@ label:has(+ input:required)::after {
   width: 100%;
 }
 
+tr.total {
+  border-top: 1px solid #c3c4c7;
+  background-color: #ededed !important;
+}
+
+tr.total td {
+}
