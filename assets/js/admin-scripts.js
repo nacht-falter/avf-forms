@@ -185,7 +185,6 @@ jQuery(document).ready(function ($) {
         $("#membership-stats").html(response.data.membership_stats);
       },
     });
-    get_total_membership_fees();
   }
 
   function init() {

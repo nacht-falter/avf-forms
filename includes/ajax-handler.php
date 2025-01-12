@@ -5,7 +5,6 @@ add_action('wp_ajax_avf_schnupperkurs_action', 'Avf_Handle_Ajax_schnupperkurs_re
 add_action('wp_ajax_avf_download_csv', 'Generate_Csv_download');
 add_action('wp_ajax_avf_fetch_memberships', 'Fetch_Membership_data');
 add_action('wp_ajax_avf_fetch_schnupperkurse', 'Fetch_Schnupperkurs_data');
-add_action('wp_ajax_avf_get_total_membership_fees', 'Get_Total_Membership_fees');
 add_action('wp_ajax_avf_get_membership_stats', 'Get_Membership_stats');
 
 function validate_user_and_nonce()
