@@ -660,9 +660,10 @@ function Get_Membership_stats()
     $current_year = date('Y');
     $previous_year = $current_year - 1;
 
-    function get_combined_stats_for_year($year, $table_name)
+    function get_combined_stats_for_year($year)
     {
         global $wpdb;
+        $table_name = $wpdb->prefix . 'avf_memberships';
 
         $beitritte_query = $wpdb->prepare(
             "SELECT mitgliedschaft_art, COUNT(*) as count
@@ -693,7 +694,10 @@ function Get_Membership_stats()
         foreach ($austritte as $row) {
             $mitgliedschaft_art = $row['mitgliedschaft_art'];
             if (!isset($combined_stats[$mitgliedschaft_art])) {
-                $combined_stats[$mitgliedschaft_art] = ['beitritte' => 0];
+                $combined_stats[$mitgliedschaft_art] = [
+                'beitritte' => 0,
+                'austritte' => 0,
+                ];
             }
             $combined_stats[$mitgliedschaft_art]['austritte'] = intval($row['count']);
         }
@@ -701,9 +705,62 @@ function Get_Membership_stats()
         return $combined_stats;
     }
 
-    function get_membership_stats_by_type($table_name)
+    function get_combined_schupperkurse_for_year($year)
     {
         global $wpdb;
+        $table_name = $wpdb->prefix . 'avf_schnupperkurse';
+        $memberships_table = $wpdb->prefix . 'avf_memberships';
+
+        $schnupperkurse_query = $wpdb->prepare(
+            "SELECT schnupperkurs_art, COUNT(*) as count
+            FROM $table_name
+            WHERE YEAR(beginn) = %d
+            GROUP BY schnupperkurs_art",
+            $year
+        );
+
+        $schnupperkurs_conversion_query = $wpdb->prepare(
+            "SELECT schnupperkurs_art, COUNT(*) as count
+            FROM $table_name AS sk
+            WHERE YEAR(sk.beginn) = %d AND EXISTS (
+                SELECT 1
+                FROM $memberships_table AS m
+                WHERE m.vorname = sk.vorname
+                AND m.nachname = sk.nachname
+                AND m.email = sk.email
+            )
+            GROUP BY schnupperkurs_art",
+            $year
+        );
+
+        $schnupperkurse = $wpdb->get_results($schnupperkurse_query, ARRAY_A);
+        $schnupperkurs_conversion = $wpdb->get_results($schnupperkurs_conversion_query, ARRAY_A);
+
+        $combined_stats = [];
+        foreach ($schnupperkurse as $row) {
+            $schnupperkurs_art = $row['schnupperkurs_art'];
+            $combined_stats[$schnupperkurs_art]['schnupperkurse'] = intval($row['count']);
+            $combined_stats[$schnupperkurs_art]['schnupperkurs_conversion'] = 0;
+        }
+
+        foreach ($schnupperkurs_conversion as $row) {
+            $schnupperkurs_art = $row['schnupperkurs_art'];
+            if (!isset($combined_stats[$schnupperkurs_art])) {
+                $combined_stats[$schnupperkurs_art] = [
+                'schnupperkurse' => 0,
+                'schnupperkurs_conversion' => 0
+                ];
+            }
+            $combined_stats[$schnupperkurs_art]['schnupperkurs_conversion'] = intval($row['count']);
+        }
+
+        return $combined_stats;
+    }
+
+    function get_membership_stats_by_type()
+    {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'avf_memberships';
 
         $query = $wpdb->prepare(
             "SELECT mitgliedschaft_art, COUNT(*) as count, SUM(beitrag) as fees
@@ -746,47 +803,75 @@ function Get_Membership_stats()
         return $html;
     }
 
-    function format_combined_stats($stats, $year)
+    function format_combined_stats($stats, $year, $data_type)
     {
-        $html = '<h2>' . $year . '</h2>';
+        $columns = $data_type === 'schnupperkurse'
+            ? ['Schnupperkursart', 'Anzahl', 'Beigetreten']
+            : ['Mitgliedschaftsart', 'Beitritte', 'Austritte'];
+        $html = $data_type === 'schnupperkurse' ? '<h3>Schnupperkurse</h3>' : '<h3>Beitritte/Austritte</h3>';
         $html .= '<table class="wp-list-table widefat striped">';
-        $html .= '<thead><tr><th>Mitgliedschaftsart</th><th>Beitritte</th><th>Austritte</th></tr></thead>';
+        $html .= '<thead><tr><th>' . implode('</th><th>', $columns) . '</th></tr></thead>';
         $html .= '<tbody>';
 
         $total_beitritte = 0;
         $total_austritte = 0;
+        $total_schnupperkurse = 0;
+        $total_schnupperkurs_conversion = 0;
 
-        foreach ($stats as $membership_type => $counts) {
-            $membership_name = esc_html(MITGLIEDSCHAFTSARTEN_PLURAL[$membership_type] ?? $membership_type);
-            $html .= sprintf(
-                '<tr><td>%s</td><td>%d</td><td>%d</td></tr>',
-                $membership_name,
-                $counts['beitritte'],
-                $counts['austritte']
-            );
-            $total_beitritte += $counts['beitritte'];
-            $total_austritte += $counts['austritte'];
+        if ($data_type === 'schnupperkurse') {
+            foreach ($stats as $schnupperkurs_art => $counts) {
+                $schnupperkurs_art = esc_html(SCHNUPPERKURSARTEN[$schnupperkurs_art] ?? $schnupperkurs_art);
+                $html .= sprintf(
+                    '<tr><td>%s</td><td>%d</td><td>%d</td></tr>',
+                    $schnupperkurs_art,
+                    $counts['schnupperkurse'],
+                    $counts['schnupperkurs_conversion']
+                );
+                $total_schnupperkurse += $counts['schnupperkurse'];
+                $total_schnupperkurs_conversion += $counts['schnupperkurs_conversion'];
+            }
+        } else {
+            foreach ($stats as $membership_type => $counts) {
+                $membership_name = esc_html(MITGLIEDSCHAFTSARTEN_PLURAL[$membership_type] ?? $membership_type);
+                $html .= sprintf(
+                    '<tr><td>%s</td><td>%d</td><td>%d</td></tr>',
+                    $membership_name,
+                    $counts['beitritte'],
+                    $counts['austritte']
+                );
+                $total_beitritte += $counts['beitritte'];
+                $total_austritte += $counts['austritte'];
+            }
         }
 
         $html .= sprintf(
             '<tr class="total"><td><strong>Gesamt:</strong></td><td><strong>%d</strong></td><td><strong>%d</strong></td></tr>',
-            $total_beitritte,
-            $total_austritte
+            $data_type === 'schnupperkurse' ? $total_schnupperkurse : $total_beitritte,
+            $data_type === 'schnupperkurse' ? $total_schnupperkurs_conversion : $total_austritte
         );
 
         $html .= '</tbody></table>';
         return $html;
     }
 
-    $stats_by_type = get_membership_stats_by_type($table_name);
-    $stats_current_year = get_combined_stats_for_year($current_year, $table_name);
-    $stats_previous_year = get_combined_stats_for_year($previous_year, $table_name);
+    $stats_by_type = get_membership_stats_by_type();
+    $stats_current_year = get_combined_stats_for_year($current_year);
+    $schnupperkurse_current_year = get_combined_schupperkurse_for_year($current_year);
+    $stats_previous_year = get_combined_stats_for_year($previous_year);
+    $schnupperkurse_previous_year = get_combined_schupperkurse_for_year($previous_year);
 
     if (!empty($stats_by_type) || !empty($stats_current_year) || !empty($stats_previous_year)) {
-        $html .= '<h2>Aktuelle Mitgliederzahlen</h2>';
+        $html = '<h2>Aktuelle Mitgliederzahlen</h2>';
         $html .= format_membership_stats_by_type($stats_by_type);
-        $html .= format_combined_stats($stats_current_year, $current_year);
-        $html .= format_combined_stats($stats_previous_year, $previous_year);
+
+        $html .= '<h2>' . $current_year . '</h2>';
+        $html .= format_combined_stats($stats_current_year, $current_year, 'memberships');
+        $html .= format_combined_stats($schnupperkurse_current_year, $current_year, 'schnupperkurse');
+
+        $html .= '<h2>' . $previous_year . '</h2>';
+        $html .= format_combined_stats($stats_previous_year, $previous_year, 'memberships');
+        $html .= format_combined_stats($schnupperkurse_previous_year, $previous_year, 'schnupperkurse');
+
 
         wp_send_json_success(['membership_stats' => $html]);
     } else {

@@ -309,6 +309,11 @@ label:has(+ input:required)::after {
   width: 100%;
 }
 
+#membership-stats h3 {
+  margin-top: 1.2rem;
+  font-weight: 400 !important;
+}
+
 tr.total {
   border-top: 1px solid #c3c4c7;
   background-color: #ededed !important;
