@@ -668,7 +668,6 @@ function Get_Total_Membership_fees()
         wp_send_json_error('Error fetching total membership fees.');
     }
 }
-
 function Get_Membership_stats()
 {
     global $wpdb;
@@ -676,104 +675,131 @@ function Get_Membership_stats()
     $current_year = date('Y');
     $previous_year = $current_year - 1;
 
-    function get_count_for_year_and_type($year, $field, $table_name)
+    function get_combined_stats_for_year($year, $table_name)
     {
         global $wpdb;
-        $query = $wpdb->prepare(
-            "SELECT mitgliedschaft_art, COUNT(*) as count FROM $table_name WHERE YEAR($field) = %d GROUP BY mitgliedschaft_art",
+
+        $beitritte_query = $wpdb->prepare(
+            "SELECT mitgliedschaft_art, COUNT(*) as count
+            FROM $table_name
+            WHERE YEAR(beitrittsdatum) = %d
+            GROUP BY mitgliedschaft_art",
             $year
         );
+
+        $austritte_query = $wpdb->prepare(
+            "SELECT mitgliedschaft_art, COUNT(*) as count
+            FROM $table_name
+            WHERE YEAR(austrittsdatum) = %d
+            GROUP BY mitgliedschaft_art",
+            $year
+        );
+
+        $beitritte = $wpdb->get_results($beitritte_query, ARRAY_A);
+        $austritte = $wpdb->get_results($austritte_query, ARRAY_A);
+
+        $combined_stats = [];
+        foreach ($beitritte as $row) {
+            $mitgliedschaft_art = $row['mitgliedschaft_art'];
+            $combined_stats[$mitgliedschaft_art]['beitritte'] = intval($row['count']);
+            $combined_stats[$mitgliedschaft_art]['austritte'] = 0;
+        }
+
+        foreach ($austritte as $row) {
+            $mitgliedschaft_art = $row['mitgliedschaft_art'];
+            if (!isset($combined_stats[$mitgliedschaft_art])) {
+                $combined_stats[$mitgliedschaft_art] = ['beitritte' => 0];
+            }
+            $combined_stats[$mitgliedschaft_art]['austritte'] = intval($row['count']);
+        }
+
+        return $combined_stats;
+    }
+
+    function get_membership_stats_by_type($table_name)
+    {
+        global $wpdb;
+
+        $query = $wpdb->prepare(
+            "SELECT mitgliedschaft_art, COUNT(*) as count
+            FROM $table_name
+            WHERE austrittsdatum IS NULL OR austrittsdatum > %s
+            GROUP BY mitgliedschaft_art",
+            date('Y-m-d')
+        );
+
         return $wpdb->get_results($query, ARRAY_A);
     }
 
-    function format_stats_by_type($results)
+    function format_membership_stats_by_type($stats)
     {
-        $html = '';
-        foreach ($results as $row) {
-            $membership_type = esc_html(MITGLIEDSCHAFTSARTEN_PLURAL[$row['mitgliedschaft_art']] ?? $row['mitgliedschaft_art']);
+        $html = '<table class="wp-list-table widefat striped">';
+        $html .= '<thead><tr><th>Mitgliedschaftsart</th><th>Anzahl</th></tr></thead>';
+        $html .= '<tbody>';
+
+        $total_count = 0;
+        foreach ($stats as $row) {
+            $membership_name = esc_html(MITGLIEDSCHAFTSARTEN_PLURAL[$row['mitgliedschaft_art']] ?? $row['mitgliedschaft_art']);
             $html .= sprintf(
                 '<tr><td>%s</td><td>%d</td></tr>',
-                $membership_type,
+                $membership_name,
                 intval($row['count'])
             );
+            $total_count += intval($row['count']);
         }
-        if (empty($results)) {
-            $html = '<tr><td colspan="2">-</td></tr>'; // Use colspan to span across both columns
-        }
+
+        $html .= sprintf(
+            '<tr><td><strong>Gesamt:</strong></td><td><strong>%d</strong></td></tr>',
+            $total_count
+        );
+
+        $html .= '</tbody></table>';
         return $html;
     }
 
-    // Fetch the membership stats
-    $membership_stats = $wpdb->get_results(
-        $wpdb->prepare(
-            "SELECT mitgliedschaft_art, COUNT(*) as count 
-        FROM $table_name 
-        WHERE austrittsdatum IS NULL OR austrittsdatum > %s 
-        GROUP BY mitgliedschaft_art",
-            date('Y-m-d')
-        ),
-        ARRAY_A
-    );
+    function format_combined_stats($stats, $year)
+    {
+        $html = '<h2>' . $year . '</h2>';
+        $html .= '<table class="wp-list-table widefat striped">';
+        $html .= '<thead><tr><th>Mitgliedschaftsart</th><th>Beitritte</th><th>Austritte</th></tr></thead>';
+        $html .= '<tbody>';
 
-    // Fetch yearly stats
-    $new_members_current_year = get_count_for_year_and_type($current_year, 'beitrittsdatum', $table_name);
-    $resignations_current_year = get_count_for_year_and_type($current_year, 'austrittsdatum', $table_name);
-    $new_members_previous_year = get_count_for_year_and_type($previous_year, 'beitrittsdatum', $table_name);
-    $resignations_previous_year = get_count_for_year_and_type($previous_year, 'austrittsdatum', $table_name);
+        $total_beitritte = 0;
+        $total_austritte = 0;
 
-    if ($membership_stats) {
-        // Stats by type (current)
-        $html1 = format_stats_by_type($membership_stats);
-        $html1 .= '<tr><td><strong>Gesamt:</strong></td><td><strong>' . array_sum(array_column($membership_stats, 'count')) . '</strong></td></tr>';
+        foreach ($stats as $membership_type => $counts) {
+            $membership_name = esc_html(MITGLIEDSCHAFTSARTEN_PLURAL[$membership_type] ?? $membership_type);
+            $html .= sprintf(
+                '<tr><td>%s</td><td>%d</td><td>%d</td></tr>',
+                $membership_name,
+                $counts['beitritte'],
+                $counts['austritte']
+            );
+            $total_beitritte += $counts['beitritte'];
+            $total_austritte += $counts['austritte'];
+        }
 
-        // Yearly stats (current year)
-        $html2 = '<h2>' . $current_year . '</h2>';
-
-        // New members (Beitritte)
-        $html2 .= '<h3>Beitritte</h3>';
-        $html2 .= '<table class="wp-list-table widefat striped">';
-        $html2 .= '<thead><tr><th>Mitgliedschaftsart</th><th>Anzahl</th></tr></thead>';
-        $html2 .= '<tbody>';
-        $html2 .= format_stats_by_type($new_members_current_year);
-        $html2 .= '<tr><td><strong>Gesamt:</strong></td><td><strong>' . array_sum(array_column($new_members_current_year, 'count')) . '</strong></td></tr>';
-        $html2 .= '</tbody></table>';
-
-        // Resignations (Austritte)
-        $html2 .= '<h3>Austritte</h3>';
-        $html2 .= '<table class="wp-list-table widefat striped">';
-        $html2 .= '<thead><tr><th>Mitgliedschaftsart</th><th>Anzahl</th></tr></thead>';
-        $html2 .= '<tbody>';
-        $html2 .= format_stats_by_type($resignations_current_year);
-        $html2 .= '<tr><td><strong>Gesamt:</strong></td><td><strong>' . array_sum(array_column($resignations_current_year, 'count')) . '</strong></td></tr>';
-        $html2 .= '</tbody></table>';
-
-        // Yearly stats (previous year)
-        $html2 .= '<h2>' . $previous_year . '</h2>';
-
-        // New members (Beitritte)
-        $html2 .= '<h3>Beitritte</h3>';
-        $html2 .= '<table class="wp-list-table widefat striped">';
-        $html2 .= '<thead><tr><th>Mitgliedschaftsart</th><th>Anzahl</th></tr></thead>';
-        $html2 .= '<tbody>';
-        $html2 .= format_stats_by_type($new_members_previous_year);
-        $html2 .= '<tr><td><strong>Gesamt:</strong></td><td><strong>' . array_sum(array_column($new_members_previous_year, 'count')) . '</strong></td></tr>';
-        $html2 .= '</tbody></table>';
-
-        // Resignations (Austritte)
-        $html2 .= '<h3>Austritte</h3>';
-        $html2 .= '<table class="wp-list-table widefat striped">';
-        $html2 .= '<thead><tr><th>Mitgliedschaftsart</th><th>Anzahl</th></tr></thead>';
-        $html2 .= '<tbody>';
-        $html2 .= format_stats_by_type($resignations_previous_year);
-        $html2 .= '<tr><td><strong>Gesamt:</strong></td><td><strong>' . array_sum(array_column($resignations_previous_year, 'count')) . '</strong></td></tr>';
-        $html2 .= '</tbody></table>';
-
-        wp_send_json_success(
-            [
-                'membership_stats_by_type' => $html1,
-                'membership_stats_by_year' => $html2,
-            ]
+        $html .= sprintf(
+            '<tr><td><strong>Gesamt:</strong></td><td><strong>%d</strong></td><td><strong>%d</strong></td></tr>',
+            $total_beitritte,
+            $total_austritte
         );
+
+        $html .= '</tbody></table>';
+        return $html;
+    }
+
+    $stats_by_type = get_membership_stats_by_type($table_name);
+    $stats_current_year = get_combined_stats_for_year($current_year, $table_name);
+    $stats_previous_year = get_combined_stats_for_year($previous_year, $table_name);
+
+    if (!empty($stats_by_type) || !empty($stats_current_year) || !empty($stats_previous_year)) {
+        $html .= '<h2>Aktuelle Mitglieder</h2>';
+        $html .= format_membership_stats_by_type($stats_by_type);
+        $html .= format_combined_stats($stats_current_year, $current_year);
+        $html .= format_combined_stats($stats_previous_year, $previous_year);
+
+        wp_send_json_success(['membership_stats' => $html]);
     } else {
         wp_send_json_error('Error fetching membership stats.');
     }

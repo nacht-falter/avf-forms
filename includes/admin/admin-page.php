@@ -177,20 +177,8 @@ function Avf_Display_Membership_stats()
 
     ?>
     <div class="wrap">
-        <div id="membership-stats">
-            <h1>Mitglieder-Statistik</h1>
-            <h2>Anzahl Mitglieder aktuell</h2>
-            <table class="wp-list-table widefat striped">
-                <thead>
-                    <tr>
-                        <th scope="col">Mitgliedschaftsart</th>
-                        <th scope="col">Anzahl</th>
-                    </tr>
-                </thead>
-                <tbody id="membership_stats_by_type"></tbody>
-            </table>
-            <div id="membership_stats_by_year"></div>
-        </div>
+        <h1>Mitglieder-Statistik</h1>
+        <div id="membership-stats"></div>
     </div>
     <?php
 }

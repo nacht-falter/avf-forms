@@ -196,8 +196,7 @@ jQuery(document).ready(function ($) {
       _ajax_nonce: avf_ajax_admin.nonce,
       },
       success: function (response) {
-        $("#membership_stats_by_type").html(response.data.membership_stats_by_type)
-        $("#membership_stats_by_year").html(response.data.membership_stats_by_year)
+        $("#membership-stats").html(response.data.membership_stats)
       },
     });
   }
