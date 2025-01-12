@@ -73,8 +73,6 @@ function Avf_Display_memberships()
                 </ul>
             </div>
 
-            <div id="total-beitraege-container"><strong>Mitgliedsbeiträge gesamt pro Quartal: <span id="total-beitraege"></span> €</strong></div>
-
             <div class="bulk-actions">
                 <button type="button" id="export-csv" class="button button-primary" disabled>Ausgewählte Mitgliedschaften als CSV exportieren</button>
                 <button type="button" id="delete-bulk" class="button button-secondary" disabled>Ausgewählte Mitgliedschaften löschen</button>
@@ -180,5 +178,6 @@ function Avf_Display_Membership_stats()
         <h1>Mitglieder-Statistik</h1>
         <div id="membership-stats"></div>
     </div>
+
     <?php
 }

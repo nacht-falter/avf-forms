@@ -668,6 +668,7 @@ function Get_Total_Membership_fees()
         wp_send_json_error('Error fetching total membership fees.');
     }
 }
+
 function Get_Membership_stats()
 {
     global $wpdb;
@@ -721,7 +722,7 @@ function Get_Membership_stats()
         global $wpdb;
 
         $query = $wpdb->prepare(
-            "SELECT mitgliedschaft_art, COUNT(*) as count
+            "SELECT mitgliedschaft_art, COUNT(*) as count, SUM(beitrag) as fees
             FROM $table_name
             WHERE austrittsdatum IS NULL OR austrittsdatum > %s
             GROUP BY mitgliedschaft_art",
@@ -734,23 +735,27 @@ function Get_Membership_stats()
     function format_membership_stats_by_type($stats)
     {
         $html = '<table class="wp-list-table widefat striped">';
-        $html .= '<thead><tr><th>Mitgliedschaftsart</th><th>Anzahl</th></tr></thead>';
+        $html .= '<thead><tr><th>Mitgliedschaftsart</th><th>Anzahl</th><th>Beiträge</th></tr></thead>';
         $html .= '<tbody>';
 
         $total_count = 0;
+        $total_fees = 0;
         foreach ($stats as $row) {
             $membership_name = esc_html(MITGLIEDSCHAFTSARTEN_PLURAL[$row['mitgliedschaft_art']] ?? $row['mitgliedschaft_art']);
             $html .= sprintf(
-                '<tr><td>%s</td><td>%d</td></tr>',
+                '<tr><td>%s</td><td>%d</td><td>%d €</td></tr>',
                 $membership_name,
-                intval($row['count'])
+                intval($row['count']),
+                intval($row['fees'])
             );
             $total_count += intval($row['count']);
+            $total_fees += intval($row['fees']);
         }
 
         $html .= sprintf(
-            '<tr><td><strong>Gesamt:</strong></td><td><strong>%d</strong></td></tr>',
-            $total_count
+            '<tr><td><strong>Gesamt:</strong></td><td><strong>%d</strong></td><td><strong>%d €</strong></td></tr>',
+            $total_count,
+            $total_fees
         );
 
         $html .= '</tbody></table>';
@@ -794,7 +799,7 @@ function Get_Membership_stats()
     $stats_previous_year = get_combined_stats_for_year($previous_year, $table_name);
 
     if (!empty($stats_by_type) || !empty($stats_current_year) || !empty($stats_previous_year)) {
-        $html .= '<h2>Aktuelle Mitglieder</h2>';
+        $html .= '<h2>Aktuelle Mitgliederzahlen</h2>';
         $html .= format_membership_stats_by_type($stats_by_type);
         $html .= format_combined_stats($stats_current_year, $current_year);
         $html .= format_combined_stats($stats_previous_year, $previous_year);

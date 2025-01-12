@@ -192,13 +192,14 @@ jQuery(document).ready(function ($) {
       url: avf_ajax_admin.ajaxurl,
       method: "POST",
       data: {
-      action: "avf_get_membership_stats",
-      _ajax_nonce: avf_ajax_admin.nonce,
+        action: "avf_get_membership_stats",
+        _ajax_nonce: avf_ajax_admin.nonce,
       },
       success: function (response) {
-        $("#membership-stats").html(response.data.membership_stats)
+        $("#membership-stats").html(response.data.membership_stats);
       },
     });
+    get_total_membership_fees();
   }
 
   function init() {
@@ -431,7 +432,6 @@ jQuery(document).ready(function ($) {
 
     wieErfahren.on("change", toggleWieErfahrenSonstiges);
 
-    get_total_membership_fees();
     get_membership_stats();
   }
 
