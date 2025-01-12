@@ -178,6 +178,5 @@ function Avf_Display_Membership_stats()
         <h1>Mitglieder-Statistik</h1>
         <div id="membership-stats"></div>
     </div>
-
     <?php
 }

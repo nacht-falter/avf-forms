@@ -654,21 +654,6 @@ function Fetch_Schnupperkurs_data()
     );
 }
 
-function Get_Total_Membership_fees()
-{
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'avf_memberships';
-
-    $query = "SELECT SUM(beitrag) FROM $table_name WHERE austrittsdatum IS NULL OR austrittsdatum > CURRENT_DATE";
-    $result = $wpdb->get_var($query);
-
-    if ($result) {
-        wp_send_json_success($result);
-    } else {
-        wp_send_json_error('Error fetching total membership fees.');
-    }
-}
-
 function Get_Membership_stats()
 {
     global $wpdb;
