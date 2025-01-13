@@ -174,6 +174,9 @@ jQuery(document).ready(function ($) {
   }
 
   function get_membership_stats() {
+    $("#membership-stats").html(
+      '<div class="loading-spinner" style="visibility: visible"></div>',
+    );
     jQuery.ajax({
       url: avf_ajax_admin.ajaxurl,
       method: "POST",
