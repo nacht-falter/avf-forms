@@ -705,7 +705,7 @@ function Get_Membership_stats()
         return $combined_stats;
     }
 
-    function get_combined_schupperkurse_for_year($year)
+    function get_combined_schnupperkurse_for_year($year)
     {
         global $wpdb;
         $table_name = $wpdb->prefix . 'avf_schnupperkurse';
@@ -775,6 +775,10 @@ function Get_Membership_stats()
 
     function format_membership_stats_by_type($stats)
     {
+        if (empty($stats)) {
+            return '<p>Keine Mitgliedschaften gefunden.</p>';
+        }
+
         $html = '<table class="wp-list-table widefat striped">';
         $html .= '<thead><tr><th>Mitgliedschaftsart</th><th>Anzahl</th><th>Beiträge</th></tr></thead>';
         $html .= '<tbody>';
@@ -803,12 +807,18 @@ function Get_Membership_stats()
         return $html;
     }
 
-    function format_combined_stats($stats, $year, $data_type)
+    function format_combined_stats($stats, $data_type)
     {
         $columns = $data_type === 'schnupperkurse'
             ? ['Schnupperkursart', 'Anzahl', 'Beigetreten']
             : ['Mitgliedschaftsart', 'Beitritte', 'Austritte'];
         $html = $data_type === 'schnupperkurse' ? '<h3>Schnupperkurse</h3>' : '<h3>Beitritte/Austritte</h3>';
+
+        if (empty($stats)) {
+            $html .= '<p>Keine Daten gefunden.</p>';
+            return $html;
+        }
+
         $html .= '<table class="wp-list-table widefat striped">';
         $html .= '<thead><tr><th>' . implode('</th><th>', $columns) . '</th></tr></thead>';
         $html .= '<tbody>';
@@ -856,21 +866,26 @@ function Get_Membership_stats()
 
     $stats_by_type = get_membership_stats_by_type();
     $stats_current_year = get_combined_stats_for_year($current_year);
-    $schnupperkurse_current_year = get_combined_schupperkurse_for_year($current_year);
+    $schnupperkurse_current_year = get_combined_schnupperkurse_for_year($current_year);
     $stats_previous_year = get_combined_stats_for_year($previous_year);
-    $schnupperkurse_previous_year = get_combined_schupperkurse_for_year($previous_year);
+    $schnupperkurse_previous_year = get_combined_schnupperkurse_for_year($previous_year);
 
-    if (!empty($stats_by_type) || !empty($stats_current_year) || !empty($stats_previous_year)) {
+    if (!empty($stats_by_type)
+        || !empty($stats_current_year)
+        || !empty($stats_previous_year)
+        || !empty($schnupperkurse_current_year)
+        || !empty($schnupperkurse_previous_year)
+    ) {
         $html = '<h2>Aktuelle Mitgliederzahlen</h2>';
         $html .= format_membership_stats_by_type($stats_by_type);
 
         $html .= '<h2>' . $current_year . '</h2>';
-        $html .= format_combined_stats($stats_current_year, $current_year, 'memberships');
-        $html .= format_combined_stats($schnupperkurse_current_year, $current_year, 'schnupperkurse');
+        $html .= format_combined_stats($stats_current_year, 'memberships');
+        $html .= format_combined_stats($schnupperkurse_current_year, 'schnupperkurse');
 
         $html .= '<h2>' . $previous_year . '</h2>';
-        $html .= format_combined_stats($stats_previous_year, $previous_year, 'memberships');
-        $html .= format_combined_stats($schnupperkurse_previous_year, $previous_year, 'schnupperkurse');
+        $html .= format_combined_stats($stats_previous_year, 'memberships');
+        $html .= format_combined_stats($schnupperkurse_previous_year, 'schnupperkurse');
 
 
         wp_send_json_success(['membership_stats' => $html]);
