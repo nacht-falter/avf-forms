@@ -780,7 +780,7 @@ function Get_Membership_stats()
         }
 
         $html = '<table class="wp-list-table widefat striped">';
-        $html .= '<thead><tr><th>Mitgliedschaftsart</th><th>Anzahl</th><th>Beiträge</th></tr></thead>';
+        $html .= '<thead><tr><th>Mitgliedschaftsart</th><th>Anzahl</th><th>Beiträge pro Quartal</th></tr></thead>';
         $html .= '<tbody>';
 
         $total_count = 0;
