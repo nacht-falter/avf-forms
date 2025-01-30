@@ -289,25 +289,6 @@ function validate_and_get_params($allowed_columns)
     return $params;
 }
 
-function format_date_columns($row, $date_columns)
-{
-    $formatted_row = [];
-    foreach (array_keys($row) as $key) {
-        $formatted_row['column_' . $key] = esc_html($row[$key]);
-        if ($key === 'id') {
-            $formatted_row['column_' . $key . '_attr'] = esc_attr($row[$key]);
-        }
-        if (in_array($key, $date_columns, true)) {
-            $dateString = $row[$key] ?? '';
-            $date = $dateString ? DateTime::createFromFormat('Y-m-d', $dateString) : null;
-            if ($date) {
-                $formatted_row['column_' . $key] = esc_html($date->format('d.m.Y'));
-            }
-        }
-    }
-    return $formatted_row;
-}
-
 function process_membership_filters($filters)
 {
     $allowed_filters = ['aktiv', 'kind', 'sonder', 'passiv', 'foerder', 'ausgetreten'];
@@ -380,20 +361,27 @@ function build_membership_query($table_name, $active_filters, $search, $column, 
 function generate_membership_html($results)
 {
     $html = '';
-    $dateColumns = ['geburtsdatum', 'beitrittsdatum', 'austrittsdatum', 'wiedervorlage'];
+    $dateColumns = ['geburtsdatum', 'beitrittsdatum', 'austrittsdatum', 'wiedervorlage', 'submission_date'];
 
     foreach ($results as $row) {
         foreach (array_keys($row) as $key) {
             ${'column_' . $key} = esc_html($row[$key]);
+
             if ($key === 'id') {
                 ${'column_' . $key . '_attr'} = esc_attr($row[$key]);
             }
+
             if (in_array($key, $dateColumns, true)) {
                 $dateString = $row[$key] ?? '';
-                $date = $dateString ? DateTime::createFromFormat('Y-m-d', $dateString) : null;
 
-                if ($date) {
-                    ${'column_' . $key} = esc_html($date->format('d.m.Y'));
+                if ($dateString) {
+                    try {
+                        $date = new DateTime($dateString);
+                        ${'column_' . $key} = esc_html($date->format('d.m.Y'));
+                    } catch (Exception $e) {
+                        // Handle invalid date format
+                        ${'column_' . $key} = esc_html($dateString);
+                    }
                 }
             }
         }
@@ -497,7 +485,8 @@ function generate_membership_html($results)
 function generate_schnupperkurs_html($results)
 {
     $html = '';
-        $dateColumns = ['geburtsdatum', 'beginn', 'ende'];
+    $dateColumns = ['geburtsdatum', 'beginn', 'ende', 'submission_date'];
+
     foreach ($results as $row) {
         foreach (array_keys($row) as $key) {
             ${'column_' . $key} = esc_html($row[$key]);
@@ -505,9 +494,15 @@ function generate_schnupperkurs_html($results)
                 ${'column_' . $key . '_attr'} = esc_attr($row[$key]);
             }
             if (in_array($key, $dateColumns, true)) {
-                $date = DateTime::createFromFormat('Y-m-d', $row[$key]);
-                if ($date) {
-                    ${'column_' . $key} = esc_html($date->format('d.m.Y'));
+                $dateString = $row[$key] ?? '';
+
+                if ($dateString) {
+                    try {
+                        $date = new DateTime($dateString);
+                        ${'column_' . $key} = esc_html($date->format('d.m.Y'));
+                    } catch (Exception) {
+                        ${'column_' . $key} = esc_html($dateString);
+                    }
                 }
             }
         }
