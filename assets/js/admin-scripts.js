@@ -111,9 +111,14 @@ jQuery(document).ready(function ($) {
     const urlParams = getCurrentUrlParams();
     const filters = urlParams.filters ? urlParams.filters.split(",") : [];
 
+    // Get filters from url params. "ausgetreten" is initially unchecked.
     document.querySelectorAll(".filter-checkbox").forEach((checkbox) => {
-      checkbox.checked =
-        filters.length === 0 || filters.includes(checkbox.value);
+      if (checkbox.value == "ausgetreten") {
+        checkbox.checked = filters.includes("ausgetreten");
+      } else {
+        checkbox.checked =
+          filters.length === 0 || filters.includes(checkbox.value);
+      }
     });
   }
 

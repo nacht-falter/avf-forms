@@ -304,7 +304,7 @@ function format_date_columns($row, $date_columns)
 
 function process_membership_filters($filters)
 {
-    $allowed_filters = ['aktiv', 'kind', 'sonder', 'passiv', 'foerder'];
+    $allowed_filters = ['aktiv', 'kind', 'sonder', 'passiv', 'foerder', 'ausgetreten'];
     $related_filters = [
         'aktiv' => ['aktiv_ermaessigt', 'familie'],
         'kind' => ['jugend'],
@@ -328,23 +328,29 @@ function process_membership_filters($filters)
 function build_membership_query($table_name, $active_filters, $search, $column, $order)
 {
     $query_parts = ['params' => []];
+    $where_clauses = [];
 
-    $where_in_clause = '';
-    if ($active_filters) {
-        $where_in_clause = implode(', ', array_fill(0, count($active_filters), '%s'));
-        $query_parts['params'] = $active_filters;
+    // Special case for "ausgetreten" filter
+    if (($index = array_search("ausgetreten", $active_filters, true)) !== false) {
+        unset($active_filters[$index]);
+        $resigned_members = true;
+    } else {
+        $where_clauses[] = "austrittsdatum IS NULL";
     }
 
-    $search_clause = '';
+    // Return empty dataset if no active filters are selected
+    if (empty($active_filters)) {
+        $where_clauses[] = "mitgliedschaft_art IN (NULL)"; 
+    } else {
+        $placeholders = implode(', ', array_fill(0, count($active_filters), '%s'));
+        $where_clauses[] = "mitgliedschaft_art IN ($placeholders)";
+        $query_parts['params'] = array_merge($query_parts['params'], $active_filters);
+    }
+
     if ($search) {
         $search_columns = ['vorname', 'nachname', 'email', 'kontoinhaber', 'notizen'];
-        $like_clauses = array_map(
-            function ($column) {
-                return "$column LIKE %s";
-            },
-            $search_columns
-        );
-        $search_clause = ' AND (' . implode(' OR ', $like_clauses) . ')';
+        $like_clauses = array_map(fn($col) => "$col LIKE %s", $search_columns);
+        $where_clauses[] = '(' . implode(' OR ', $like_clauses) . ')';
         $query_parts['params'] = array_merge(
             $query_parts['params'],
             array_fill(0, count($search_columns), '%' . $search . '%')
@@ -353,16 +359,17 @@ function build_membership_query($table_name, $active_filters, $search, $column, 
 
     $order_clause = $column === 'init'
         ? 'CASE WHEN wiedervorlage <= CURRENT_DATE THEN 1 ELSE 2 END, mitgliedschaft_art ASC'
-        : $column . ' ' . $order;
+        : "$column $order";
 
-    $query_parts['query'] = "SELECT * FROM $table_name WHERE 1=1";
-    if ($where_in_clause) {
-        $query_parts['query'] .= " AND mitgliedschaft_art IN ($where_in_clause)";
+    $query_parts['query'] = "SELECT * FROM $table_name";
+    if (!empty($where_clauses)) {
+        $query_parts['query'] .= " WHERE " . implode(' AND ', $where_clauses);
     }
-    $query_parts['query'] .= "$search_clause ORDER BY $order_clause";
+    $query_parts['query'] .= " ORDER BY $order_clause";
 
     return $query_parts;
 }
+
 
 function generate_membership_html($results)
 {

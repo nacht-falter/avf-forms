@@ -11,6 +11,7 @@ function Avf_Display_memberships()
         'sonder' => 'Sondermitglieder',
         'passiv' => 'Passive Mitglieder',
         'foerder' => 'Fördermitglieder',
+        'ausgetreten' => 'Ausgetretene Mitglieder',
     ];
 
     ?>
