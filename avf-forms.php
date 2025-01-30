@@ -62,13 +62,13 @@ define(
 );
 define(
     'BEITRAEGE', [
-        'aktiv' => 72,
-        'aktiv_ermaessigt' => 54,
-        'familie' => 45,
-        'foerder' => 15,
+        'aktiv' => 81,
+        'aktiv_ermaessigt' => 60,
+        'familie' => 60,
+        'foerder' => 9,
         'sonder' => 30,
-        'kind' => 42,
-        'jugend' => 54,
+        'kind' => 45,
+        'jugend' => 60,
         'geschwisterkind_discount' => 9,
         'passiv' => 0,
     ]
