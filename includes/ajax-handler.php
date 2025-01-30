@@ -431,8 +431,8 @@ function generate_membership_html($results)
         $html .= ' onclick="handleRowClick(event, ' . $column_id_attr . ')">';
 
         $html .= <<<HTML
-            <th scope="row" class="check-column" style="cursor: initial;">
-            <input type="checkbox" class="membership-checkbox" value="{$column_id_attr}">
+            <th scope="row" class="check-column no-link" style="cursor: initial;">
+            <input type="checkbox" class="membership-checkbox no-link" value="{$column_id_attr}">
             </th>
             <td>{$column_id}</td>
             <td>

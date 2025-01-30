@@ -43,8 +43,8 @@ function Avf_Display_memberships()
                 <table class="wp-list-table widefat striped">
                     <thead>
                         <tr>
-                            <th scope="col" class="check-column">
-                                <input type="checkbox" id="select-all" title="Alle Einträge auswählen" />
+                            <th scope="col" class="check-column no-link">
+                                <input type="checkbox" class="no-link" id="select-all" title="Alle Einträge auswählen" />
                             </th>
                             <?php
                             foreach (COLUMN_HEADERS_MEMBERSHIPS as $column_key => $column_label) {
@@ -93,9 +93,13 @@ function Avf_Display_memberships()
 
         <script>
         function handleRowClick(event, id) {
-            if (event.target.tagName != 'INPUT' && event.target.tagName != 'TH') {
-                window.location.href = 'admin.php?page=avf-membership-form-page&edit=' + id;
-            }
+            const selection = window.getSelection();
+
+            setTimeout(() => {
+                if (selection.isCollapsed && !window.getSelection().toString()) {
+                    window.location.href = 'admin.php?page=avf-membership-form-page&edit=' + id;
+                }
+            }, 250);
         }
         </script>
     </div>
