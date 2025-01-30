@@ -107,8 +107,11 @@ function Avf_Handle_Ajax_membership_requests()
             'wiedervorlage' => !empty($_POST['wiedervorlage']) ? sanitize_text_field($_POST['wiedervorlage']) : null,
             'wiedervorlage_grund' => !empty($_POST['wiedervorlage_grund']) ? sanitize_text_field($_POST['wiedervorlage_grund']) : null,
             'notizen' => sanitize_textarea_field($_POST['notizen']),
-            'submission_date' => current_time('mysql'), // Capture the current timestamp
         ];
+
+        if ($action_type === 'create') {
+            $data['submission_date'] = current_time('mysql');
+        }
 
         $response = handle_insert_update($table_name, $data, $action_type, $_POST['id'] ?? null);
 
@@ -150,8 +153,11 @@ function Avf_Handle_Ajax_schnupperkurs_requests()
                 ? sanitize_text_field($_POST['wie_erfahren_sonstiges'])
                 : sanitize_text_field($_POST['wie_erfahren']),
             'notizen' => sanitize_textarea_field($_POST['notizen']),
-            'submission_date' => current_time('mysql'),
         ];
+
+        if ($action_type === 'create') {
+            $data['submission_date'] = current_time('mysql');
+        }
 
         $response = handle_insert_update($table_name, $data, $action_type, $_POST['id'] ?? null);
 
