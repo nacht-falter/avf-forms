@@ -119,6 +119,22 @@ function Avf_Handle_Ajax_membership_requests()
         $response = handle_delete($table_name, $_POST['id']);
     } elseif ($action_type === 'bulk_delete' && isset($_POST['ids']) && is_array($_POST['ids'])) {
         $response = handle_bulk_delete($table_name, array_map('intval', $_POST['ids']));
+    } elseif ($action_type === 'export_csv' && isset($_POST['ids']) && is_array($_POST['ids'])) {
+        if (empty($_POST['ids'])) {
+            wp_send_json_error('No data selected for export');
+        } else {
+            $ids = implode(',', array_map('intval', $_POST['ids']));
+
+            $download_url = add_query_arg(
+                [
+                    'action' => 'avf_download_csv',
+                    'ids' => $ids,
+                    '_ajax_nonce' => $_POST['_ajax_nonce'],
+                ],
+                admin_url('admin-ajax.php')
+            );
+            wp_send_json_success(['download_url' => $download_url]);
+        }
     }
 
     echo json_encode($response);
