@@ -337,7 +337,7 @@ function build_membership_query($table_name, $active_filters, $search, $column, 
     if (($index = array_search("ausgetreten", $active_filters, true)) !== false) {
         unset($active_filters[$index]);
     } else {
-        $where_clauses[] = "austrittsdatum IS NULL or austrittsdatum > CURRENT_DATE";
+        $where_clauses[] = "(austrittsdatum IS NULL OR austrittsdatum > CURRENT_DATE)";
     }
 
     // Return empty dataset if no active filters are selected
