@@ -61,19 +61,6 @@ define(
     ]
 );
 define(
-    'BEITRAEGE', [
-        'aktiv' => 81,
-        'aktiv_ermaessigt' => 60,
-        'familie' => 60,
-        'foerder' => 9,
-        'sonder' => 30,
-        'kind' => 45,
-        'jugend' => 60,
-        'geschwisterkind_discount' => 9,
-        'passiv' => 0,
-    ]
-);
-define(
     'SCHNUPPERKURSPREISE', [
         'kind' => 20,
         'erwachsene' => 30,

@@ -94,5 +94,20 @@ class Avf_Forms_Activator
             wp_schedule_event(time(), 'daily', 'avf_schnupperkurs_notification');
             error_log('Cron job scheduled at ' . date('Y-m-d H:i:s', time()));
         }
+
+        // Define membership fees and store them in wp_options
+        $membership_fees = [
+        'aktiv' => 81,
+        'aktiv_ermaessigt' => 60,
+        'familie' => 60,
+        'foerder' => 9,
+        'sonder' => 30,
+        'kind' => 45,
+        'jugend' => 60,
+        'geschwisterkind_discount' => 9,
+        'passiv' => 0,
+        ];
+
+        update_option('avf_beitraege', $membership_fees);
     }
 }

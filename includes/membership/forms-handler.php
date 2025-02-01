@@ -72,12 +72,14 @@ class Avf_Forms_Membership_Handler
                 $mitgliedschaft_art = 'jugend';
             }
 
-            if (array_key_exists($mitgliedschaft_art, BEITRAEGE)) {
-                $beitrag = BEITRAEGE[$mitgliedschaft_art];
+            $beitraege = get_option('avf_beitraege');
+
+            if (array_key_exists($mitgliedschaft_art, $beitraege)) {
+                $beitrag = $beitraege[$mitgliedschaft_art] ?? 0;
             }
 
             if ($beitrag && $geschwisterkind) {
-                $discount = BEITRAEGE['geschwisterkind_discount'];
+                $discount = $beitraege['geschwisterkind_discount'] ?? 0; // Default to 0 if not set
                 $beitrag = $beitrag - $discount;
                 $notizen = '2. Kind, ' . $discount . ' € Rabatt';
             }

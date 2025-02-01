@@ -85,7 +85,7 @@ function Avf_Display_memberships()
                 <th>Beiträge</th>
             </tr>
             <?php
-            foreach (BEITRAEGE as $key => $value) {
+            foreach (get_option('avf_beitraege') as $key => $value) {
                 $displayName = MITGLIEDSCHAFTSARTEN[$key] ?? $key;
                 echo "<tr><td>{$displayName}:</td><td>{$value} €</td></tr>";
             }

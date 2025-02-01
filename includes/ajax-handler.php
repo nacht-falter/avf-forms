@@ -415,7 +415,8 @@ function generate_membership_html($results)
             $markInactive = true;
         }
 
-        if (BEITRAEGE[$row['mitgliedschaft_art']] != $row['beitrag']) {
+        $beitraege = get_option('avf_beitraege');
+        if ($beitraege[$row['mitgliedschaft_art']] != $row['beitrag']) {
             $markCustomBeitrag = true;
         }
 
