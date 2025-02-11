@@ -179,7 +179,7 @@ function Avf_Display_Membership_form()
                 </div>
 
                 <label for="beitrag">Mitgliedsbeitrag</label>
-                <input id="beitrag" type="number" name="beitrag" value="<?php echo esc_attr($record->beitrag ?? ''); ?>" step="1" required>
+                <input id="beitrag" type="number" name="beitrag" value="<?php echo esc_attr($record->beitrag ?? ''); ?>" step="0.5" required>
 
                 <table class="beitragsliste">
                     <tr>
