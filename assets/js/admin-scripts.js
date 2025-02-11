@@ -319,6 +319,36 @@ jQuery(document).ready(function ($) {
       });
     });
 
+    $("#avf-membership-fees-form").on("submit", function (e) {
+      e.preventDefault();
+
+      let formData = $(this).serialize();
+
+      if (
+        !confirm(
+          "Bist Du dir sicher, dass Du die Mitgliedsbeiträge aktualisieren willst?",
+        )
+      ) {
+        return;
+      }
+
+      $.post(
+        avf_ajax_admin.ajaxurl,
+        formData,
+        function (response) {
+          console.log(response);
+          let className = response.success ? "updated" : "error",
+            $message = $(
+              `<div class="${className}"><p>${response.data.message || response.data}</p></div>`,
+            );
+
+          $("#avf-membership-fees-form").prepend($message);
+          setTimeout(() => $message.remove(), 5000);
+        },
+        "json",
+      );
+    });
+
     deleteButton.on("click", function (e) {
       e.preventDefault();
 

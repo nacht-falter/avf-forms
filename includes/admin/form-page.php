@@ -318,7 +318,6 @@ function Avf_Display_Schnupperkurs_form()
                     </div>
                 </div>
 
-
                 <label for="notizen">Notizen</label>
                 <textarea id="notizen" name="notizen"><?php echo esc_textarea($record->notizen ?? ''); ?></textarea>
 
@@ -330,6 +329,44 @@ function Avf_Display_Schnupperkurs_form()
             <?php else : ?>
                 <a href="admin.php?page=avf-schnupperkurs-admin" class="button button-secondary">Abbrechen</a>
             <?php endif; ?>
+        </form>
+    </div>
+    <?php
+}
+
+function Avf_Manage_Membership_fees()
+{
+    if (!current_user_can('manage_memberships')) {
+        wp_die(__('You do not have sufficient permissions to access this page.'));
+    }
+
+    $beitraege = get_option('avf_beitraege', []);
+    ?>
+    <div class="wrap">
+        <h1>AVF-Mitgliedsbeiträge</h1>
+        <br>
+        <form id="avf-membership-fees-form">
+            <div id="admin-form-container">
+                <?php wp_nonce_field('avf_membership_action', '_ajax_nonce'); ?>
+                <input type="hidden" name="action" value="avf_membership_action">
+                <input type="hidden" name="action_type" value="update_fees">
+                <?php foreach ($beitraege as $key => $value) : ?>
+                <div >
+                    <label for="<?php echo esc_attr($key); ?>"><?php echo MITGLIEDSCHAFTSARTEN[esc_html($key)]; ?>:</label>
+                    <input class="fee-input" type="number" step="0.5" name="avf_beitraege[<?php echo esc_attr($key); ?>]" value="<?php echo esc_attr($value); ?>" required><br>
+                </div>
+                <?php endforeach; ?>
+                <br>
+            </div>
+            <input id="update-existing-fees" type="checkbox" name="update-existing-fees" value="1" checked>
+            <label for="update-existing-fees"><strong>Beiträge bestehender Mitglieder aktualisieren?</strong></label>
+            <div class="notice notice-info inline">
+                <p>
+                    Wenn dieser Haken gesetzt ist, werden die Beiträge von Mitgliedern, die den Regelbeitrag zahlen, auf die angegebenen Beiträge für die jeweilige Mitgliedschaftsart gesetzt. Dies kann nicht rückgängig gemacht werden.
+                    Beiträge von Mitgliedern, die einen individuell vereinbarten Beitrag zahlen, werden nicht verändert.
+                </p>
+            </div>
+            <input type="submit" value="Beiträge aktualisieren" class="button button-primary">
         </form>
     </div>
     <?php

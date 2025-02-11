@@ -135,6 +135,41 @@ function Avf_Handle_Ajax_membership_requests()
             );
             wp_send_json_success(['download_url' => $download_url]);
         }
+    } elseif ($action_type === 'update_fees') {
+        if (empty($_POST['avf_beitraege']) || ! is_array($_POST['avf_beitraege']) ) {
+            wp_send_json_error('No fee data received.');
+        }
+
+        $current_fees = get_option('avf_beitraege');
+        $new_fees     = array_map('floatval', $_POST['avf_beitraege']);
+
+        $fees_changed = update_option('avf_beitraege', $new_fees);
+
+        if ($fees_changed
+            && isset($_POST['update-existing-fees'])
+            && '1' === $_POST['update-existing-fees']
+        ) {
+            global $wpdb;
+            $table_name = $wpdb->prefix . 'avf_memberships';
+
+            foreach ($new_fees as $membership_type => $new_fee) {
+                if (! isset($current_fees[ $membership_type ]) ) {
+                    continue;
+                }
+
+                $wpdb->query(
+                    $wpdb->prepare(
+                        "UPDATE $table_name SET beitrag = %f
+                         WHERE beitrag = %f
+                         AND mitgliedschaft_art = %s",
+                        $new_fee,
+                        $current_fees[ $membership_type ],
+                        $membership_type
+                    )
+                );
+            }
+        }
+        wp_send_json_success(array( 'message' => $fees_changed ? 'Beiträge aktualisiert' : 'Beiträge sind bereits aktuell'));
     }
 
     echo json_encode($response);
@@ -342,7 +377,7 @@ function build_membership_query($table_name, $active_filters, $search, $column, 
 
     // Return empty dataset if no active filters are selected
     if (empty($active_filters)) {
-        $where_clauses[] = "mitgliedschaft_art IN (NULL)"; 
+        $where_clauses[] = "mitgliedschaft_art IN (NULL)";
     } else {
         $placeholders = implode(', ', array_fill(0, count($active_filters), '%s'));
         $where_clauses[] = "mitgliedschaft_art IN ($placeholders)";
@@ -910,7 +945,6 @@ function Get_Membership_stats()
         $html .= '<h2>' . $previous_year . '</h2>';
         $html .= format_combined_stats($stats_previous_year, 'memberships');
         $html .= format_combined_stats($schnupperkurse_previous_year, 'schnupperkurse');
-
 
         wp_send_json_success(['membership_stats' => $html]);
     } else {

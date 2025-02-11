@@ -2,7 +2,8 @@
 #delete-schnupperkurs,
 #export-csv,
 #set-reminder,
-#delete-bulk {
+#delete-bulk,
+#update-fees {
   margin-top: 1rem;
 }
 
@@ -43,7 +44,8 @@
 }
 
 @media (max-width: 768px) {
-  #search-container, #search {
+  #search-container,
+  #search {
     margin-top: 0.5rem;
     width: 100%;
   }
@@ -118,6 +120,21 @@
 .form-group input[type="checkbox"] {
   margin-top: 0;
   order: -1;
+}
+
+#avf-membership-fees-form div {
+  display: flex;
+  gap: 10px;
+}
+
+#avf-membership-fees-form input.fee-input {
+  min-width: 50px;
+  max-width: 100px;
+}
+
+#avf-membership-fees-form label {
+  flex: 0 0 50%;
+  white-space: nowrap;
 }
 
 .list-container {
@@ -281,7 +298,8 @@ label:has(+ input:required)::after {
   max-width: 700px;
 }
 
-#membership-stats table thead tr, #membership-stats table tbody tr {
+#membership-stats table thead tr,
+#membership-stats table tbody tr {
   display: flex;
   width: 100%;
   justify-content: space-between;
@@ -291,13 +309,15 @@ label:has(+ input:required)::after {
   border-bottom: 1px solid #c3c4c7;
 }
 
-#membership-stats th, #membership-stats td {
+#membership-stats th,
+#membership-stats td {
   border: none;
   text-align: right;
   flex: 1 1 50%;
 }
 
-#membership-stats th:first-child, #membership-stats td:first-child {
+#membership-stats th:first-child,
+#membership-stats td:first-child {
   text-align: left;
 }
 
@@ -317,7 +337,4 @@ label:has(+ input:required)::after {
 tr.total {
   border-top: 1px solid #c3c4c7;
   background-color: #ededed !important;
-}
-
-tr.total td {
 }

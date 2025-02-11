@@ -244,8 +244,15 @@ class Avf_Forms_Plugin
             'avf-membership-stats',
             'Avf_Display_Membership_stats'
         );
+        add_submenu_page(
+            'avf-membership-admin',
+            'Mitgliedsbeiträge verwalten',
+            'Mitgliedsbeiträge verwalten',
+            'manage_memberships',
+            'avf-membership-fee-admin',
+            'Avf_Manage_Membership_fees'
+        );
     }
-
 }
 
 Avf_Forms_Plugin::init();
