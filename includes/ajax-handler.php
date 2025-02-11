@@ -692,7 +692,7 @@ function Fetch_Schnupperkurs_data()
     global $wpdb;
     $table_name = $wpdb->prefix . 'avf_schnupperkurse';
 
-    $order_clause = $params['column'] === 'init' ? 'beginn ASC' : $params['column'] . ' ' . $params['order'];
+    $order_clause = $params['column'] === 'init' ? 'beginn DESC' : $params['column'] . ' ' . $params['order'];
     $query = "SELECT * FROM $table_name ORDER BY $order_clause";
 
     $results = $wpdb->get_results($query, ARRAY_A);
