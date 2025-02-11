@@ -25,6 +25,7 @@ class Avf_Forms_Activator
                 plz varchar(10) NOT NULL,
                 ort varchar(255) NOT NULL,
                 beitrittsdatum date NOT NULL,
+                kuendigungseingang date NULL,
                 austrittsdatum date NULL,
                 starterpaket boolean NULL,
                 spende boolean NULL,

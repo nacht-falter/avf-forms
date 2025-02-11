@@ -75,6 +75,7 @@ define(
         'email'              => 'E-Mail',
         'geburtsdatum'       => 'Geburtsdatum',
         'beitrittsdatum'     => 'Beitrittsdatum',
+        'kuendigungseingang' => 'Kündigungseingang',
         'austrittsdatum'     => 'Austrittsdatum',
         'starterpaket'       => 'Starterpaket',
         'spende'             => 'Spende',

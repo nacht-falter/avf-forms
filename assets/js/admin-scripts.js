@@ -336,7 +336,6 @@ jQuery(document).ready(function ($) {
         avf_ajax_admin.ajaxurl,
         formData,
         function (response) {
-          console.log(response);
           let className = response.success ? "updated" : "error",
             $message = $(
               `<div class="${className}"><p>${response.data.message || response.data}</p></div>`,

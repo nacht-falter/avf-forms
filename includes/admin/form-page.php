@@ -107,9 +107,16 @@ function Avf_Display_Membership_form()
                         <label for="beitrittsdatum">Beitrittsdatum</label>
                         <input id="beitrittsdatum" type="date" name="beitrittsdatum" value="<?php echo esc_attr($record->beitrittsdatum ?? ''); ?>" required>
                     </div>
+                </div>
+
+                <div class="form-group">
+                    <div>
+                        <label for="kuendigungseingang">Kündigungseingang</label>
+                        <input id="kuendigungseingang" type="date" name="kuendigungseingang" value="<?php echo esc_attr($record->kuendigungseingang ?? ''); ?>">
+                    </div>
                     <div>
                         <label for="austrittsdatum">Austrittsdatum</label>
-                        <input id="austrittsdatum" type="date" name="austrittsdatum" value="<?php echo esc_attr($record->austrittsdatum ?? ''); ?>">
+                        <input id="austrittsdatum" type="date" name="austrittsdatum" value="<?php echo esc_attr($record->austrittsdatum ?? ''); ?>" disabled>
                     </div>
                 </div>
 

@@ -65,6 +65,34 @@ function handle_bulk_delete($table_name, $ids)
     }
 }
 
+function avf_handle_update_existing_fees()
+{
+    global $wpdb;
+    $fees = get_option('avf_beitraege');
+
+    return true;
+
+}
+
+function avf_calculate_resignation_date($kuendigungseingang)
+{
+    $kuendigungseingang_date = new DateTime($kuendigungseingang);
+
+    // Determine last day of current quarter
+    $month = $kuendigungseingang_date->format('n');
+    $year = $kuendigungseingang_date->format('Y');
+    $quarter_end_month = ceil($month / 3) * 3;
+    $quarter_end = new DateTime("$year-$quarter_end_month-01");
+    $quarter_end->modify('last day of this month');
+
+    // Check if cancellation date is within 6 weeks before end of quarter
+    if ($kuendigungseingang_date > (clone $quarter_end)->modify('-6 weeks')) {
+        $quarter_end->modify('+3 months')->modify('last day of this month');
+    }
+
+    return $quarter_end->format('Y-m-d');
+}
+
 function Avf_Handle_Ajax_membership_requests()
 {
     validate_user_and_nonce();
@@ -76,6 +104,9 @@ function Avf_Handle_Ajax_membership_requests()
     $response = array('status' => 'error', 'message' => 'Invalid action');
 
     if ($action_type === 'create' || $action_type === 'update') {
+        $kuendigungseingang = sanitize_text_field($_POST['kuendigungseingang']);
+        $austrittsdatum = avf_calculate_resignation_date($kuendigungseingang);
+
         $data = [
             'mitgliedschaft_art' => sanitize_text_field($_POST['mitgliedschaft_art']),
             'vorname' => sanitize_text_field($_POST['vorname']),
@@ -91,7 +122,8 @@ function Avf_Handle_Ajax_membership_requests()
             'plz' => sanitize_text_field($_POST['plz']),
             'ort' => sanitize_text_field($_POST['ort']),
             'beitrittsdatum' => sanitize_text_field($_POST['beitrittsdatum']),
-            'austrittsdatum' => !empty($_POST['austrittsdatum']) ? sanitize_text_field($_POST['austrittsdatum']) : null,
+            'kuendigungseingang' => !empty($_POST['kuendigungseingang']) ? sanitize_text_field($_POST['kuendigungseingang']) : null,
+            'austrittsdatum' => $austrittsdatum,
             'starterpaket' => isset($_POST['starterpaket']) ? 1 : 0,
             'spende' => isset($_POST['spende']) ? 1 : 0,
             'spende_monatlich' => isset($_POST['spende_monatlich']) ? floatval($_POST['spende_monatlich']) : null,
@@ -253,6 +285,7 @@ function Generate_Csv_download()
                 'PLZ',
                 'Ort',
                 'Beitrittsdatum',
+                'Kündigungseingang',
                 'Austrittsdatum',
                 'Starterpaket',
                 'Spende',
@@ -291,6 +324,7 @@ function Generate_Csv_download()
                         $row['plz'],
                         $row['ort'],
                         Avf_Forms_Utils::format_date($row['beitrittsdatum']),
+                        Avf_Forms_Utils::format_date($row['kuendigungseingang']),
                         Avf_Forms_Utils::format_date($row['austrittsdatum']),
                         Avf_Forms_Utils::format_bool($row['starterpaket']),
                         Avf_Forms_Utils::format_bool($row['spende']),
@@ -411,7 +445,7 @@ function build_membership_query($table_name, $active_filters, $search, $column, 
 function generate_membership_html($results)
 {
     $html = '';
-    $dateColumns = ['geburtsdatum', 'beitrittsdatum', 'austrittsdatum', 'wiedervorlage', 'submission_date'];
+    $dateColumns = ['geburtsdatum', 'beitrittsdatum', 'kuendigungseingang', 'austrittsdatum', 'wiedervorlage', 'submission_date'];
 
     foreach ($results as $row) {
         foreach (array_keys($row) as $key) {
@@ -502,6 +536,7 @@ function generate_membership_html($results)
             <td>{$column_email}</td>
             <td>{$column_geburtsdatum}</td>
             <td>{$column_beitrittsdatum}</td>
+            <td>{$column_kuendigungseingang}</td>
             <td>{$column_austrittsdatum}</td>
             HTML;
 
