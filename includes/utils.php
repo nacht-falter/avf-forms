@@ -60,10 +60,7 @@ class Avf_Forms_Utils
         global $wpdb;
         $table_name = $wpdb->prefix . 'avf_schnupperkurse';
 
-        $query = $wpdb->prepare(
-            "SELECT * FROM {$table_name}
-            WHERE DATE(ende) = CURDATE()"
-        );
+        $query = "SELECT * FROM $table_name WHERE DATE(ende) = CURDATE()";
 
         $results = $wpdb->get_results($query);
 
