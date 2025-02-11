@@ -105,7 +105,11 @@ function Avf_Handle_Ajax_membership_requests()
 
     if ($action_type === 'create' || $action_type === 'update') {
         $kuendigungseingang = sanitize_text_field($_POST['kuendigungseingang']);
-        $austrittsdatum = avf_calculate_resignation_date($kuendigungseingang);
+        if (!empty($kuendigungseingang)) {
+            $austrittsdatum = avf_calculate_resignation_date($kuendigungseingang);
+        } else {
+            $austrittsdatum = isset($_POST['austrittsdatum']) ? sanitize_text_field($_POST['austrittsdatum']) : null;
+        }
 
         $data = [
             'mitgliedschaft_art' => sanitize_text_field($_POST['mitgliedschaft_art']),
