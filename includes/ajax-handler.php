@@ -105,10 +105,10 @@ function Avf_Handle_Ajax_membership_requests()
 
     if ($action_type === 'create' || $action_type === 'update') {
         $kuendigungseingang = sanitize_text_field($_POST['kuendigungseingang']);
+        $austrittsdatum = !empty($_POST['austrittsdatum']) ? sanitize_text_field($_POST['austrittsdatum']) : null;
+
         if (!empty($kuendigungseingang)) {
             $austrittsdatum = avf_calculate_resignation_date($kuendigungseingang);
-        } else {
-            $austrittsdatum = isset($_POST['austrittsdatum']) ? sanitize_text_field($_POST['austrittsdatum']) : null;
         }
 
         $data = [
@@ -126,7 +126,7 @@ function Avf_Handle_Ajax_membership_requests()
             'plz' => sanitize_text_field($_POST['plz']),
             'ort' => sanitize_text_field($_POST['ort']),
             'beitrittsdatum' => sanitize_text_field($_POST['beitrittsdatum']),
-            'kuendigungseingang' => !empty($_POST['kuendigungseingang']) ? sanitize_text_field($_POST['kuendigungseingang']) : null,
+            'kuendigungseingang' => !empty($kuendigungseingang) ? $kuendigungseingang : null,
             'austrittsdatum' => $austrittsdatum,
             'starterpaket' => isset($_POST['starterpaket']) ? 1 : 0,
             'spende' => isset($_POST['spende']) ? 1 : 0,
@@ -142,7 +142,7 @@ function Avf_Handle_Ajax_membership_requests()
             'beitrag' => isset($_POST['beitrag']) ? floatval($_POST['beitrag']) : null,
             'wiedervorlage' => !empty($_POST['wiedervorlage']) ? sanitize_text_field($_POST['wiedervorlage']) : null,
             'wiedervorlage_grund' => !empty($_POST['wiedervorlage_grund']) ? sanitize_text_field($_POST['wiedervorlage_grund']) : null,
-            'notizen' => sanitize_textarea_field($_POST['notizen']),
+            'notizen' => sanitize_textarea_field($_POST['notizen'])
         ];
 
         if ($action_type === 'create') {

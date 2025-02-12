@@ -116,7 +116,7 @@ function Avf_Display_Membership_form()
                     </div>
                     <div>
                         <label for="austrittsdatum">Austrittsdatum</label>
-                        <input id="austrittsdatum" type="date" name="austrittsdatum" value="<?php echo esc_attr($record->austrittsdatum ?? ''); ?>" disabled>
+                        <input id="austrittsdatum" type="date" name="austrittsdatum" value="<?php echo esc_attr($record->austrittsdatum ?? ''); ?>" readonly>
                     </div>
                 </div>
 
