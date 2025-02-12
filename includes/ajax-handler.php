@@ -479,7 +479,8 @@ function generate_membership_html($results)
 
         $age = date_diff(date_create($row['geburtsdatum']), date_create('now'))->y;
         $checkAge = false;
-        $markInactive = false;
+        $markResigned = false;
+        $markCancelled = false;
         $markWiedervorlage = false;
         $markCustomBeitrag = false;
 
@@ -498,9 +499,18 @@ function generate_membership_html($results)
         }
 
         if (!empty($row['austrittsdatum'])) {
+            $austrittsdatum = strtotime($row['austrittsdatum']);
+            $today = strtotime(date('Y-m-d'));
+
             $classes[] = 'highlight-red';
-            $titleParts[] = 'Ausgetreten';
-            $markInactive = true;
+
+            if ($austrittsdatum > $today) {
+                $titleParts[] = 'Gekündigt';
+                $markCancelled = true;
+            } else {
+                $titleParts[] = 'Ausgetreten';
+                $markResigned = true;
+            }
         }
 
         $beitraege = get_option('avf_beitraege');
@@ -530,7 +540,8 @@ function generate_membership_html($results)
 
         $html .= esc_html(MITGLIEDSCHAFTSARTEN[$row['mitgliedschaft_art']] ?? 'Unbekannt');
         $html .= $checkAge ? '&nbsp;<span class="dashicons dashicons-warning" style="color: orange;" title="Alter stimmt nicht mit Mitgliedschaftsart überein."></span>' : '';
-        $html .= $markInactive ? '&nbsp;<span class="dashicons dashicons-dismiss" style="color: red;" title="Austritt zum ' . esc_attr(date('d.m.Y', strtotime($row['austrittsdatum']))) . '"></span>' : '';
+        $html .= $markCancelled ? '&nbsp;<span class="dashicons dashicons-warning" style="color: red;" title="Gekündigt zum ' . esc_attr(date('d.m.Y', $austrittsdatum)) . '"></span>' : '';
+        $html .= $markResigned ? '&nbsp;<span class="dashicons dashicons-dismiss" style="color: red;" title="Ausgetreten zum ' . esc_attr(date('d.m.Y', $austrittsdatum)) . '"></span>' : '';
         $html .= $markWiedervorlage ? '&nbsp;<span class="dashicons dashicons-info" style="color: #3498db;" title="Wiedervorlage: ' . $column_wiedervorlage_grund . '"></span>' : '';
 
         $html .= <<<HTML
