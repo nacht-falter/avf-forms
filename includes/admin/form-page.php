@@ -27,17 +27,32 @@ function Avf_Display_Membership_form()
                 <input type="hidden" name="id" value="<?php echo $id; ?>">
 
                 <label for="mitgliedschaft_art">Art der Mitgliedschaft</label>
-                <select id="mitgliedschaft_art" name="mitgliedschaft_art" required>
-                    <?php
-                    foreach (MITGLIEDSCHAFTSARTEN as $value => $display) {
-                        if ($value === 'geschwisterkind_discount') {
-                            continue;
+                <div class="membership-status-label">
+                    <select id="mitgliedschaft_art" name="mitgliedschaft_art" required>
+                        <?php
+                        foreach (MITGLIEDSCHAFTSARTEN as $value => $display) {
+                            if ($value === 'geschwisterkind_discount') {
+                                continue;
+                            }
+                            $selected = selected($record->mitgliedschaft_art ?? '', $value, false);
+                            echo "<option value=\"{$value}\" {$selected}>{$display}</option>";
                         }
-                        $selected = selected($record->mitgliedschaft_art ?? '', $value, false);
-                        echo "<option value=\"{$value}\" {$selected}>{$display}</option>";
-                    }
+                        ?>
+                    </select>
+                    <span>
+                    <?php
+                    if (isset($record->austrittsdatum)) {
+                        $austrittsdatum = strtotime($record->austrittsdatum);
+                        $today = strtotime(date('Y-m-d'));
+
+                        if ($austrittsdatum > $today) {
+                            echo '<span class="dashicons dashicons-warning" style="color: red;"></span>&nbsp;Gekündigt zum ' . esc_attr(date('d.m.Y', $austrittsdatum));
+                        } elseif ($austrittsdatum <= $today) 
+                            echo '<span class="dashicons dashicons-dismiss" style="color: red;"></span>&nbsp;Ausgetreten zum ' . esc_attr(date('d.m.Y', $austrittsdatum));
+                        }
                     ?>
-                </select>
+                    </span>
+                </div>
 
                 <div class="form-group">
                     <div>
