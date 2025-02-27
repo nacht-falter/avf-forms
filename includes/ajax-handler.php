@@ -462,7 +462,9 @@ function generate_membership_html($results)
             if (in_array($key, $dateColumns, true)) {
                 $dateString = $row[$key] ?? '';
 
-                if ($dateString) {
+                if (empty($dateString) || $dateString === '0000-00-00') {
+                    ${'column_' . $key} = '';
+                } else {
                     try {
                         $date = new DateTime($dateString);
                         ${'column_' . $key} = esc_html($date->format('d.m.Y'));
