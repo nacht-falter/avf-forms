@@ -147,4 +147,34 @@ class Avf_Forms_Utils
             }
         }
     }
+    public static function avf_delete_old_membership_data()
+    {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'avf_memberships';
+
+        $query = "UPDATE $table_name
+        SET telefon = NULL,
+            geburtsdatum = NULL,
+            strasse = NULL,
+            hausnummer = NULL,
+            plz = NULL,
+            ort = NULL,
+            sepa = NULL,
+            kontoinhaber = NULL,
+            iban = NULL,
+            bic = NULL,
+            bank = NULL
+        WHERE austrittsdatum IS NOT NULL
+          AND austrittsdatum < DATE_SUB(CURDATE(), INTERVAL 6 MONTH)";
+
+        $affected_rows = $wpdb->query($query);
+
+        if ($affected_rows === false) {
+            error_log('AVF-Mitgliedschaftsverwaltung: Fehler beim Bereinigen der Daten.');
+        } elseif ($affected_rows === 0) {
+            error_log('AVF-Mitgliedschaftsverwaltung: Keine zu bereinigenden Daten gefunden.');
+        } else {
+            error_log("AVF-Mitgliedschaftsverwaltung: $affected_rows Datensätze bereinigt.");
+        }
+    }
 }

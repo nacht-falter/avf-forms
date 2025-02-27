@@ -90,9 +90,14 @@ class Avf_Forms_Activator
             $admin_role->add_cap('manage_memberships');
         }
 
-        // Schedule cron job
+        // Schedule cron jobs
         if (!wp_next_scheduled('avf_schnupperkurs_notification')) {
             wp_schedule_event(time(), 'daily', 'avf_schnupperkurs_notification');
+            error_log('Cron job scheduled at ' . date('Y-m-d H:i:s', time()));
+        }
+
+        if (!wp_next_scheduled('avf_delete_old_membership_data')) {
+            wp_schedule_event(time(), 'daily', 'avf_delete_old_membership_data');
             error_log('Cron job scheduled at ' . date('Y-m-d H:i:s', time()));
         }
 
