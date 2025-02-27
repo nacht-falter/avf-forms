@@ -152,20 +152,35 @@ class Avf_Forms_Utils
         global $wpdb;
         $table_name = $wpdb->prefix . 'avf_memberships';
 
+
         $query = "UPDATE $table_name
-        SET telefon = NULL,
-            geburtsdatum = NULL,
-            strasse = NULL,
-            hausnummer = NULL,
-            plz = NULL,
-            ort = NULL,
-            sepa = NULL,
-            kontoinhaber = NULL,
-            iban = NULL,
-            bic = NULL,
-            bank = NULL
-        WHERE austrittsdatum IS NOT NULL
-          AND austrittsdatum < DATE_SUB(CURDATE(), INTERVAL 6 MONTH)";
+            SET telefon = NULL,
+                geburtsdatum = NULL,
+                strasse = NULL,
+                hausnummer = NULL,
+                plz = NULL,
+                ort = NULL,
+                sepa = NULL,
+                kontoinhaber = NULL,
+                iban = NULL,
+                bic = NULL,
+                bank = NULL,
+                notizen = CONCAT('Daten wegen Austritt bereinigt. ', notizen))
+            WHERE austrittsdatum IS NOT NULL
+              AND austrittsdatum < DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+              AND (
+                   telefon IS NOT NULL OR
+                   geburtsdatum IS NOT NULL OR
+                   strasse IS NOT NULL OR
+                   hausnummer IS NOT NULL OR
+                   plz IS NOT NULL OR
+                   ort IS NOT NULL OR
+                   sepa IS NOT NULL OR
+                   kontoinhaber IS NOT NULL OR
+                   iban IS NOT NULL OR
+                   bic IS NOT NULL OR
+                   bank IS NOT NULL
+              )";
 
         $affected_rows = $wpdb->query($query);
 
