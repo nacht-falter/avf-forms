@@ -76,21 +76,35 @@ function avf_handle_update_existing_fees()
 
 function avf_calculate_resignation_date($kuendigungseingang)
 {
-    $kuendigungseingang_date = new DateTime($kuendigungseingang);
+    $input_date = new DateTime($kuendigungseingang);
 
-    // Determine last day of current quarter
-    $month = $kuendigungseingang_date->format('n');
-    $year = $kuendigungseingang_date->format('Y');
-    $quarter_end_month = ceil($month / 3) * 3;
-    $quarter_end = new DateTime("$year-$quarter_end_month-01");
+    $current_quarter = ceil($input_date->format('n') / 3);
+    $quarter_end_month = $current_quarter * 3;
+    $quarter_end = new DateTime($input_date->format('Y') . '-' . $quarter_end_month . '-01');
     $quarter_end->modify('last day of this month');
 
-    // Check if cancellation date is within 6 weeks before end of quarter
-    if ($kuendigungseingang_date > (clone $quarter_end)->modify('-6 weeks')) {
-        $quarter_end->modify('+3 months')->modify('last day of this month');
-    }
+    // Period of notice is 6 weeks
+    $threshold = clone $quarter_end;
+    $threshold->modify('-6 weeks');
 
-    return $quarter_end->format('Y-m-d');
+    if ($input_date > $threshold) {
+        $next_quarter = $current_quarter + 1;
+        $next_year = $input_date->format('Y');
+
+        // Handle last quarter of the year
+        if ($next_quarter > 4) {
+            $next_quarter = 1;
+            $next_year++;
+        }
+
+        $next_quarter_month = $next_quarter * 3;
+        $next_quarter_end = new DateTime("$next_year-$next_quarter_month-01");
+        $next_quarter_end->modify('last day of this month');
+
+        return $next_quarter_end->format('Y-m-d');
+    } else {
+        return $quarter_end->format('Y-m-d');
+    }
 }
 
 function Avf_Handle_Ajax_membership_requests()
