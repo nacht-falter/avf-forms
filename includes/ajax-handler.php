@@ -489,7 +489,11 @@ function generate_membership_html($results)
 
     foreach ($results as $row) {
         foreach (array_keys($row) as $key) {
-            ${'column_' . $key} = esc_html($row[$key]);
+            if ($key === 'notizen') {
+                ${'column_' . $key} = nl2br(esc_html($row[$key]));
+            } else {
+                ${'column_' . $key} = esc_html($row[$key]);
+            }
 
             if ($key === 'id') {
                 ${'column_' . $key . '_attr'} = esc_attr($row[$key]);
@@ -628,7 +632,12 @@ function generate_schnupperkurs_html($results)
 
     foreach ($results as $row) {
         foreach (array_keys($row) as $key) {
-            ${'column_' . $key} = esc_html($row[$key]);
+            if ($key === 'notizen') {
+                ${'column_' . $key} = nl2br(esc_html($row[$key]));
+            } else {
+                ${'column_' . $key} = esc_html($row[$key]);
+            }
+
             if ($key === 'id') {
                 ${'column_' . $key . '_attr'} = esc_attr($row[$key]);
             }
