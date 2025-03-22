@@ -118,11 +118,33 @@ function Avf_Handle_Ajax_membership_requests()
     $response = array('status' => 'error', 'message' => 'Invalid action');
 
     if ($action_type === 'create' || $action_type === 'update') {
-        $kuendigungseingang = sanitize_text_field($_POST['kuendigungseingang']);
+        $kuendigungseingang = sanitize_text_field($_POST['kuendigungseingang'] ?? '');
         $austrittsdatum = !empty($_POST['austrittsdatum']) ? sanitize_text_field($_POST['austrittsdatum']) : null;
+        $wiedervorlage_grund = !empty($_POST['wiedervorlage_grund']) ? sanitize_text_field($_POST['wiedervorlage_grund']) : '';
+        $wiedervorlage = null;
+        $wiedervorlage_date = null;
 
         if (!empty($kuendigungseingang)) {
             $austrittsdatum = avf_calculate_resignation_date($kuendigungseingang);
+
+            if (!empty($wiedervorlage_grund) && strpos($wiedervorlage_grund, 'SEPA löschen') === false) {
+                $wiedervorlage_grund = 'SEPA löschen, ' . $wiedervorlage_grund;
+            } else {
+                $wiedervorlage_grund = 'SEPA löschen';
+            }
+
+            // Set wiedervorlage_date to 15th of first month of quarter
+            $wiedervorlage_date = new DateTime($austrittsdatum);
+            $wiedervorlage_date->modify('-2 months');
+            $wiedervorlage_date->setDate(
+                $wiedervorlage_date->format('Y'),
+                $wiedervorlage_date->format('m'),
+                15
+            );
+            $wiedervorlage = $wiedervorlage_date->format('Y-m-d');
+
+        } else {
+            $austrittsdatum = null;
         }
 
         $data = [
@@ -154,8 +176,8 @@ function Avf_Handle_Ajax_membership_requests()
             'bic' => sanitize_text_field($_POST['bic']),
             'bank' => sanitize_text_field($_POST['bank']),
             'beitrag' => isset($_POST['beitrag']) ? floatval($_POST['beitrag']) : null,
-            'wiedervorlage' => !empty($_POST['wiedervorlage']) ? sanitize_text_field($_POST['wiedervorlage']) : null,
-            'wiedervorlage_grund' => !empty($_POST['wiedervorlage_grund']) ? sanitize_text_field($_POST['wiedervorlage_grund']) : null,
+            'wiedervorlage' => $wiedervorlage,
+            'wiedervorlage_grund' => $wiedervorlage_grund,
             'notizen' => sanitize_textarea_field($_POST['notizen'])
         ];
 
