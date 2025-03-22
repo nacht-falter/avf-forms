@@ -220,7 +220,7 @@ function Avf_Display_Membership_form()
                 </div>
 
                 <label for="notizen">Notizen</label>
-                <textarea id="notizen" name="notizen"><?php echo esc_textarea($record->notizen ?? ''); ?></textarea>
+                <textarea rows=5 id="notizen" name="notizen"><?php echo esc_textarea($record->notizen ?? ''); ?></textarea>
 
             </div>
             <button type="submit" class="button button-primary">Mitgliedschaft <?php echo $id ? 'aktualisieren' : 'hinzufügen'; ?></button>
