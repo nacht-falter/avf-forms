@@ -11,9 +11,25 @@ class Avf_Forms_Membership_Shortcodes
     // Render Membership Adults form
     public static function Render_Membership_form()
     {
+        $errors = get_transient('form_validation_errors');
+
         ob_start();
         ?>
         <form id="membership-form" class="avf-form" method="post" action="">
+
+        <?php
+         $errors = get_transient('form_validation_errors');
+
+        if ($errors) {
+            echo '<div class="form-error" style="display: block; padding: 0.25rem 0.75rem;">';
+            foreach ($errors as $field => $error) {
+                echo '<p class="error-' . esc_attr($field) . '">' . esc_html($error) . '</p>';
+            }
+            echo '</div>';
+            delete_transient('form_validation_errors');
+        }
+        ?>
+
             <h2>Persönliche Angaben</h2>
             <div class="container">
                 <div class="flex-container">
@@ -62,7 +78,7 @@ class Avf_Forms_Membership_Shortcodes
                 <div class="flex-container">
                     <div class="half-width">
                         <label for="plz">PLZ</label>
-                        <input type="text" name="plz" id="plz" placeholder="PLZ" required>
+                        <input type="text" name="plz" id="plz" placeholder="PLZ" maxlength="5" size="5" required>
                     </div>
                     <div class="half-width">
                         <label for="ort">Ort</label>
@@ -128,11 +144,11 @@ class Avf_Forms_Membership_Shortcodes
                     </div>
                     <div class="half-width">
                         <label for="iban">IBAN</label>
-                        <input type="text" name="iban" id="iban" placeholder="IBAN" required>
+                        <input type="text" name="iban" id="iban" placeholder="IBAN" maxlength="34" size="34" required>
                     </div>
                     <div class="half-width">
                         <label for="bic">BIC</label>
-                        <input type="text" name="bic" id="bic" placeholder="BIC" required>
+                        <input type="text" name="bic" id="bic" placeholder="BIC" maxlength="11" size="11" required>
                     </div>
                     <div class="half-width">
                         <label for="bank">Bank</label>
@@ -253,7 +269,7 @@ class Avf_Forms_Membership_Shortcodes
                 <div class="flex-container">
                     <div class="half-width">
                         <label for="plz">PLZ</label>
-                        <input type="text" name="plz" id="plz" placeholder="PLZ" required>
+                        <input type="text" name="plz" id="plz" placeholder="PLZ" maxlength="5" size="5" required>
                     </div>
                     <div class="half-width">
                         <label for="ort">Ort</label>
@@ -313,11 +329,11 @@ class Avf_Forms_Membership_Shortcodes
                     </div>
                     <div class="half-width">
                         <label for="iban">IBAN</label>
-                        <input type="text" name="iban" id="iban" placeholder="IBAN" required>
+                        <input type="text" name="iban" id="iban" placeholder="IBAN" maxlength="34" size="34" required>
                     </div>
                     <div class="half-width">
                         <label for="bic">BIC</label>
-                        <input type="text" name="bic" id="bic" placeholder="BIC" required>
+                        <input type="text" name="bic" id="bic" placeholder="BIC" maxlength="11" size="11" required>
                     </div>
                     <div class="half-width">
                         <label for="bank">Bank</label>

@@ -41,6 +41,30 @@ class Avf_Forms_Membership_Handler
             $bic = sanitize_text_field($_POST['bic']);
             $bank = sanitize_text_field($_POST['bank']);
 
+            $errors = [];
+
+            if (strlen($plz) > 5) {
+                $errors[] = "Die Postleitzahl darf maximal 5 Zeichen lang sein.";
+            }
+
+            if (strlen($iban) > 34) {
+                $errors[] = "Die IBAN darf maximal 34 Zeichen lang sein.";
+            }
+
+            if (strlen($bic) > 11) {
+                $errors[] = "Die BIC darf maximal 11 Zeichen lang sein.";
+            }
+
+            if (!empty($errors)) {
+                set_transient('form_validation_errors', $errors, 0);
+
+                $redirect_url = wp_get_referer();
+                $redirect_url = add_query_arg('form_status', 'error', $redirect_url);
+
+                wp_redirect($redirect_url);
+                exit();
+            }
+
             // Donations
             if (isset($_POST['spende'])) {
                 if ($_POST['spende'] === 'freibetrag' && isset($_POST['freibetrag-input']) && is_numeric($_POST['freibetrag-input'])) {

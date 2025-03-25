@@ -149,7 +149,6 @@ function Activate_Avf_forms()
 
 class Avf_Forms_Plugin
 {
-
     public static function init()
     {
         Avf_Forms_Membership_Shortcodes::register();
