@@ -121,6 +121,11 @@ class Avf_Forms_Membership_Handler
                 Avf_Forms_Utils::subscribe_to_mailinglist($email, "alle@aikido-freiburg.de");
             }
 
+            // Send notification for starter kit
+            if ($starterpaket) {
+                Avf_Forms_Utils::send_starter_kit_notification($email, $telefon, $vorname, $nachname);
+            }
+
             // Send confirmation email
             if ($mitgliedschaft_art == 'Kind' || $mitgliedschaft_art == 'Jugend') {
                 Avf_Forms_Utils::send_membership_confirmation_email($email, $vorname_eltern, $nachname_eltern);

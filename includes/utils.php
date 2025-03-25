@@ -2,22 +2,100 @@
 
 class Avf_Forms_Utils
 {
+    private static $emails = null;
+
+    private static function load_emails()
+    {
+        if (self::$emails === null) {
+            $config_path = AVF_PLUGIN_DIR . 'config.php';
+            if (!file_exists($config_path)) {
+                error_log("Config file not found at: " . $config_path);
+                self::$emails = [];
+                return;
+            }
+
+            $config = file_exists($config_path) ? include $config_path : [];
+
+            if (!is_array($config)) {
+                error_log("Invalid config format. Expected an array.");
+                self::$emails = [];
+                return;
+            }
+
+            self::$emails = $config;
+        }
+    }
+
+    public static function get_emails_by_key($key)
+    {
+        self::load_emails();
+
+        // Convert strings to array
+        if (isset(self::$emails[$key])) {
+            return is_array(self::$emails[$key]) ? self::$emails[$key] : [self::$emails[$key]];
+        }
+
+        return [get_option('admin_email')];
+    }
+
     public static function send_membership_confirmation_email($email, $vorname, $nachname)
     {
-        $subject = '[Aikido Verein Freiburg e.V.] Mitgliedschaftsantrag erhalten';
-        $message = "Hallo $vorname,\n\n";
-        $message .= "Dein Antrag ist bei uns eingegangen. Wir werden uns in Kürze bei dir melden.\n\n";
-        $message .= "Falls Du Fragen zur Mitgliedschaft hast, schreibe bitte eine Mail an schatzmeister@aikido-freiburg.de. ";
-        $message .= "Bei allen anderen Fragen, wende dich gerne an vorstand@aikido-freiburg.de oder sprich uns auf der Matte an.\n\n";
-        $message .= "Viele Grüße\n";
-        $message .= "Dein Aikido Verein Freiburg e.V.\n";
-        wp_mail($email, $subject, $message);
+        $member_subject = '[Aikido Verein Freiburg e.V.] Mitgliedschaftsantrag erhalten';
+        $member_message = "Hallo $vorname,\n\n";
+        $member_message .= "Dein Antrag ist bei uns eingegangen. Wir werden uns in Kürze bei dir melden.\n\n";
+        $member_message .= "Falls Du Fragen zur Mitgliedschaft hast, schreibe bitte eine Mail an schatzmeister@aikido-freiburg.de. ";
+        $member_message .= "Bei allen anderen Fragen, wende dich gerne an vorstand@aikido-freiburg.de oder sprich uns auf der Matte an.\n\n";
+        $member_message .= "Viele Grüße\n";
+        $member_message .= "Dein Aikido Verein Freiburg e.V.\n";
 
-        $admin_email = get_option('treasurer_email');
-        $admin_subject = 'Neuer Mitgliedschaftsantrag eingegangen';
-        $admin_message = "Neuer Mitgliedschaftsantrag von $vorname $nachname eingegangen.\n\n";
-        $admin_message .= "Zur Mitgliedschaftsverwaltung: " . home_url('/wp-admin/admin.php?page=avf-membership-admin') . "\n";
-        wp_mail($admin_email, $admin_subject, $admin_message);
+        $member_headers = array(
+            'From: Aikido Verein Freiburg <noreply@aikido-freiburg.de>',
+            'Content-Type: text/plain; charset=UTF-8'
+        );
+
+        if (!wp_mail($email, $member_subject, $member_message, $member_headers)) {
+            error_log("Failed to send membership confirmation email to $email");
+        }
+
+        $treasurer_email = self::get_emails_by_key('treasurer_email');
+
+        $treasurer_subject = 'Neuer Mitgliedschaftsantrag eingegangen';
+        $treasurer_message = "Neuer Mitgliedschaftsantrag von $vorname $nachname eingegangen.\n\n";
+        $treasurer_message .= "Zur Mitgliedschaftsverwaltung: " . home_url('/wp-admin/admin.php?page=avf-membership-admin') . "\n";
+
+        $treasurer_headers = array(
+            'From: Aikido Verein Freiburg <noreply@aikido-freiburg.de>',
+            'Content-Type: text/plain; charset=UTF-8'
+        );
+
+        foreach ($treasurer_email as $to_email) {
+            if (!wp_mail($to_email, $treasurer_subject, $treasurer_message, $treasurer_headers)) {
+                error_log("Failed to send treasurer notification to: " . $to_email);
+            }
+        }
+    }
+
+    public static function send_starter_kit_notification($email, $telefon, $vorname, $nachname)
+    {
+        $starterkit_email = self::get_emails_by_key('starterkit_email');
+
+        $subject = "[Aikido Verein Freiburg e.V.] Starterpaket für $vorname $nachname";
+        $message = "Hallo,\n\n";
+        $message .= "$vorname $nachname hat beim Vereinsbeitritt ein Starterpaket bestellt.\n\n";
+        $message .= "E-Mail-Adresse: $email\n";
+        $message .= "Tel: $telefon\n\n";
+        $message .= "Viele Grüße!\n";
+
+        $headers = array(
+            'From: Aikido Verein Freiburg <noreply@yourdomain.com>',
+            'Content-Type: text/plain; charset=UTF-8'
+        );
+
+        foreach ($starterkit_email as $to_email) {
+            if (!wp_mail($to_email, $subject, $message, $headers)) {
+                error_log("Failed to send email to: " . $to_email);
+            }
+        }
     }
 
     public static function subscribe_to_mailinglist($email, $listname)
@@ -147,6 +225,7 @@ class Avf_Forms_Utils
             }
         }
     }
+
     public static function avf_delete_old_membership_data()
     {
         global $wpdb;
