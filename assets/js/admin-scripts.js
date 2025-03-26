@@ -47,6 +47,23 @@ jQuery(document).ready(function ($) {
 
   const wieErfahrenFields = [wieErfahren, wieErfahrenLabel];
 
+  function handleRowClick(event) {
+    let $target = $(event.target);
+    let $row = $(this);
+
+    console.log("click");
+    if ($target.is('input[type="checkbox"], th')) {
+      return;
+    }
+
+    let id = $row.data("id");
+
+    if (id) {
+      window.location.href =
+        "admin.php?page=avf-membership-form-page&edit=" + id;
+    }
+  }
+
   function showHideFields(fields, show) {
     fields.forEach((field) => field.toggle(show));
   }
@@ -456,6 +473,8 @@ jQuery(document).ready(function ($) {
 
     get_membership_stats();
   }
+
+  $(document).on("click", ".table-row-link", handleRowClick);
 
   init();
 });

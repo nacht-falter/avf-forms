@@ -92,19 +92,6 @@ function Avf_Display_memberships()
             }
             ?>
         </table>
-
-        <script>
-        function handleRowClick(event, id) {
-            const selection = window.getSelection();
-
-            setTimeout(() => {
-                if (selection.isCollapsed && !window.getSelection().toString()) {
-                    window.location.href = 'admin.php?page=avf-membership-form-page&edit=' + id;
-                }
-            }, 250);
-        }
-        </script>
-    </div>
     <?php
 }
 
@@ -160,15 +147,6 @@ function Avf_Display_schnupperkurse()
                 <button type="button" id="delete-bulk" class="button button-secondary" disabled>Ausgewählte Schnupperkurse löschen</button>
             </div>
         </form>
-
-
-        <script>
-        function handleRowClick(event, id) {
-            if (event.target.tagName != 'INPUT' && event.target.tagName != 'TH') {
-                window.location.href = 'admin.php?page=avf-schnupperkurs-form-page&edit=' + id;
-            }
-        }
-        </script>
     </div>
     <?php
 }

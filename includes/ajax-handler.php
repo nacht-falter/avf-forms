@@ -570,7 +570,7 @@ function generate_membership_html($results)
         $rowTitle = implode(' | ', $titleParts);
 
         $html .= '<tr class="table-row-link ' . esc_attr($rowClasses) . '" title="' . esc_attr($rowTitle) . '"';
-        $html .= ' onclick="handleRowClick(event, ' . $column_id_attr . ')">';
+        $html .= ' data-id="' . esc_attr($column_id_attr) . '">';
 
         $html .= <<<HTML
             <th scope="row" class="check-column no-link" style="cursor: initial;">
@@ -675,7 +675,7 @@ function generate_schnupperkurs_html($results)
         }
 
         $html .= '<tr class="table-row-link ' . esc_attr($rowClasses) . '" title="' . esc_attr($rowTitle) . '"';
-        $html .= ' onclick="handleRowClick(event, ' . esc_attr($row['id']) . ')">';
+        $html .= ' data-id="' . esc_attr($column_id_attr) . '">';
 
         $html .= <<<HTML
             <th scope="row" class="check-column" style="cursor: initial;">
