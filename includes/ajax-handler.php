@@ -194,9 +194,9 @@ function Avf_Handle_Ajax_membership_requests()
 
             $download_url = add_query_arg(
                 [
-                    'action' => 'avf_download_csv',
-                    'ids' => $ids,
-                    '_ajax_nonce' => $_POST['_ajax_nonce'],
+                'action' => 'avf_download_csv',
+                'ids' => $ids,
+                '_ajax_nonce' => $_POST['_ajax_nonce'],
                 ],
                 admin_url('admin-ajax.php')
             );

@@ -48,19 +48,24 @@ jQuery(document).ready(function ($) {
   const wieErfahrenFields = [wieErfahren, wieErfahrenLabel];
 
   function handleRowClick(event) {
-    let $target = $(event.target);
-    let $row = $(this);
+    const selection = window.getSelection();
+    const $target = $(event.target);
+    const $row = $(this);
 
-    console.log("click");
+    // Skip checkboxes and table headers
     if ($target.is('input[type="checkbox"], th')) {
       return;
     }
 
-    let id = $row.data("id");
-
+    const id = $row.data("id");
     if (id) {
-      window.location.href =
-        "admin.php?page=avf-membership-form-page&edit=" + id;
+      setTimeout(() => {
+        // Ignore selections
+        if (selection.isCollapsed && !selection.toString()) {
+          window.location.href =
+            "admin.php?page=avf-membership-form-page&edit=" + id;
+        }
+      }, 250);
     }
   }
 
