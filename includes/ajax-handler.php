@@ -119,32 +119,27 @@ function Avf_Handle_Ajax_membership_requests()
 
     if ($action_type === 'create' || $action_type === 'update') {
         $kuendigungseingang = sanitize_text_field($_POST['kuendigungseingang'] ?? '');
-        $austrittsdatum = !empty($_POST['austrittsdatum']) ? sanitize_text_field($_POST['austrittsdatum']) : null;
-        $wiedervorlage_grund = !empty($_POST['wiedervorlage_grund']) ? sanitize_text_field($_POST['wiedervorlage_grund']) : '';
-        $wiedervorlage = null;
-        $wiedervorlage_date = null;
+        $austrittsdatum = sanitize_text_field($_POST['austrittsdatum'] ?? '');
+        $wiedervorlage_grund = sanitize_text_field($_POST['wiedervorlage_grund'] ?? '');
+        $wiedervorlage = sanitize_text_field($_POST['wiedervorlage'] ?? '');
 
         if (!empty($kuendigungseingang)) {
             $austrittsdatum = avf_calculate_resignation_date($kuendigungseingang);
 
-            if (!empty($wiedervorlage_grund) && strpos($wiedervorlage_grund, 'SEPA löschen') === false) {
-                $wiedervorlage_grund = 'SEPA löschen, ' . $wiedervorlage_grund;
-            } else {
-                $wiedervorlage_grund = 'SEPA löschen';
+            $wiedervorlage_date = date('Y-m-d', strtotime($austrittsdatum . ' -2 months + 15 days'));
+            $delete_sepa_date = date('m/Y', strtotime($austrittsdatum . ' +1 day'));
+
+            if (strpos($wiedervorlage_grund, 'SEPA löschen') === false) {
+                $wiedervorlage_grund = empty($wiedervorlage_grund)
+                ? "SEPA löschen ab {$delete_sepa_date}"
+                : "SEPA löschen ab {$delete_sepa_date}, " . $wiedervorlage_grund;
             }
 
-            // Set wiedervorlage_date to 15th of first month of quarter
-            $wiedervorlage_date = new DateTime($austrittsdatum);
-            $wiedervorlage_date->modify('-2 months');
-            $wiedervorlage_date->setDate(
-                $wiedervorlage_date->format('Y'),
-                $wiedervorlage_date->format('m'),
-                15
-            );
-            $wiedervorlage = $wiedervorlage_date->format('Y-m-d');
-
-        } else {
-            $austrittsdatum = null;
+            $wiedervorlage = empty($wiedervorlage)
+                ? $wiedervorlage_date
+                : (strtotime($wiedervorlage) < strtotime($wiedervorlage_date)
+                    ? $wiedervorlage
+                    : $wiedervorlage_date);
         }
 
         $data = [
@@ -163,7 +158,7 @@ function Avf_Handle_Ajax_membership_requests()
             'ort' => sanitize_text_field($_POST['ort']),
             'beitrittsdatum' => sanitize_text_field($_POST['beitrittsdatum']),
             'kuendigungseingang' => !empty($kuendigungseingang) ? $kuendigungseingang : null,
-            'austrittsdatum' => $austrittsdatum,
+            'austrittsdatum' => !empty($austrittsdatum) ? $austrittsdatum : null,
             'starterpaket' => isset($_POST['starterpaket']) ? 1 : 0,
             'spende' => isset($_POST['spende']) ? 1 : 0,
             'spende_monatlich' => isset($_POST['spende_monatlich']) ? floatval($_POST['spende_monatlich']) : null,
