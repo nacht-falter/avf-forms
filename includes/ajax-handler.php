@@ -171,13 +171,16 @@ function Avf_Handle_Ajax_membership_requests()
             'bic' => sanitize_text_field($_POST['bic']),
             'bank' => sanitize_text_field($_POST['bank']),
             'beitrag' => isset($_POST['beitrag']) ? floatval($_POST['beitrag']) : null,
-            'wiedervorlage' => $wiedervorlage,
+            'wiedervorlage' => !empty($wiedervorlage) ? $wiedervorlage : null,
             'wiedervorlage_grund' => $wiedervorlage_grund,
             'notizen' => sanitize_textarea_field($_POST['notizen'])
         ];
 
         if ($action_type === 'create') {
-            $data['submission_date'] = current_time('mysql');
+            $now = current_time('mysql');
+            $data['submission_date'] = $now;
+            $data['wiedervorlage'] = $now;
+            $data['wiedervorlage_grund'] = "SEPA anlegen";
         }
 
         $response = handle_insert_update($table_name, $data, $action_type, $_POST['id'] ?? null);
