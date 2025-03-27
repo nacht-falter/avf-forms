@@ -109,7 +109,7 @@ function Avf_Display_Membership_form()
                 <div class="form-group">
                     <div>
                         <label for="plz">PLZ</label>
-                        <input id="plz" type="text" name="plz" value="<?php echo esc_attr($record->plz ?? ''); ?>" required>
+                        <input id="plz" type="text" name="plz" maxlength="5" value="<?php echo esc_attr($record->plz ?? ''); ?>" required>
                     </div>
                     <div>
                         <label for="ort">Ort</label>
@@ -178,14 +178,14 @@ function Avf_Display_Membership_form()
                     </div>
                     <div>
                         <label for="iban">IBAN</label>
-                        <input id="iban" type="text" name="iban" value="<?php echo esc_attr($record->iban ?? ''); ?>" required>
+                        <input id="iban" type="text" name="iban" maxlength="34" value="<?php echo esc_attr($record->iban ?? ''); ?>" required>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <div>
                         <label for="bic">BIC</label>
-                        <input id="bic" type="text" name="bic" value="<?php echo esc_attr($record->bic ?? ''); ?>" required>
+                        <input id="bic" type="text" name="bic" maxlength="11" value="<?php echo esc_attr($record->bic ?? ''); ?>" required>
                     </div>
                     <div>
                         <label for="bank">Bank</label>
