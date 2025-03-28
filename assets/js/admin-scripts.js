@@ -201,6 +201,23 @@ jQuery(document).ready(function ($) {
     });
   }
 
+  function get_follow_ups() {
+    $("#follow-ups").html(
+      '<div class="loading-spinner" style="visibility: visible"></div>',
+    );
+    jQuery.ajax({
+      url: avf_ajax_admin.ajaxurl,
+      method: "POST",
+      data: {
+        action: "avf_get_follow_ups",
+        _ajax_nonce: avf_ajax_admin.nonce,
+      },
+      success: function (response) {
+        $("#follow-ups").html(response.data.follow_ups);
+      },
+    });
+  }
+
   function get_membership_stats() {
     $("#membership-stats").html(
       '<div class="loading-spinner" style="visibility: visible"></div>',
@@ -478,6 +495,8 @@ jQuery(document).ready(function ($) {
     wieErfahren.on("change", toggleWieErfahrenSonstiges);
 
     get_membership_stats();
+
+    get_follow_ups();
   }
 
   $(document).on("click", ".table-row-link", handleRowClick);

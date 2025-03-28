@@ -220,6 +220,15 @@ class Avf_Forms_Plugin
         );
 
         add_submenu_page(
+            'avf-membership-admin',
+            'Wiedervorlagen',
+            'Wiedervorlagen',
+            'manage_memberships',
+            'avf-follow-ups',
+            'Avf_Display_Follow_ups'
+        );
+
+        add_submenu_page(
             'avf-membership-admin',           // Parent slug (must match the menu slug from add_menu_page)
             'Schnupperkurs-Verwaltung',      // Page title
             'Schnupperkurs-Verwaltung',      // Menu title
@@ -245,6 +254,7 @@ class Avf_Forms_Plugin
             'avf-membership-stats',
             'Avf_Display_Membership_stats'
         );
+
         add_submenu_page(
             'avf-membership-admin',
             'Mitgliedsbeiträge verwalten',

@@ -151,6 +151,27 @@ function Avf_Display_schnupperkurse()
     <?php
 }
 
+function Avf_Display_Follow_Ups()
+{
+    if (!current_user_can('manage_memberships')) {
+        wp_die(__('You do not have sufficient permissions to access this page.'));
+    }
+
+    ?>
+    <div class="wrap">
+        <h1>Wiedervorlagen</h1>
+        <div id="follow-ups" class="list-container"></div>
+        <div id="legend">
+            <ul>
+                <li><span class="dashicons dashicons-info" style="color: #3498db;"></span> Wiedervorlage</li>
+                <li><span class="dashicons dashicons-warning" style="color: red;"></span> Gekündigt</li>
+                <li><span class="dashicons dashicons-dismiss" style="color: red;"></span> Ausgetreten</li>
+            </ul>
+        </div>
+    </div>
+    <?php
+}
+
 function Avf_Display_Membership_stats()
 {
     if (!current_user_can('manage_memberships')) {

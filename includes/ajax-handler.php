@@ -6,6 +6,7 @@ add_action('wp_ajax_avf_download_csv', 'Generate_Csv_download');
 add_action('wp_ajax_avf_fetch_memberships', 'Fetch_Membership_data');
 add_action('wp_ajax_avf_fetch_schnupperkurse', 'Fetch_Schnupperkurs_data');
 add_action('wp_ajax_avf_get_membership_stats', 'Get_Membership_stats');
+add_action('wp_ajax_avf_get_follow_ups', 'Get_Follow_ups');
 
 function validate_user_and_nonce()
 {
@@ -807,10 +808,90 @@ function Fetch_Schnupperkurs_data()
     );
 }
 
-function Get_Membership_stats()
+function Get_Follow_ups()
 {
     global $wpdb;
     $table_name = $wpdb->prefix . 'avf_memberships';
+
+    $results = $wpdb->get_results(
+        "SELECT * FROM $table_name where wiedervorlage IS NOT NULL ORDER BY wiedervorlage ASC", ARRAY_A
+    );
+    function render_follow_up_table($results)
+    {
+        if (empty($results)) {
+            return '<p>No follow-up records found.</p>';
+        }
+
+        $html = '<table class="widefat striped">';
+        $html .= '<thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Art der Mitgliedschaft</th>
+                        <th>Vorname</th>
+                        <th>Nachname</th>
+                        <th>E-Mail</th>
+                        <th>Wiedervorlage Datum</th>
+                        <th>Wiedervorlage Grund</th>
+                    </tr>
+                </thead>
+            <tbody>';
+
+
+        foreach ($results as $result) {
+            $edit_link = admin_url('admin.php?page=avf-membership-form-page&edit=' . $result['id']);
+
+            $markCancelled = false;
+            $markResigned = false;
+            $markWiedervorlage = !empty($result['wiedervorlage']) && strtotime($result['wiedervorlage']) <= strtotime('now');
+
+            if (!empty($result['austrittsdatum'])) {
+                $austrittsdatum = strtotime($result['austrittsdatum']);
+                $today = strtotime(date('Y-m-d'));
+
+                if ($austrittsdatum > $today) {
+                    $markCancelled = true;
+                } else {
+                    $markResigned = true;
+                }
+            }
+
+            $formatted_date = !empty($result['wiedervorlage'])
+            ? date('d.m.Y', strtotime($result['wiedervorlage']))
+            : '';
+
+            $html .= '<tr class="table-row-link';
+            $html .= $markWiedervorlage ? ' highlight-light-blue"' : '';
+            $html .= '" onclick="window.location.href=\'' . esc_js($edit_link) . '\'">';
+            $html .= '<td>' . esc_html($result['id']) . '</td>';
+            $html .= '<td>' . MITGLIEDSCHAFTSARTEN[esc_html($result['mitgliedschaft_art'])];
+            $html .= $markCancelled ? '&nbsp;<span class="dashicons dashicons-warning" style="color: red;" title="Gekündigt zum ' . esc_attr(date('d.m.Y', $austrittsdatum)) . '"></span>' : '';
+            $html .= $markResigned ? '&nbsp;<span class="dashicons dashicons-dismiss" style="color: red;" title="Ausgetreten zum ' . esc_attr(date('d.m.Y', $austrittsdatum)) . '"></span>' : '';
+            $html .= $markWiedervorlage ? '&nbsp;<span class="dashicons dashicons-info" style="color: #3498db;" title="Wiedervorlage: ' . $column_wiedervorlage_grund . '"></span>' : '';
+            $html .= '</td>';
+            $html .= '<td>' . esc_html($result['vorname']) . '</td>';
+            $html .= '<td>' . esc_html($result['nachname']) . '</td>';
+            $html .= '<td>' . esc_html($result['email']) . '</td>';
+            $html .= '<td>' . esc_html($formatted_date) . '</td>';
+            $html .= '<td>' . esc_html($result['wiedervorlage_grund']) . '</td>';
+            $html .= '</tr>';
+        }
+
+        $html .= '</tbody></table>';
+
+        return $html;
+    }
+
+    if (!empty($results)) {
+        $table_html = render_follow_up_table($results);
+        wp_send_json_success(['follow_ups' => $table_html]);
+    } else {
+        wp_send_json_error('Error fetching follow-up data.');
+
+    }
+}
+
+function Get_Membership_stats()
+{
     $current_year = date('Y');
     $previous_year = $current_year - 1;
 
