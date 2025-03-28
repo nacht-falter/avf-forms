@@ -64,7 +64,7 @@ jQuery(document).ready(function ($) {
         // Ignore selections
         if (selection.isCollapsed && !selection.toString()) {
           window.location.href =
-            `admin.php?page=avf-${:ype}-form-page&edit=` + id;
+            `admin.php?page=avf-${type}-form-page&edit=` + id;
         }
       }, 250);
     }
