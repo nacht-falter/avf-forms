@@ -156,9 +156,10 @@
   background: #f8f8f8;
   z-index: 3;
   padding: 1rem 0.5rem;
-  text-align: center;
+  font-weight: 500;
 }
 
+/* Center "select all" checkbox */
 .list-container th:first-child,
 .list-container td:first-child {
   padding: 0 !important;
@@ -170,6 +171,8 @@
 .list-container th,
 .list-container td {
   vertical-align: middle;
+  border-top: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 8px 10px;
 }
 
 .list-container td.no-memberships-msg {
@@ -343,4 +346,3 @@ tr.total {
   align-items: center;
   gap: 0.5rem;
 }
-
