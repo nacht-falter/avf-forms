@@ -58,12 +58,13 @@ jQuery(document).ready(function ($) {
     }
 
     const id = $row.data("id");
+    const type = $row.data("type");
     if (id) {
       setTimeout(() => {
         // Ignore selections
         if (selection.isCollapsed && !selection.toString()) {
           window.location.href =
-            "admin.php?page=avf-membership-form-page&edit=" + id;
+            `admin.php?page=avf-${:ype}-form-page&edit=` + id;
         }
       }, 250);
     }
