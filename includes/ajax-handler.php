@@ -722,19 +722,28 @@ function check_membership_status($schnupperkurs_results)
     $memberships_table = $wpdb->prefix . 'avf_memberships';
 
     foreach ($schnupperkurs_results as &$result) {
-        if (isset($result['vorname'], $result['nachname'], $result['email'])) {
+        if (isset($result['vorname'], $result['nachname'])) {
             $query = $wpdb->prepare(
-                "SELECT id, beitrittsdatum FROM $memberships_table
-                WHERE LOWER(vorname) = LOWER(%s)
-                AND LOWER(nachname) = LOWER(%s)
-                AND LOWER(email) = LOWER(%s)",
+                "SELECT m.id, m.beitrittsdatum
+                    FROM $memberships_table m
+                    WHERE LOWER(m.vorname) = LOWER(%s)
+                    AND LOWER(m.nachname) = LOWER(%s)
+                    AND (
+                        (SELECT COUNT(*) FROM $memberships_table
+                            WHERE LOWER(vorname) = LOWER(%s)
+                            AND LOWER(nachname) = LOWER(%s)
+                        ) = 1
+                        OR
+                        LOWER(m.email) = LOWER(%s)
+                )",
                 $result['vorname'],
                 $result['nachname'],
-                $result['email']
+                $result['vorname'],
+                $result['nachname'],
+                isset($result['email']) ? $result['email'] : ''
             );
 
             $membership = $wpdb->get_row($query);
-
             $result['is_member'] = !empty($membership);
             if ($result['is_member']) {
                 $result['member_since'] = $membership->beitrittsdatum;
