@@ -3,8 +3,9 @@
 #export-csv,
 #set-reminder,
 #delete-bulk,
-#update-fees {
-  margin-top: 1rem;
+#update-fees,
+#send-email {
+  margin-top: 0.5rem;
 }
 
 #admin-page-header {

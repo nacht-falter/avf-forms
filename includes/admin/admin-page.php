@@ -65,21 +65,23 @@ function Avf_Display_memberships()
                     </tbody>
                 </table>
             </div>
-            <div id="legend">
-                <ul>
-                    <li><span class="dashicons dashicons-info" style="color: #3498db;"></span> Wiedervorlage</li>
-                    <li><span class="dashicons dashicons-warning" style="color: orange;"></span> Alter stimmt nicht mit Mitgliedschaftsart überein</li>
-                    <li><span class="dashicons dashicons-warning" style="color: red;"></span> Gekündigt</li>
-                    <li><span class="dashicons dashicons-dismiss" style="color: red;"></span> Ausgetreten</li>
-                    <li><span class="dashicons dashicons-edit" style="color: #2271b1;"></span> Beitrag angepasst</li>
-                </ul>
-            </div>
 
             <div class="bulk-actions">
-                <button type="button" id="export-csv" class="button button-primary" disabled>Ausgewählte Mitgliedschaften als CSV exportieren</button>
-                <button type="button" id="delete-bulk" class="button button-secondary" disabled>Ausgewählte Mitgliedschaften löschen</button>
+                <button type="button" id="export-csv" class="button button-primary" title="Ausgewählte Mitgliedschaften als CSV exportieren" disabled>Als CSV exportieren</button>
+                <button type="button" id="send-email" class="button button-primary" title="E-Mail an ausgewählte Mitglieder schreiben" disabled>E-Mail schreiben</button>
+                <button type="button" id="delete-bulk" class="button button-secondary" title="Ausgewählte Mitgliedschaften löschen" disabled>Mitgliedschaften löschen</button>
             </div>
         </form>
+
+        <div id="legend">
+            <ul>
+                <li><span class="dashicons dashicons-info" style="color: #3498db;"></span> Wiedervorlage</li>
+                <li><span class="dashicons dashicons-warning" style="color: orange;"></span> Alter stimmt nicht mit Mitgliedschaftsart überein</li>
+                <li><span class="dashicons dashicons-warning" style="color: red;"></span> Gekündigt</li>
+                <li><span class="dashicons dashicons-dismiss" style="color: red;"></span> Ausgetreten</li>
+                <li><span class="dashicons dashicons-edit" style="color: #2271b1;"></span> Beitrag angepasst</li>
+            </ul>
+        </div>
 
         <table class="beitragsliste">
             <tr>

@@ -5,6 +5,7 @@ jQuery(document).ready(function ($) {
   const exportCsvButton = $("#export-csv");
   const goBackButton = $("#go-back");
   const cancelButton = $("#cancel");
+  const sendEmailButton = $("#send-email");
   const mitgliedschaftArt = $("#mitgliedschaft_art");
   const vornameEltern = $("#vorname_eltern");
   const nachnameEltern = $("#nachname_eltern");
@@ -29,6 +30,7 @@ jQuery(document).ready(function ($) {
     const selectedCheckboxes = $(".membership-checkbox").filter(":checked");
     deleteButton.prop("disabled", selectedCheckboxes.length === 0);
     exportCsvButton.prop("disabled", selectedCheckboxes.length === 0);
+    sendEmailButton.prop("disabled", selectedCheckboxes.length === 0);
   }
 
   const childFields = [
@@ -470,6 +472,39 @@ jQuery(document).ready(function ($) {
         function (response) {
           if (response.success) {
             window.location.href = response.data.download_url;
+          } else {
+            alert("Error: " + response.data.message);
+          }
+        },
+        "json",
+      );
+    });
+
+    sendEmailButton.on("click", function (e) {
+      e.preventDefault();
+      const selectedIds = $(".membership-checkbox")
+        .filter(":checked")
+        .map(function () {
+          return $(this).val();
+        })
+        .get();
+      if (selectedIds.length === 0) {
+        alert("Bitte wähle mindestens einen Eintrag aus.");
+        return;
+      }
+      let formData = {
+        action_type: "send_email",
+        action: "avf_membership_action",
+        ids: selectedIds,
+        _ajax_nonce: avf_ajax_admin.nonce,
+      };
+
+      $.post(
+        avf_ajax_admin.ajaxurl,
+        formData,
+        function (response) {
+          if (response.success) {
+            window.location.href = response.data.mailto;
           } else {
             alert("Error: " + response.data.message);
           }

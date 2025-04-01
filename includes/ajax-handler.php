@@ -3,6 +3,7 @@
 add_action('wp_ajax_avf_membership_action', 'Avf_Handle_Ajax_membership_requests');
 add_action('wp_ajax_avf_schnupperkurs_action', 'Avf_Handle_Ajax_schnupperkurs_requests');
 add_action('wp_ajax_avf_download_csv', 'Generate_Csv_download');
+add_action('wp_ajax_avf_send_email', 'Avf_Send_Email_To_Members');
 add_action('wp_ajax_avf_fetch_memberships', 'Fetch_Membership_data');
 add_action('wp_ajax_avf_fetch_schnupperkurse', 'Fetch_Schnupperkurs_data');
 add_action('wp_ajax_avf_get_membership_stats', 'Get_Membership_stats');
@@ -241,6 +242,13 @@ function Avf_Handle_Ajax_membership_requests()
             }
         }
         wp_send_json_success(array( 'message' => $fees_changed ? 'Beiträge aktualisiert' : 'Beiträge sind bereits aktuell'));
+    } elseif ($action_type === 'send_email') {
+        if (empty($_POST['ids'])) {
+            wp_send_json_error('No data selected for export');
+        } else {
+            $ids = array_map('intval', $_POST['ids']);
+            Avf_Send_Email_To_Members($ids);
+        }
     }
 
     echo json_encode($response);
@@ -1125,5 +1133,34 @@ function Get_Membership_stats()
         wp_send_json_success(['membership_stats' => $html]);
     } else {
         wp_send_json_error('Error fetching membership stats.');
+    }
+}
+
+function Avf_Send_Email_To_Members($ids)
+{
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'avf_memberships';
+
+    $placeholders = implode(',', array_fill(0, count($ids), '%d'));
+    $sql = $wpdb->prepare("SELECT email FROM $table_name WHERE id IN ($placeholders)", ...$ids);
+    $results = $wpdb->get_results($sql, ARRAY_A);
+
+    if (!empty($results)) {
+        $emails = array_column($results, 'email');
+        $valid_emails = array_filter(
+            $emails, function ($email) {
+                return filter_var($email, FILTER_VALIDATE_EMAIL);
+            }
+        );
+
+        if (empty($valid_emails)) {
+            wp_send_json_error(['message' => 'No valid email addresses found']);
+        }
+
+        $action = count($valid_emails) == 1 ? "to" : "bcc";
+        $mailto_link = "mailto:?$action=" . urlencode(implode(',', $valid_emails));
+        wp_send_json_success(['mailto' => $mailto_link]);
+    } else {
+        wp_send_json_error(['message' => 'No data found for the selected IDs.']);
     }
 }
