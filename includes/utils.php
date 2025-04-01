@@ -155,8 +155,8 @@ class Avf_Forms_Utils
                     "SELECT COUNT(*) FROM $memberships_table
                     WHERE LOWER(vorname) = LOWER(%s)
                     AND LOWER(nachname) = LOWER(%s)
-                    AND LOWER(email) = LOWER(%s)",
-                    $result->vorname, $result->nachname, $result->email
+                    AND geburtsdatum = DATE(%s)",
+                    $result->vorname, $result->nachname, $result->geburtsdatum
                 )
             );
 
@@ -170,6 +170,7 @@ class Avf_Forms_Utils
             $nachname = sanitize_text_field($result->nachname);
             $email = sanitize_email($result->email);
             $telefon = sanitize_text_field($result->telefon);
+            $schnupperkurs_art = SCHNUPPERKURSARTEN[sanitize_text_field($result->schnupperkurs_art)];
 
             $to = get_option('admin_email');
             $subject = sprintf(
@@ -182,12 +183,14 @@ class Avf_Forms_Utils
             $message = sprintf(
                 "Hallo,\n\n" .
                 "Der Schnupperkurs von %s %s endet heute.\n\n" .
+                "Schnupperkursart: %s\n" .
                 "E-Mail: %s\n" .
                 "Telefon: %s\n\n" .
                 "Bitte erinnere %s daran, einen Mitgliedsantrag zu stellen.\n\n" .
                 "Diese E-Mail wurde automatisch generiert.",
                 $vorname,
                 $nachname,
+                $schnupperkurs_art,
                 $email,
                 $telefon,
                 $vorname
@@ -195,7 +198,7 @@ class Avf_Forms_Utils
 
             $headers = array(
             'Content-Type: text/plain; charset=UTF-8',
-            'From: ' . get_bloginfo('name') . ' <' . get_option('admin_email') . '>'
+            'From: ' . get_bloginfo('name') . ' <' . $to . '>'
             );
 
             try {
@@ -204,19 +207,21 @@ class Avf_Forms_Utils
                 if ($sent) {
                     error_log(
                         sprintf(
-                            'AVF-Mitgliedschaftsverwaltung: Schnupperkurs-Benachrichtigung wurde am %s an %s %s gesendet',
-                            current_time('mysql'),
+                            'AVF-Mitgliedschaftsverwaltung: Schnupperkurs-Benachrichtigung für %s %s wurde am %s an %s gesendet',
                             $vorname,
-                            $nachname
+                            $nachname,
+                            current_time('mysql'),
+                            $to
                         )
                     );
                 } else {
                     error_log(
                         sprintf(
-                            'AVF-Mitgliedschaftsverwaltung: Fehler beim Senden der Schnupperkurs-Benachrichtigung am %s an %s %s',
-                            current_time('mysql'),
+                            'AVF-Mitgliedschaftsverwaltung: Fehler beim Senden der Schnupperkurs-Benachrichtigung für %s %s am %s an %s',
                             $vorname,
-                            $nachname
+                            $nachname,
+                            current_time('mysql'),
+                            $to
                         )
                     );
                 }
