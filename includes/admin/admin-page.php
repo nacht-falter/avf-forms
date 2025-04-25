@@ -28,7 +28,6 @@ function Avf_Display_memberships()
             </div>
         </div>
         <div id="filter-list">
-            <span><strong>Anzeigen:&nbsp;</strong></span>
             <div>
             <?php foreach ($filters as $filter_key => $filter_label) { ?>
                 <label>
