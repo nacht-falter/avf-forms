@@ -137,6 +137,8 @@ class Avf_Forms_Membership_Handler
                     'bank' => $bank,
                     'beitrag' => $beitrag,
                     'notizen' => $notizen,
+                    'wiedervorlage' => current_time('mysql'),
+                    'wiedervorlage_grund' => "SEPA anlegen"
                 )
             );
 

@@ -5,6 +5,7 @@ jQuery(document).ready(function ($) {
   const exportCsvButton = $("#export-csv");
   const goBackButton = $("#go-back");
   const cancelButton = $("#cancel");
+  const deleteReminderButton = $("#delete-reminder");
   const sendEmailButton = $("#send-email");
   const mitgliedschaftArt = $("#mitgliedschaft_art");
   const vornameEltern = $("#vorname_eltern");
@@ -521,6 +522,12 @@ jQuery(document).ready(function ($) {
     cancelButton.on("click", function (e) {
       e.preventDefault();
       window.history.back();
+    });
+
+    deleteReminderButton.on("click", function (e) {
+      e.preventDefault();
+      document.getElementById("wiedervorlage-grund").value = "";
+      document.getElementById("wiedervorlage").value = "";
     });
 
     mitgliedschaftArt.on("change", updateMembershipFields);

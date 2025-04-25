@@ -122,10 +122,11 @@ function Avf_Handle_Ajax_membership_requests()
     if ($action_type === 'create' || $action_type === 'update') {
         $kuendigungseingang = sanitize_text_field($_POST['kuendigungseingang'] ?? '');
         $austrittsdatum = sanitize_text_field($_POST['austrittsdatum'] ?? '');
-        $wiedervorlage_grund = sanitize_text_field($_POST['wiedervorlage_grund'] ?? '');
         $wiedervorlage = sanitize_text_field($_POST['wiedervorlage'] ?? '');
+        $wiedervorlage_grund = sanitize_text_field($_POST['wiedervorlage-grund'] ?? '');
 
-        if (!empty($kuendigungseingang)) {
+        // Autofill reminder fields on cancellation
+        if (!empty($kuendigungseingang) && empty($austrittsdatum)) {
             $austrittsdatum = avf_calculate_resignation_date($kuendigungseingang);
 
             $wiedervorlage_date = date('Y-m-d', strtotime($austrittsdatum . ' -2 months + 15 days'));

@@ -210,13 +210,16 @@ function Avf_Display_Membership_form()
 
                 <div class="form-group">
                     <div>
-                        <label for="wiedervorlage-datum">Wiedervorlage-Datum</label>
-                        <input id="wiedervorlage-datum" type="date" name="wiedervorlage" value="<?php echo esc_attr($record->wiedervorlage ?? ''); ?>">
+                        <label for="wiedervorlage">Wiedervorlage-Datum</label>
+                        <input id="wiedervorlage" type="date" name="wiedervorlage" value="<?php echo esc_attr($record->wiedervorlage ?? ''); ?>">
                     </div>
                     <div>
-                        <label for="wiedervorlage">Wiedervorlage-Grund</label>
-                        <textarea id="wiedervorlage" name="wiedervorlage_grund" maxlength="255" rows="1"><?php echo esc_attr($record->wiedervorlage_grund ?? ''); ?></textarea>
+                        <label for="wiedervorlage-grund">Wiedervorlage-Grund</label>
+                        <textarea id="wiedervorlage-grund" name="wiedervorlage-grund" maxlength="255" rows="1"><?php echo esc_attr($record->wiedervorlage_grund ?? ''); ?></textarea>
                     </div>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="button button-secondary" id="delete-reminder">Wiedervorlage löschen</button>
                 </div>
 
                 <label for="notizen">Notizen</label>
