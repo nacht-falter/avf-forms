@@ -11,8 +11,11 @@ function Avf_Display_memberships()
         'sonder' => 'Sondermitglieder',
         'passiv' => 'Passive Mitglieder',
         'foerder' => 'Fördermitglieder',
-        'ausgetreten' => 'Ausgetretene Mitglieder',
     ];
+    $secondary_filters = [
+        'beitragsbefreit' => 'Beitragsbefreite ausblenden',
+        'ausgetreten' => 'Ausgetretene ausblenden',
+    ]
 
     ?>
     <div class="wrap">
@@ -28,6 +31,14 @@ function Avf_Display_memberships()
             <span><strong>Anzeigen:&nbsp;</strong></span>
             <div>
             <?php foreach ($filters as $filter_key => $filter_label) { ?>
+                <label>
+                    <input type="checkbox" class="filter-checkbox" name="filter" value="<?php echo $filter_key; ?>" />
+                    <?php echo $filter_label; ?>
+                </label>
+            <?php } ?>
+            </div>
+            <div>
+            <?php foreach ($secondary_filters as $filter_key => $filter_label) { ?>
                 <label>
                     <input type="checkbox" class="filter-checkbox" name="filter" value="<?php echo $filter_key; ?>" />
                     <?php echo $filter_label; ?>

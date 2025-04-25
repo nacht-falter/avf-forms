@@ -58,10 +58,16 @@
   flex-wrap: wrap;
 }
 
-#filter-list div {
+#filter-list div,
+#secondary-filter-list div {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 0.8rem;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
 }
 
 #filter-list label {

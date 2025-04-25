@@ -138,8 +138,8 @@ jQuery(document).ready(function ($) {
 
     // Get filters from url params. "ausgetreten" is initially unchecked.
     document.querySelectorAll(".filter-checkbox").forEach((checkbox) => {
-      if (checkbox.value == "ausgetreten") {
-        checkbox.checked = filters.includes("ausgetreten");
+      if (checkbox.value == "beitragsbefreit") {
+        checkbox.checked = filters.includes("beitragsbefreit");
       } else {
         checkbox.checked =
           filters.length === 0 || filters.includes(checkbox.value);

@@ -423,7 +423,7 @@ function validate_and_get_params($allowed_columns)
 
 function process_membership_filters($filters)
 {
-    $allowed_filters = ['aktiv', 'kind', 'sonder', 'passiv', 'foerder', 'ausgetreten'];
+    $allowed_filters = ['aktiv', 'kind', 'sonder', 'passiv', 'foerder', 'beitragsbefreit', 'ausgetreten'];
     $related_filters = [
         'aktiv' => ['aktiv_ermaessigt', 'familie'],
         'kind' => ['jugend'],
@@ -451,9 +451,14 @@ function build_membership_query($table_name, $active_filters, $search, $column, 
 
     // Special case for "ausgetreten" filter
     if (($index = array_search("ausgetreten", $active_filters, true)) !== false) {
-        unset($active_filters[$index]);
-    } else {
         $where_clauses[] = "(austrittsdatum IS NULL OR austrittsdatum > CURRENT_DATE)";
+        unset($active_filters[$index]);
+    }
+
+    // Special case for "beitragsbefreit" filter
+    if (($index = array_search("beitragsbefreit", $active_filters, true)) !== false) {
+        $where_clauses[] = "beitrag != 0";
+        unset($active_filters[$index]);
     }
 
     // Return empty dataset if no active filters are selected
