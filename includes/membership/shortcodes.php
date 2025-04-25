@@ -4,12 +4,12 @@ class Avf_Forms_Membership_Shortcodes
 
     public static function register()
     {
-        add_shortcode('membership_form', array( __CLASS__, 'Render_Membership_form' ));
-        add_shortcode('membership_children_form', array( __CLASS__, 'Render_Membership_Children_form' ));
+        add_shortcode('membership_form', array( __CLASS__, 'render_membership_form' ));
+        add_shortcode('membership_children_form', array( __CLASS__, 'render_membership_children_form' ));
     }
 
     // Render Membership Adults form
-    public static function Render_Membership_form()
+    public static function render_membership_form()
     {
         $errors = get_transient('form_validation_errors');
 
@@ -210,7 +210,7 @@ class Avf_Forms_Membership_Shortcodes
     }
 
     // Render Membership Children form
-    public static function Render_Membership_Children_form()
+    public static function render_membership_children_form()
     {
         ob_start();
         ?>

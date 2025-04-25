@@ -133,7 +133,7 @@ class Avf_Forms_Utils
         return '';
     }
 
-    public static function avf_schnupperkurs_notification()
+    public static function schnupperkurs_notification()
     {
         global $wpdb;
         $table_name = $wpdb->prefix . 'avf_schnupperkurse';
@@ -231,7 +231,7 @@ class Avf_Forms_Utils
         }
     }
 
-    public static function avf_delete_old_membership_data()
+    public static function delete_old_membership_data()
     {
         global $wpdb;
         $table_name = $wpdb->prefix . 'avf_memberships';

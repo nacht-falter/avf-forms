@@ -1,5 +1,5 @@
 <?php
-function Avf_Display_Membership_form()
+function avf_display_membership_form()
 {
     if (!current_user_can('manage_memberships')) {
         wp_die(__('You do not have sufficient permissions to access this page.'));
@@ -238,7 +238,7 @@ function Avf_Display_Membership_form()
     <?php
 }
 
-function Avf_Display_Schnupperkurs_form()
+function avf_display_schnupperkurs_form()
 {
     if (!current_user_can('manage_memberships')) {
         wp_die(__('You do not have sufficient permissions to access this page.'));
@@ -359,7 +359,7 @@ function Avf_Display_Schnupperkurs_form()
     <?php
 }
 
-function Avf_Manage_Membership_fees()
+function avf_manage_membership_fees()
 {
     if (!current_user_can('manage_memberships')) {
         wp_die(__('You do not have sufficient permissions to access this page.'));

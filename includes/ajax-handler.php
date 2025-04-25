@@ -1,15 +1,14 @@
 <?php
 
-add_action('wp_ajax_avf_membership_action', 'Avf_Handle_Ajax_membership_requests');
-add_action('wp_ajax_avf_schnupperkurs_action', 'Avf_Handle_Ajax_schnupperkurs_requests');
-add_action('wp_ajax_avf_download_csv', 'Generate_Csv_download');
-add_action('wp_ajax_avf_send_email', 'Avf_Send_Email_To_Members');
-add_action('wp_ajax_avf_fetch_memberships', 'Fetch_Membership_data');
-add_action('wp_ajax_avf_fetch_schnupperkurse', 'Fetch_Schnupperkurs_data');
-add_action('wp_ajax_avf_get_membership_stats', 'Get_Membership_stats');
-add_action('wp_ajax_avf_get_follow_ups', 'Get_Follow_ups');
+add_action('wp_ajax_avf_membership_action', 'avf_handle_ajax_membership_requests');
+add_action('wp_ajax_avf_schnupperkurs_action', 'avf_handle_ajax_schnupperkurs_requests');
+add_action('wp_ajax_avf_download_csv', 'avf_generate_csv_download');
+add_action('wp_ajax_avf_fetch_memberships', 'avf_fetch_membership_data');
+add_action('wp_ajax_avf_fetch_schnupperkurse', 'avf_fetch_schnupperkurs_data');
+add_action('wp_ajax_avf_get_membership_stats', 'avf_get_membership_stats');
+add_action('wp_ajax_avf_get_follow_ups', 'avf_get_follow_ups');
 
-function validate_user_and_nonce()
+function avf_validate_user_and_nonce()
 {
     if (!current_user_can('manage_memberships')) {
         wp_send_json_error('You do not have permission to perform this action.');
@@ -21,7 +20,7 @@ function validate_user_and_nonce()
     }
 }
 
-function handle_insert_update($table_name, $data, $action_type, $id = null)
+function avf_handle_insert_update($table_name, $data, $action_type, $id = null)
 {
     if (str_contains($table_name, 'avf_memberships')) {
         $redirect_url = admin_url('admin.php?page=avf-membership-admin');
@@ -39,7 +38,7 @@ function handle_insert_update($table_name, $data, $action_type, $id = null)
     }
 }
 
-function handle_delete($table_name, $id)
+function avf_handle_delete($table_name, $id)
 {
     global $wpdb;
     $id = intval($id);
@@ -53,7 +52,7 @@ function handle_delete($table_name, $id)
     }
 }
 
-function handle_bulk_delete($table_name, $ids)
+function avf_handle_bulk_delete($table_name, $ids)
 {
     global $wpdb;
     $placeholders = implode(',', array_fill(0, count($ids), '%d'));
@@ -65,15 +64,6 @@ function handle_bulk_delete($table_name, $ids)
     } else {
         return array('status' => 'error', 'message' => 'Error deleting records.');
     }
-}
-
-function avf_handle_update_existing_fees()
-{
-    global $wpdb;
-    $fees = get_option('avf_beitraege');
-
-    return true;
-
 }
 
 function avf_calculate_resignation_date($kuendigungseingang)
@@ -109,9 +99,9 @@ function avf_calculate_resignation_date($kuendigungseingang)
     }
 }
 
-function Avf_Handle_Ajax_membership_requests()
+function avf_handle_ajax_membership_requests()
 {
-    validate_user_and_nonce();
+    avf_validate_user_and_nonce();
 
     global $wpdb;
     $table_name = $wpdb->prefix . 'avf_memberships';
@@ -186,12 +176,12 @@ function Avf_Handle_Ajax_membership_requests()
             $data['wiedervorlage_grund'] = "SEPA anlegen";
         }
 
-        $response = handle_insert_update($table_name, $data, $action_type, $_POST['id'] ?? null);
+        $response = avf_handle_insert_update($table_name, $data, $action_type, $_POST['id'] ?? null);
 
     } elseif ($action_type === 'delete') {
-        $response = handle_delete($table_name, $_POST['id']);
+        $response = avf_handle_delete($table_name, $_POST['id']);
     } elseif ($action_type === 'bulk_delete' && isset($_POST['ids']) && is_array($_POST['ids'])) {
-        $response = handle_bulk_delete($table_name, array_map('intval', $_POST['ids']));
+        $response = avf_handle_bulk_delete($table_name, array_map('intval', $_POST['ids']));
     } elseif ($action_type === 'export_csv' && isset($_POST['ids']) && is_array($_POST['ids'])) {
         if (empty($_POST['ids'])) {
             wp_send_json_error('No data selected for export');
@@ -248,7 +238,7 @@ function Avf_Handle_Ajax_membership_requests()
             wp_send_json_error('No data selected for export');
         } else {
             $ids = array_map('intval', $_POST['ids']);
-            Avf_Send_Email_To_Members($ids);
+            avf_send_email_to_members($ids);
         }
     }
 
@@ -256,9 +246,9 @@ function Avf_Handle_Ajax_membership_requests()
     wp_die();
 }
 
-function Avf_Handle_Ajax_schnupperkurs_requests()
+function avf_handle_ajax_schnupperkurs_requests()
 {
-    validate_user_and_nonce();
+    avf_validate_user_and_nonce();
 
     global $wpdb;
     $table_name = $wpdb->prefix . 'avf_schnupperkurse';
@@ -290,21 +280,21 @@ function Avf_Handle_Ajax_schnupperkurs_requests()
             $data['submission_date'] = current_time('mysql');
         }
 
-        $response = handle_insert_update($table_name, $data, $action_type, $_POST['id'] ?? null);
+        $response = avf_handle_insert_update($table_name, $data, $action_type, $_POST['id'] ?? null);
 
     } elseif ($action_type === 'delete') {
-        $response = handle_delete($table_name, $_POST['id']);
+        $response = avf_handle_delete($table_name, $_POST['id']);
     } elseif ($action_type === 'bulk_delete' && isset($_POST['ids']) && is_array($_POST['ids'])) {
-        $response = handle_bulk_delete($table_name, array_map('intval', $_POST['ids']));
+        $response = avf_handle_bulk_delete($table_name, array_map('intval', $_POST['ids']));
     }
 
     echo json_encode($response);
     wp_die();
 }
 
-function Generate_Csv_download()
+function avf_generate_csv_download()
 {
-    validate_user_and_nonce();
+    avf_validate_user_and_nonce();
 
     $ids = isset($_GET['ids']) ? explode(',', $_GET['ids']) : [];
 
@@ -404,7 +394,7 @@ function Generate_Csv_download()
 
 function validate_and_get_params($allowed_columns)
 {
-    validate_user_and_nonce();
+    avf_validate_user_and_nonce();
 
     $params = [
         'column' => isset($_POST['column']) ? sanitize_text_field($_POST['column']) : 'init',
@@ -760,7 +750,7 @@ function check_membership_status($schnupperkurs_results)
     return $schnupperkurs_results;
 }
 
-function Fetch_Membership_data()
+function avf_fetch_membership_data()
 {
     $params = validate_and_get_params('COLUMN_HEADERS_MEMBERSHIPS');
 
@@ -795,7 +785,7 @@ function Fetch_Membership_data()
     );
 }
 
-function Fetch_Schnupperkurs_data()
+function avf_fetch_schnupperkurs_data()
 {
     $params = validate_and_get_params('COLUMN_HEADERS_SCHNUPPERKURSE');
 
@@ -822,7 +812,7 @@ function Fetch_Schnupperkurs_data()
     );
 }
 
-function Get_Follow_ups()
+function avf_get_follow_ups()
 {
     global $wpdb;
     $table_name = $wpdb->prefix . 'avf_memberships';
@@ -904,7 +894,7 @@ function Get_Follow_ups()
     }
 }
 
-function Get_Membership_stats()
+function avf_get_membership_stats()
 {
     $current_year = date('Y');
     $previous_year = $current_year - 1;
@@ -1142,7 +1132,7 @@ function Get_Membership_stats()
     }
 }
 
-function Avf_Send_Email_To_Members($ids)
+function avf_send_email_to_members($ids)
 {
     global $wpdb;
     $table_name = $wpdb->prefix . 'avf_memberships';

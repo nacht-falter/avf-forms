@@ -133,16 +133,16 @@ foreach ($includes as $file) {
     include_once AVF_PLUGIN_DIR . $file;
 }
 
-register_activation_hook(__FILE__, 'Activate_Avf_forms');
+register_activation_hook(__FILE__, 'activate_avf_forms');
 
-function Avf_Clear_Cron_job()
+function avf_clear_cronjob()
 {
     wp_clear_scheduled_hook('avf_schnupperkurs_notification');
 }
 
-register_deactivation_hook(__FILE__, 'Avf_Clear_Cron_job');
+register_deactivation_hook(__FILE__, 'avf_clear_cronjob');
 
-function Activate_Avf_forms()
+function activate_avf_forms()
 {
     Avf_Forms_Activator::activate();
 }
@@ -157,8 +157,8 @@ class Avf_Forms_Plugin
         add_action('wp_enqueue_scripts', [__CLASS__, 'enqueue_public_assets']);
         add_action('admin_enqueue_scripts', [__CLASS__, 'enqueue_admin_assets']);
         add_action('admin_menu', [__CLASS__, 'add_admin_menu']);
-        add_action('avf_schnupperkurs_notification', ['Avf_Forms_Utils', 'avf_schnupperkurs_notification']);
-        add_action('avf_delete_old_membership_data', ['Avf_Forms_Utils', 'avf_delete_old_membership_data']);
+        add_action('avf_schnupperkurs_notification', ['Avf_Forms_Utils', 'schnupperkurs_notification']);
+        add_action('avf_delete_old_membership_data', ['Avf_Forms_Utils', 'delete_old_membership_data']);
     }
 
     public static function enqueue_public_assets()
@@ -206,7 +206,7 @@ class Avf_Forms_Plugin
             'AVF Mitgliederverwaltung', // Menu title
             'manage_memberships', // Capability
             'avf-membership-admin', // Menu slug
-            'Avf_Display_memberships', // Callback function
+            'avf_display_memberships', // Callback function
             'dashicons-feedback' // Icon URL
         );
 
@@ -216,7 +216,7 @@ class Avf_Forms_Plugin
             'Neue Mitgliedschaft hinzufügen',            // Menu title
             'manage_memberships',             // Capability
             'avf-membership-form-page',       // Slug for the new membership page
-            'Avf_Display_Membership_form'     // Function to display the new membership form
+            'avf_display_membership_form'     // Function to display the new membership form
         );
 
         add_submenu_page(
@@ -225,7 +225,7 @@ class Avf_Forms_Plugin
             'Wiedervorlagen',
             'manage_memberships',
             'avf-follow-ups',
-            'Avf_Display_Follow_ups'
+            'avf_display_followups'
         );
 
         add_submenu_page(
@@ -234,7 +234,7 @@ class Avf_Forms_Plugin
             'Schnupperkurs-Verwaltung',      // Menu title
             'manage_memberships',             // Capability
             'avf-schnupperkurs-admin',       // Slug for the new membership page
-            'Avf_Display_schnupperkurse'     // Function to display the new membership form
+            'avf_display_schnupperkurse'     // Function to display the new membership form
         );
 
         add_submenu_page(
@@ -243,7 +243,7 @@ class Avf_Forms_Plugin
             'Neuen Schnupperkurs hinzufügen',
             'manage_memberships',
             'avf-schnupperkurs-form-page',
-            'Avf_Display_Schnupperkurs_form'
+            'avf_display_schnupperkurs_form'
         );
 
         add_submenu_page(
@@ -252,7 +252,7 @@ class Avf_Forms_Plugin
             'Mitglieder-Statistik',
             'manage_memberships',
             'avf-membership-stats',
-            'Avf_Display_Membership_stats'
+            'avf_display_membership_stats'
         );
 
         add_submenu_page(
@@ -261,7 +261,7 @@ class Avf_Forms_Plugin
             'Mitgliedsbeiträge verwalten',
             'manage_memberships',
             'avf-membership-fee-admin',
-            'Avf_Manage_Membership_fees'
+            'avf_manage_membership_fees'
         );
     }
 }

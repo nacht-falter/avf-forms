@@ -1,5 +1,5 @@
 <?php
-function Avf_Display_memberships()
+function avf_display_memberships()
 {
     if (!current_user_can('manage_memberships')) {
         wp_die(__('You do not have sufficient permissions to access this page.'));
@@ -107,7 +107,7 @@ function Avf_Display_memberships()
     <?php
 }
 
-function Avf_Display_schnupperkurse()
+function avf_display_schnupperkurse()
 {
     if (!current_user_can('manage_memberships')) {
         wp_die(__('You do not have sufficient permissions to access this page.'));
@@ -163,7 +163,7 @@ function Avf_Display_schnupperkurse()
     <?php
 }
 
-function Avf_Display_Follow_Ups()
+function avf_display_followups()
 {
     if (!current_user_can('manage_memberships')) {
         wp_die(__('You do not have sufficient permissions to access this page.'));
@@ -184,7 +184,7 @@ function Avf_Display_Follow_Ups()
     <?php
 }
 
-function Avf_Display_Membership_stats()
+function avf_display_membership_stats()
 {
     if (!current_user_can('manage_memberships')) {
         wp_die(__('You do not have sufficient permissions to access this page.'));
