@@ -387,7 +387,7 @@ function Avf_Manage_Membership_fees()
             <label for="update-existing-fees"><strong>Beiträge bestehender Mitglieder aktualisieren?</strong></label>
             <div class="notice notice-info inline">
                 <p>
-                    Wenn dieser Haken gesetzt ist, werden die Beiträge von Mitgliedern, die den Regelbeitrag zahlen, auf die angegebenen Beiträge für die jeweilige Mitgliedschaftsart gesetzt. Dies kann nicht rückgängig gemacht werden.
+                    Wenn dieser Haken gesetzt ist, werden die Beiträge von Mitgliedern, die den Regelbeitrag zahlen, auf die angegebenen Beiträge für die jeweilige Mitgliedschaftsart gesetzt.
                     Beiträge von Mitgliedern, die einen individuell vereinbarten Beitrag zahlen, werden nicht verändert.
                 </p>
             </div>
