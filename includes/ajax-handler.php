@@ -964,9 +964,10 @@ function avf_get_membership_stats()
             WHERE YEAR(sk.beginn) = %d AND EXISTS (
                 SELECT 1
                 FROM $memberships_table AS m
-                WHERE m.vorname = sk.vorname
-                AND m.nachname = sk.nachname
-                AND m.email = sk.email
+                WHERE LOWER(m.vorname) = LOWER(sk.vorname)
+                AND LOWER(m.nachname) = LOWER(sk.nachname)
+                AND m.geburtsdatum = DATE(sk.geburtsdatum)
+                AND m.beitrittsdatum >= sk.beginn
             )
             GROUP BY schnupperkurs_art",
             $year
