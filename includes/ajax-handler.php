@@ -792,10 +792,31 @@ function avf_fetch_schnupperkurs_data()
     global $wpdb;
     $table_name = $wpdb->prefix . 'avf_schnupperkurse';
 
-    $order_clause = $params['column'] === 'init' ? 'beginn DESC' : $params['column'] . ' ' . $params['order'];
-    $query = "SELECT * FROM $table_name ORDER BY $order_clause";
+    $search = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
 
-    $results = $wpdb->get_results($query, ARRAY_A);
+    $order_clause = $params['column'] === 'init' ? 'beginn DESC' : $params['column'] . ' ' . $params['order'];
+
+    $query_parts = ['params' => []];
+    $where_clauses = [];
+
+    if ($search) {
+        $search_columns = ['vorname', 'nachname', 'email', 'telefon', 'notizen'];
+        $like_clauses = array_map(fn($col) => "$col LIKE %s", $search_columns);
+        $where_clauses[] = '(' . implode(' OR ', $like_clauses) . ')';
+        $query_parts['params'] = array_fill(0, count($search_columns), '%' . $search . '%');
+    }
+
+    $query = "SELECT * FROM $table_name";
+    if (!empty($where_clauses)) {
+        $query .= " WHERE " . implode(' AND ', $where_clauses);
+    }
+    $query .= " ORDER BY $order_clause";
+
+    if (!empty($query_parts['params'])) {
+        $results = $wpdb->get_results($wpdb->prepare($query, ...$query_parts['params']), ARRAY_A);
+    } else {
+        $results = $wpdb->get_results($query, ARRAY_A);
+    }
 
     if (empty($results)) {
         $html = '<td colspan="5" class="no-memberships-msg">Keine Schnupperkurse gefunden.</td>';
