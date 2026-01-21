@@ -118,6 +118,10 @@ function avf_display_schnupperkurse()
         <h1>Schnupperkurse</h1>
         <div id="admin-page-header">
             <a href="admin.php?page=avf-schnupperkurs-form-page" class="button button-primary">Neuen Schnupperkurs hinzufügen</a>
+            <div id="search-container">
+                <label for="search" class="dashicons dashicons-search" id="search-label"></label>
+                <input type="search" id="search" placeholder="Suche" />
+            </div>
         </div>
         <div>
             <span>Gefunden: <span id="record-count">0</span></span>
