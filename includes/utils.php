@@ -38,7 +38,7 @@ class Avf_Forms_Utils
         return [get_option('admin_email')];
     }
 
-    public static function send_membership_confirmation_email($email, $vorname, $nachname)
+    public static function send_membership_confirmation_email($email, $vorname, $nachname, $additional_data = array())
     {
         $member_subject = '[Aikido Verein Freiburg e.V.] Mitgliedschaftsantrag erhalten';
         $member_message = "Hallo $vorname,\n\n";
@@ -61,6 +61,30 @@ class Avf_Forms_Utils
 
         $treasurer_subject = 'Neuer Mitgliedschaftsantrag eingegangen';
         $treasurer_message = "Neuer Mitgliedschaftsantrag von $vorname $nachname eingegangen.\n\n";
+
+        // Add additional membership details if provided
+        if (!empty($additional_data)) {
+            if (isset($additional_data['mitgliedschaft_art'])) {
+                $membership_type = isset(MITGLIEDSCHAFTSARTEN[$additional_data['mitgliedschaft_art']])
+                    ? MITGLIEDSCHAFTSARTEN[$additional_data['mitgliedschaft_art']]
+                    : ucfirst($additional_data['mitgliedschaft_art']);
+                $treasurer_message .= "Mitgliedschaftsart: " . $membership_type . "\n";
+            }
+            if (isset($additional_data['starterpaket']) && $additional_data['starterpaket']) {
+                $treasurer_message .= "Starterpaket: Ja\n";
+            }
+            if (isset($additional_data['spende_monatlich']) && $additional_data['spende_monatlich'] > 0) {
+                $treasurer_message .= "Monatliche Spende: " . number_format($additional_data['spende_monatlich'], 2, ',', '.') . " €\n";
+            }
+            if (isset($additional_data['spende_einmalig']) && $additional_data['spende_einmalig'] > 0) {
+                $treasurer_message .= "Einmalige Spende: " . number_format($additional_data['spende_einmalig'], 2, ',', '.') . " €\n";
+            }
+            if (isset($additional_data['email'])) {
+                $treasurer_message .= "E-Mail: " . $additional_data['email'] . "\n";
+            }
+            $treasurer_message .= "\n";
+        }
+
         $treasurer_message .= "Zur Mitgliedschaftsverwaltung: " . home_url('/wp-admin/admin.php?page=avf-membership-admin') . "\n";
 
         $treasurer_headers = array(

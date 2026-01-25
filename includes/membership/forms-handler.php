@@ -152,11 +152,20 @@ class Avf_Forms_Membership_Handler
                 Avf_Forms_Utils::send_starter_kit_notification($email, $telefon, $vorname, $nachname);
             }
 
+            // Prepare additional data for staff notification
+            $additional_data = array(
+                'mitgliedschaft_art' => $mitgliedschaft_art,
+                'starterpaket' => $starterpaket,
+                'spende_monatlich' => $spende_monatlich,
+                'spende_einmalig' => $spende_einmalig,
+                'email' => $email
+            );
+
             // Send confirmation email
             if ($mitgliedschaft_art == 'Kind' || $mitgliedschaft_art == 'Jugend') {
-                Avf_Forms_Utils::send_membership_confirmation_email($email, $vorname_eltern, $nachname_eltern);
+                Avf_Forms_Utils::send_membership_confirmation_email($email, $vorname_eltern, $nachname_eltern, $additional_data);
             } else {
-                Avf_Forms_Utils::send_membership_confirmation_email($email, $vorname, $nachname);
+                Avf_Forms_Utils::send_membership_confirmation_email($email, $vorname, $nachname, $additional_data);
             }
 
             wp_redirect(home_url('/success'));
