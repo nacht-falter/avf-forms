@@ -353,6 +353,12 @@ class Avf_Forms_Membership_Shortcodes
                     <p>Der Aikido Verein Freiburg e.V. zieht die Mitgliedsbeiträge quartalsweise jeweils in den ersten beiden Wochen zu Beginn eines neuen Quartals ein. Mir ist bekannt, dass seitens des kontoführenden Kreditinstitutes keine Verpflichtung zur Einlösung besteht, wenn mein Konto die erforderliche Deckung nicht aufweist.</p>
                     <p>Der/die Kontoinhaber/in kann innerhalb von acht Wochen, beginnend mit dem Belastungsdatum, die Erstattung des belasteten Betrages verlangen. Es gelten dabei die mit meinem Kreditinstitut vereinbarten Bedingungen.</p>
                     <p>Falls dem Aikido-Verein Freiburg e.V. im Rahmen des Lastschriftverfahrens Kosten entstehen, die der Kontoinhaber zu vertreten hat, z.B. Rücklastschriftgebühren wegen mangelnder Kontodeckung oder fehlerhafter Angaben, sind diese Kosten vom Kontoinhaber zu tragen.</p>
+                    <p>Teilhabegutscheine sind dem Verein unaufgefordert in ausreichender Höhe vorzulegen. Der Verein ist unverzüglich zu informieren, wenn die Mitgliedsbeiträge nicht mehr über Teilhabegutscheine abgerechnet werden können/sollen.</p>
+                    <p>Für alle Fragen zur Mitgliedschaft sowie zu Mitgliedsbeiträgen ist die Schatzmeisterin/der Schatzmeister zuständig: <?php
+                        $treasurer_emails = Avf_Forms_Utils::get_emails_by_key('treasurer_email');
+                        $treasurer_email = $treasurer_emails[0] ?? 'schatzmeister@aikido-freiburg.de';
+                        echo '<a href="mailto:' . esc_attr($treasurer_email) . '">' . esc_html($treasurer_email) . '</a>';
+                    ?></p>
                 </div>
             </div>
 
