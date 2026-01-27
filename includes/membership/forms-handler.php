@@ -29,17 +29,18 @@ class Avf_Forms_Membership_Handler
             $hausnummer = sanitize_text_field($_POST['hausnummer']);
             $plz = sanitize_text_field($_POST['plz']);
             $ort = sanitize_text_field($_POST['ort']);
-            $mitgliedschaft_art = sanitize_text_field($_POST['mitgliedschaft_art']);
+            $mitgliedschaft_art = sanitize_text_field($_POST['mitgliedschaft_art'] ?? '');
             $beitrittsdatum = sanitize_text_field($_POST['beitrittsdatum']);
             $starterpaket = isset($_POST['starterpaket']) ? 1 : 0;
             $mailinglist = isset($_POST['mailinglist']) ? 1 : 0;
             $satzung_datenschutz = isset($_POST['satzung_datenschutz']) ? 1 : 0;
             $hinweise = isset($_POST['hinweise']) ? 1 : 0;
+            $thgutscheine = isset($_POST['thgutscheine']) ? 1 : 0;
             $sepa = isset($_POST['sepa']) ? 1 : 0;
-            $kontoinhaber = sanitize_text_field($_POST['kontoinhaber']);
-            $iban = sanitize_text_field($_POST['iban']);
-            $bic = sanitize_text_field($_POST['bic']);
-            $bank = sanitize_text_field($_POST['bank']);
+            $kontoinhaber = sanitize_text_field($_POST['kontoinhaber'] ?? '');
+            $iban = sanitize_text_field($_POST['iban'] ?? '');
+            $bic = sanitize_text_field($_POST['bic'] ?? '');
+            $bank = sanitize_text_field($_POST['bank'] ?? '');
 
             $errors = [];
 
@@ -130,6 +131,7 @@ class Avf_Forms_Membership_Handler
                     'spende_einmalig' => $spende_einmalig,
                     'satzung_datenschutz' => $satzung_datenschutz,
                     'hinweise' => $hinweise,
+                    'thgutscheine' => $thgutscheine,
                     'sepa' => $sepa,
                     'kontoinhaber' => $kontoinhaber,
                     'iban' => $iban,
@@ -152,19 +154,27 @@ class Avf_Forms_Membership_Handler
                 Avf_Forms_Utils::send_starter_kit_notification($email, $telefon, $vorname, $nachname);
             }
 
-            // Prepare additional data for staff notification
-            $additional_data = array(
-                'mitgliedschaft_art' => $mitgliedschaft_art,
-                'starterpaket' => $starterpaket,
-                'spende_monatlich' => $spende_monatlich,
-                'spende_einmalig' => $spende_einmalig,
-                'email' => $email
-            );
-
-            // Send confirmation email
+            // Prepare additional data for staff notification based on membership type
             if ($mitgliedschaft_art == 'Kind' || $mitgliedschaft_art == 'Jugend') {
+                // Children/Youth membership - include child name and thgutscheine
+                $additional_data = array(
+                    'mitgliedschaft_art' => $mitgliedschaft_art,
+                    'child_vorname' => $vorname,
+                    'child_nachname' => $nachname,
+                    'geschwisterkind' => $geschwisterkind,
+                    'thgutscheine' => $thgutscheine,
+                    'email' => $email
+                );
                 Avf_Forms_Utils::send_membership_confirmation_email($email, $vorname_eltern, $nachname_eltern, $additional_data);
             } else {
+                // Adult membership - include donations and starter kit
+                $additional_data = array(
+                    'mitgliedschaft_art' => $mitgliedschaft_art,
+                    'starterpaket' => $starterpaket,
+                    'spende_monatlich' => $spende_monatlich,
+                    'spende_einmalig' => $spende_einmalig,
+                    'email' => $email
+                );
                 Avf_Forms_Utils::send_membership_confirmation_email($email, $vorname, $nachname, $additional_data);
             }
 

@@ -167,6 +167,11 @@ function avf_display_membership_form()
                 </div>
 
                 <div class="form-group">
+                    <input id="thgutscheine" type="checkbox" name="thgutscheine" value="1" <?php checked($record->thgutscheine ?? 0, 1); ?>>
+                    <label for="thgutscheine">Abrechnung über Teilhabegutscheine</label>
+                </div>
+
+                <div class="form-group">
                     <input id="sepa" type="checkbox" name="sepa" value="1" <?php checked($record->sepa ?? 0, 1); ?>>
                     <label for="sepa">SEPA-Lastschrift zugestimmt</label>
                 </div>

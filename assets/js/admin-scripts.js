@@ -21,6 +21,17 @@ jQuery(document).ready(function ($) {
   const labelSpendeEinmalig = $(
     'label[for="' + spendeEinmalig.attr("id") + '"]',
   );
+  const thgutscheine = $("#thgutscheine");
+  const kontoinhaber = $("#kontoinhaber");
+  const iban = $("#iban");
+  const bic = $("#bic");
+  const bank = $("#bank");
+  const sepa = $("#sepa");
+  const labelKontoinhaber = $('label[for="kontoinhaber"]');
+  const labelIban = $('label[for="iban"]');
+  const labelBic = $('label[for="bic"]');
+  const labelBank = $('label[for="bank"]');
+  const labelSepa = $('label[for="sepa"]');
   const wieErfahren = $("#wie_erfahren");
   const wieErfahrenLabel = $('label[for="wie_erfahren"]');
   const wieErfahrenSonstiges = $("#wie_erfahren_sonstiges");
@@ -87,6 +98,35 @@ jQuery(document).ready(function ($) {
 
     showHideFields(childFields, isChildOrYouth);
     showHideFields(adultFields, !isChildOrYouth);
+  }
+
+  function updateThgutscheineFields() {
+    const isChecked = thgutscheine.is(":checked");
+    const paymentFields = [
+      kontoinhaber,
+      iban,
+      bic,
+      bank,
+      sepa,
+      labelKontoinhaber,
+      labelIban,
+      labelBic,
+      labelBank,
+      labelSepa,
+    ];
+
+    paymentFields.forEach((field) => {
+      field.prop("disabled", isChecked);
+      field.prop("required", !isChecked);
+    });
+
+    if (isChecked) {
+      kontoinhaber.val("");
+      iban.val("");
+      bic.val("");
+      bank.val("");
+      sepa.prop("checked", false);
+    }
   }
 
   function updateSchnupperkursFields() {
@@ -260,6 +300,7 @@ jQuery(document).ready(function ($) {
 
     updateButtons();
     updateMembershipFields();
+    updateThgutscheineFields();
     updateSchnupperkursFields();
 
     // Event listeners for sorting, filtering, searching and bulk actions
@@ -531,6 +572,8 @@ jQuery(document).ready(function ($) {
     });
 
     mitgliedschaftArt.on("change", updateMembershipFields);
+
+    thgutscheine.on("change", updateThgutscheineFields);
 
     schnupperkursArt.on("change", updateSchnupperkursFields);
 

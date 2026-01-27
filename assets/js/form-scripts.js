@@ -38,10 +38,31 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     });
   }
+
   if (membershipForm || membershipChildrenForm) {
     const geburtsdatum = document.getElementById("geburtsdatum");
     const ageError = document.getElementById("age-error");
     const submitButton = document.getElementById("submit-btn");
+    const thg = document.getElementById("thgutscheine");
+    const thg_elements = document.querySelectorAll(
+      '#kontoinhaber, #iban, #bic, #bank, #starterpaket, #sepa'
+    );
+
+    thg.addEventListener('change', () => {
+      const isChecked = thg.checked;
+
+      thg_elements.forEach(input => {
+        input.disabled = isChecked;
+        input.required = !isChecked;
+        if (input.type === 'checkbox') input.checked = false;
+        if (input.type === 'text' || input.type === 'number') input.value = '';
+
+        const label = document.querySelector(`label[for="${input.id}"]`);
+        if (label) {
+          label.classList.toggle("disabled", isChecked);
+        }
+      });
+    });
 
     const handleDateChange = function () {
       const geburtsdatumValue = new Date(this.value);

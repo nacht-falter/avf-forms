@@ -81,6 +81,7 @@ define(
         'spende'             => 'Spende',
         'spende_monatlich'   => 'Spende mtl.',
         'spende_einmalig'    => 'Spende einm.',
+        'thgutscheine'       => 'Teilhabegutscheine',
         'sepa'               => 'SEPA-Mandat',
         'kontoinhaber'       => 'Kontoinhaber',
         'iban'               => 'IBAN',

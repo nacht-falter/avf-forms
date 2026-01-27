@@ -158,6 +158,7 @@ function avf_handle_ajax_membership_requests()
             'spende_einmalig' => isset($_POST['spende_einmalig']) ? floatval($_POST['spende_einmalig']) : null,
             'satzung_datenschutz' => isset($_POST['satzung_datenschutz']) ? 1 : 0,
             'hinweise' => isset($_POST['hinweise']) ? 1 : 0,
+            'thgutscheine' => isset($_POST['thgutscheine']) ? 1 : 0,
             'sepa' => isset($_POST['sepa']) ? 1 : 0,
             'kontoinhaber' => sanitize_text_field($_POST['kontoinhaber']),
             'iban' => sanitize_text_field($_POST['iban']),
@@ -331,6 +332,7 @@ function avf_generate_csv_download()
                 'Spende einmalig',
                 'Satzung und Datenschutz',
                 'Hinweise',
+                'Teilhabegutscheine',
                 'SEPA-Mandat',
                 'Kontoinhaber',
                 'IBAN',
@@ -370,6 +372,7 @@ function avf_generate_csv_download()
                         $row['spende_einmalig'],
                         $row['satzung_datenschutz'] ? 'Akzeptiert' : 'Nicht akzeptiert',
                         $row['hinweise'] ? 'Gelesen' : 'Nicht gelesen',
+                        Avf_Forms_Utils::format_bool($row['thgutscheine']),
                         $row['sepa'] ? 'Erteilt' : 'Nicht erteilt',
                         $row['kontoinhaber'],
                         $row['iban'],
@@ -604,6 +607,7 @@ function generate_membership_html($results)
         $html .= $column_spende ? '<td><span class="dashicons dashicons-yes"></span></td>' : '<td></td>';
         $html .= $column_spende_monatlich ? '<td>' . $column_spende_monatlich . ' €</td>' : '<td></td>';
         $html .= $column_spende_einmalig ? '<td>' . $column_spende_einmalig . ' €</td>' : '<td></td>';
+        $html .= $column_thgutscheine ? '<td><span class="dashicons dashicons-yes"></span></td>' : '<td></td>';
         $html .= $column_sepa ? '<td><span class="dashicons dashicons-yes"></span></td>' : '<td></td>';
 
         $html .= <<<HTML

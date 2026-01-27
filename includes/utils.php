@@ -70,6 +70,8 @@ class Avf_Forms_Utils
                     : ucfirst($additional_data['mitgliedschaft_art']);
                 $treasurer_message .= "Mitgliedschaftsart: " . $membership_type . "\n";
             }
+
+            // Adult membership specific fields
             if (isset($additional_data['starterpaket']) && $additional_data['starterpaket']) {
                 $treasurer_message .= "Starterpaket: Ja\n";
             }
@@ -79,6 +81,18 @@ class Avf_Forms_Utils
             if (isset($additional_data['spende_einmalig']) && $additional_data['spende_einmalig'] > 0) {
                 $treasurer_message .= "Einmalige Spende: " . number_format($additional_data['spende_einmalig'], 2, ',', '.') . " €\n";
             }
+
+            // Children/Youth membership specific fields
+            if (isset($additional_data['child_vorname']) && isset($additional_data['child_nachname'])) {
+                $treasurer_message .= "Name des Kindes: " . $additional_data['child_vorname'] . " " . $additional_data['child_nachname'] . "\n";
+            }
+            if (isset($additional_data['geschwisterkind']) && $additional_data['geschwisterkind']) {
+                $treasurer_message .= "Geschwisterkind: Ja\n";
+            }
+            if (isset($additional_data['thgutscheine']) && $additional_data['thgutscheine']) {
+                $treasurer_message .= "Abrechnung über Teilhabegutscheine: Ja\n";
+            }
+
             if (isset($additional_data['email'])) {
                 $treasurer_message .= "E-Mail: " . $additional_data['email'] . "\n";
             }
@@ -267,6 +281,7 @@ class Avf_Forms_Utils
                 hausnummer = NULL,
                 plz = NULL,
                 ort = NULL,
+                thgutscheine = NULL,
                 sepa = NULL,
                 kontoinhaber = NULL,
                 iban = NULL,

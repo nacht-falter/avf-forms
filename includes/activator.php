@@ -33,9 +33,10 @@ class Avf_Forms_Activator
                 spende_einmalig float NULL,
                 satzung_datenschutz boolean NOT NULL,
                 hinweise boolean NOT NULL,
-                sepa boolean NOT NULL,
-                kontoinhaber varchar(255) NOT NULL,
-                iban varchar(34) NOT NULL,
+                thgutscheine boolean NULL,
+                sepa boolean NULL,
+                kontoinhaber varchar(255) NULL,
+                iban varchar(34) NULL,
                 bic varchar(11) NULL,
                 bank varchar(255) NULL,
                 beitrag float NULL,
@@ -49,6 +50,23 @@ class Avf_Forms_Activator
 
         $wpdb->query($membership_sql);
 
+        // Update existing installations
+        // Check if thgutscheine column exists before adding
+        $column_exists = $wpdb->get_results(
+            $wpdb->prepare(
+                "SHOW COLUMNS FROM $memberships_table LIKE %s",
+                'thgutscheine'
+            )
+        );
+
+        if (empty($column_exists)) {
+            $wpdb->query("ALTER TABLE $memberships_table ADD COLUMN thgutscheine boolean NULL AFTER hinweise");
+        }
+
+        // Make payment columns nullable for thgutscheine support
+        $wpdb->query("ALTER TABLE $memberships_table MODIFY COLUMN sepa boolean NULL");
+        $wpdb->query("ALTER TABLE $memberships_table MODIFY COLUMN kontoinhaber varchar(255) NULL");
+        $wpdb->query("ALTER TABLE $memberships_table MODIFY COLUMN iban varchar(34) NULL");
 
         $schnupperkurs_table = "{$wpdb->prefix}avf_schnupperkurse";
 
