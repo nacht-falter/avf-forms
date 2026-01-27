@@ -117,16 +117,33 @@ jQuery(document).ready(function ($) {
 
     paymentFields.forEach((field) => {
       field.prop("disabled", isChecked);
-      field.prop("required", !isChecked);
     });
 
     if (isChecked) {
-      kontoinhaber.val("");
-      iban.val("");
-      bic.val("");
-      bank.val("");
       sepa.prop("checked", false);
     }
+
+    validatePaymentFields();
+  }
+
+  function validatePaymentFields() {
+    const isThgutscheineChecked = thgutscheine.is(":checked");
+    const isSepaChecked = sepa.is(":checked");
+    const paymentFieldsList = [kontoinhaber, iban, bic, bank];
+
+    // Payment fields are required only if sepa is checked AND thgutscheine is not checked
+    const shouldBeRequired = isSepaChecked && !isThgutscheineChecked;
+
+    paymentFieldsList.forEach((field) => {
+      field.prop("required", shouldBeRequired);
+
+      // Show warning if field is required and empty
+      if (shouldBeRequired && !field.val()) {
+        field.closest("div").addClass("field-warning");
+      } else {
+        field.closest("div").removeClass("field-warning");
+      }
+    });
   }
 
   function updateSchnupperkursFields() {
@@ -574,6 +591,13 @@ jQuery(document).ready(function ($) {
     mitgliedschaftArt.on("change", updateMembershipFields);
 
     thgutscheine.on("change", updateThgutscheineFields);
+
+    // Validate payment fields when they change
+    kontoinhaber.on("input", validatePaymentFields);
+    iban.on("input", validatePaymentFields);
+    bic.on("input", validatePaymentFields);
+    bank.on("input", validatePaymentFields);
+    sepa.on("change", validatePaymentFields);
 
     schnupperkursArt.on("change", updateSchnupperkursFields);
 

@@ -179,27 +179,27 @@ function avf_display_membership_form()
                 <div class="form-group">
                     <div>
                         <label for="kontoinhaber">Kontoinhaber</label>
-                        <input id="kontoinhaber" type="text" name="kontoinhaber" value="<?php echo esc_attr($record->kontoinhaber ?? ''); ?>" required>
+                        <input id="kontoinhaber" type="text" name="kontoinhaber" value="<?php echo esc_attr($record->kontoinhaber ?? ''); ?>">
                     </div>
                     <div>
                         <label for="iban">IBAN</label>
-                        <input id="iban" type="text" name="iban" maxlength="34" value="<?php echo esc_attr($record->iban ?? ''); ?>" required>
+                        <input id="iban" type="text" name="iban" maxlength="34" value="<?php echo esc_attr($record->iban ?? ''); ?>">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <div>
                         <label for="bic">BIC</label>
-                        <input id="bic" type="text" name="bic" maxlength="11" value="<?php echo esc_attr($record->bic ?? ''); ?>" required>
+                        <input id="bic" type="text" name="bic" maxlength="11" value="<?php echo esc_attr($record->bic ?? ''); ?>">
                     </div>
                     <div>
                         <label for="bank">Bank</label>
-                        <input id="bank" type="text" name="bank" value="<?php echo esc_attr($record->bank ?? ''); ?>" required>
+                        <input id="bank" type="text" name="bank" value="<?php echo esc_attr($record->bank ?? ''); ?>">
                     </div>
                 </div>
 
                 <label for="beitrag">Mitgliedsbeitrag</label>
-                <input id="beitrag" type="number" name="beitrag" value="<?php echo esc_attr($record->beitrag ?? ''); ?>" step="0.5" required>
+                <input id="beitrag" type="number" name="beitrag" value="<?php echo esc_attr($record->beitrag ?? ''); ?>" step="0.5">
 
                 <table class="beitragsliste">
                     <tr>

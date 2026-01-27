@@ -353,3 +353,17 @@ tr.total {
   align-items: center;
   gap: 0.5rem;
 }
+
+.field-warning input {
+  border: 1px solid #cc0000 !important;
+  background-color: #ffcccc !important;
+}
+
+.field-warning input:hover {
+  background-color: #ffdddd !important;
+}
+
+.field-warning input:focus {
+  border-color: #cc0000 !important;
+  box-shadow: 0 0 0 1px #cc0000 !important;
+}
