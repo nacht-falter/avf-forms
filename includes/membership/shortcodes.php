@@ -2,6 +2,46 @@
 class Avf_Forms_Membership_Shortcodes
 {
 
+    private static function get_config()
+    {
+        static $config = null;
+        if ($config === null) {
+            $config = include AVF_PLUGIN_DIR . 'config.php';
+        }
+        return $config;
+    }
+
+    private static function render_legal_agreement()
+    {
+        $config = self::get_config();
+        $legal_links = $config['legal_links'];
+
+        ob_start();
+        ?>
+        <div>
+            <input class="d-inline align-top mt-1" type="checkbox" name="satzung_datenschutz" id="satzung_datenschutz" required>
+            <label class="d-inline align-top" for="satzung_datenschutz">Ich habe die
+        <?php
+        $keys = array_keys($legal_links);
+        foreach ($keys as $index => $key) {
+            $link = $legal_links[$key];
+            echo '<a href="' . esc_url($link['url']) . '" title="' . esc_attr($link['label']) . '" target="_blank">' .
+                 '<strong>' . esc_html($link['label']) . '</strong></a>';
+
+            if ($index < count($keys) - 2) {
+                echo ', die ';
+            } elseif ($index === count($keys) - 2) {
+                echo ' sowie die ';
+            }
+        }
+        ?>
+                des Aikido-Verein Freiburg e.V. zur Kenntnis genommen und erkenne diese hiermit an.
+            </label>
+       </div>
+        <?php
+        return ob_get_clean();
+    }
+
     public static function register()
     {
         add_shortcode('membership_form', array( __CLASS__, 'render_membership_form' ));
@@ -111,19 +151,7 @@ class Avf_Forms_Membership_Shortcodes
                     <p><strong>Kündigung:</strong> Eine Kündigung der Mitgliedschaft hat bis spätestens 6 Wochen vor Quartalsende zu erfolgen.</p>
                     <p><strong>Haftungsausschluss:</strong> Der Aikido-Verein Freiburg e.V. weist ausdrücklich daraufhin, dass der Vereinsbeitritt keine Versicherung einschließt. Jedes Mitglied ist für ausreichenden Versicherungsschutz selbst verantwortlich. Eine Haftung durch den Verein ist, außer bei Vorsatz und grober Fahrlässigkeit, ausgeschlossen.</p>
                 </div>
-                <div>
-                    <input class="d-inline align-top mt-1" type="checkbox" name="satzung_datenschutz" id="satzung_datenschutz" required>
-                    <label class="d-inline align-top" for="satzung_datenschutz">Ich habe die 
-                        <a href="https://cloud.aikido-freiburg.de/index.php/s/DsBpZENjktxBknH" title="Satzung" target="_blank">
-                            <strong>Satzung</strong>
-                        </a> 
-                        und die 
-                        <a href="https://cloud.aikido-freiburg.de/index.php/s/yjK6ErBwtYXBBga" title="Datenschutzordnung" target="_blank">
-                            <strong>Datenschutzordnung</strong>
-                        </a> 
-                        des Aikido-Verein Freiburg e.V. gelesen und erkenne diese hiermit an.
-                    </label>
-               </div>
+                <?php echo self::render_legal_agreement(); ?>
                 <div>
                     <input class="d-inline align-top mt-4" type="checkbox" name="hinweise" id="hinweise" required>
                     <label class="d-inline align-top" for="hinweise">Die Hinweise zum <strong>Haftungsausschluss</strong> und zur <strong>Kündigung</strong> habe ich zur Kenntnis genommen.</label>
@@ -301,19 +329,7 @@ class Avf_Forms_Membership_Shortcodes
                     <p><strong>Kündigung:</strong> Eine Kündigung der Mitgliedschaft hat bis spätestens 6 Wochen vor Quartalsende zu erfolgen.</p>
                     <p><strong>Haftungsausschluss:</strong> Der Aikido-Verein Freiburg e.V. weist ausdrücklich daraufhin, dass der Vereinsbeitritt keine Versicherung einschließt. Jedes Mitglied ist für ausreichenden Versicherungsschutz selbst verantwortlich. Eine Haftung durch den Verein ist, außer bei Vorsatz und grober Fahrlässigkeit, ausgeschlossen.</p>
                 </div>
-                <div>
-                    <input class="d-inline align-top mt-1" type="checkbox" name="satzung_datenschutz" id="satzung_datenschutz" required>
-                    <label class="d-inline align-top" for="satzung_datenschutz">Ich habe die 
-                        <a href="https://cloud.aikido-freiburg.de/index.php/s/DsBpZENjktxBknH" title="Satzung" target="_blank">
-                            <strong>Satzung</strong>
-                        </a> 
-                        und die 
-                        <a href="https://cloud.aikido-freiburg.de/index.php/s/yjK6ErBwtYXBBga" title="Datenschutzordnung" target="_blank">
-                            <strong>Datenschutzordnung</strong>
-                        </a> 
-                        des Aikido-Verein Freiburg e.V. gelesen und erkenne diese hiermit an.
-                    </label>
-                </div>
+                <?php echo self::render_legal_agreement(); ?>
                 <div>
                     <input class="d-inline align-top mt-4" type="checkbox" name="hinweise" id="hinweise" required>
                     <label class="d-inline align-top" for="hinweise">Die Hinweise zum Haftungsausschluss und zur Kündigung habe ich zur Kenntnis genommen.</label>
