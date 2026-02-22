@@ -37,6 +37,12 @@ jQuery(document).ready(function ($) {
   const wieErfahrenSonstiges = $("#wie_erfahren_sonstiges");
   const wieErfahrenSonstigesLabel = $('label[for="wie_erfahren_sonstiges"]');
   const schnupperkursArt = $("#schnupperkurs_art");
+  const kuendigungseingang = $("#kuendigungseingang");
+  const austrittsdatum = $("#austrittsdatum");
+  const wiedervorlage = $("#wiedervorlage");
+  const wiedervorlageGrund = $("#wiedervorlage-grund");
+  const austrittsdatumWarning = $("#austrittsdatum-warning");
+  let calculatedAustrittsdatum = null;
 
   function updateButtons() {
     const selectedCheckboxes = $(".membership-checkbox").filter(":checked");
@@ -158,6 +164,107 @@ jQuery(document).ready(function ($) {
     const isChild = schnupperkursArt.val() === "kind";
     wieErfahrenSonstiges.toggle(isSonstiges && !isChild);
     wieErfahrenSonstigesLabel.toggle(isSonstiges && !isChild);
+  }
+
+  function formatLocalDate(date) {
+    // Format date as YYYY-MM-DD using local date values (not UTC)
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  function calculateResignationDate(kuendigungseingangDate) {
+    // Mirror PHP logic: avf_calculate_resignation_date
+    const inputDate = new Date(kuendigungseingangDate);
+
+    // Get current quarter (1-4)
+    const month = inputDate.getMonth() + 1; // getMonth is 0-indexed
+    const currentQuarter = Math.ceil(month / 3);
+
+    // Get quarter end month
+    const quarterEndMonth = currentQuarter * 3;
+    const year = inputDate.getFullYear();
+
+    // Create quarter end date (last day of quarter month)
+    const quarterEnd = new Date(year, quarterEndMonth, 0); // Day 0 = last day of previous month
+
+    // Calculate threshold: quarter end - 6 weeks
+    const threshold = new Date(quarterEnd);
+    threshold.setDate(threshold.getDate() - 42); // 6 weeks = 42 days
+
+    if (inputDate > threshold) {
+      // Too late, use next quarter
+      let nextQuarter = currentQuarter + 1;
+      let nextYear = year;
+
+      if (nextQuarter > 4) {
+        nextQuarter = 1;
+        nextYear++;
+      }
+
+      const nextQuarterMonth = nextQuarter * 3;
+      const nextQuarterEnd = new Date(nextYear, nextQuarterMonth, 0);
+      return nextQuarterEnd;
+    } else {
+      // Use current quarter
+      return quarterEnd;
+    }
+  }
+
+  function updateResignationFields() {
+    const kuendigungValue = kuendigungseingang.val();
+
+    if (!kuendigungValue) {
+      return; // No date entered
+    }
+
+    try {
+      // Calculate austrittsdatum
+      const resignationDate = calculateResignationDate(kuendigungValue);
+      const resignationDateString = formatLocalDate(resignationDate);
+
+      // Store the calculated value
+      calculatedAustrittsdatum = resignationDateString;
+
+      austrittsdatum.val(resignationDateString);
+      checkAustrittsdatumMismatch();
+
+      // Calculate wiedervorlage date: austrittsdatum - 2 months + 15 days
+      const wiedervorlageDate = new Date(resignationDate);
+      wiedervorlageDate.setMonth(wiedervorlageDate.getMonth() - 2);
+      wiedervorlageDate.setDate(wiedervorlageDate.getDate() + 15);
+      const wiedervorlageString = formatLocalDate(wiedervorlageDate);
+
+      wiedervorlage.val(wiedervorlageString);
+
+      // Update wiedervorlage-grund with SEPA deletion info
+      const deleteSepaDays = new Date(resignationDate);
+      deleteSepaDays.setDate(deleteSepaDays.getDate() + 1);
+      const deleteSepaDate = (deleteSepaDays.getMonth() + 1).toString().padStart(2, '0') + '/' +
+                             deleteSepaDays.getFullYear();
+
+      const currentGrund = wiedervorlageGrund.val();
+      if (!currentGrund.includes('SEPA löschen')) {
+        const sepaText = `SEPA löschen ab ${deleteSepaDate}`;
+        const newGrund = currentGrund ? `${sepaText}, ${currentGrund}` : sepaText;
+        wiedervorlageGrund.val(newGrund);
+      }
+    } catch (error) {
+      console.error('Error calculating resignation date:', error);
+    }
+  }
+
+  function checkAustrittsdatumMismatch() {
+    const currentValue = austrittsdatum.val();
+    const hasCalculatedValue = calculatedAustrittsdatum !== null;
+    const mismatch = hasCalculatedValue && currentValue !== calculatedAustrittsdatum;
+
+    if (mismatch) {
+      austrittsdatumWarning.show();
+    } else {
+      austrittsdatumWarning.hide();
+    }
   }
 
   function getCurrentUrlParams() {
@@ -319,6 +426,11 @@ jQuery(document).ready(function ($) {
     updateMembershipFields();
     updateThgutscheineFields();
     updateSchnupperkursFields();
+
+    // Calculate and check austrittsdatum if kuendigungseingang exists
+    if (kuendigungseingang.val()) {
+      updateResignationFields();
+    }
 
     // Event listeners for sorting, filtering, searching and bulk actions
     document.querySelectorAll(".table-header-link").forEach((a) => {
@@ -602,6 +714,10 @@ jQuery(document).ready(function ($) {
     schnupperkursArt.on("change", updateSchnupperkursFields);
 
     wieErfahren.on("change", toggleWieErfahrenSonstiges);
+
+    kuendigungseingang.on("change", updateResignationFields);
+
+    austrittsdatum.on("change", checkAustrittsdatumMismatch);
 
     get_membership_stats();
 

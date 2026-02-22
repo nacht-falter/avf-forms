@@ -131,8 +131,11 @@ function avf_display_membership_form()
                     </div>
                     <div>
                         <label for="austrittsdatum">Austrittsdatum</label>
-                        <input id="austrittsdatum" type="date" name="austrittsdatum" value="<?php echo esc_attr($record->austrittsdatum ?? ''); ?>" readonly>
+                        <input id="austrittsdatum" type="date" name="austrittsdatum" value="<?php echo esc_attr($record->austrittsdatum ?? ''); ?>">
                     </div>
+                </div>
+                <div id="austrittsdatum-warning" class="notice notice-warning inline" style="margin-top: 8px; display: none; width: 100%;">
+                    <p><strong>Achtung:</strong> Das Austrittsdatum passt nicht zum Kündigungsdatum.</p>
                 </div>
 
                 <div class="form-group">
