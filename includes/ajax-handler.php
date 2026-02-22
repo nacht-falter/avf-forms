@@ -319,7 +319,7 @@ function avf_generate_csv_download()
                 'E-Mail',
                 'Telefon',
                 'Geburtsdatum',
-                'Strasse',
+                'Straße',
                 'Hausnummer',
                 'PLZ',
                 'Ort',

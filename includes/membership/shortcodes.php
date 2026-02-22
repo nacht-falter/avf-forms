@@ -107,8 +107,8 @@ class Avf_Forms_Membership_Shortcodes
             <div class="container">
                 <div class="flex-container">
                     <div class="half-width">
-                        <label for="strasse">Strasse</label>
-                        <input type="text" name="strasse" id="strasse" placeholder="Strasse" required>
+                        <label for="strasse">Straße</label>
+                        <input type="text" name="strasse" id="strasse" placeholder="Straße" required>
                     </div>
                     <div class="half-width">
                         <label for="hausnummer">Hausnummer</label>
@@ -286,8 +286,8 @@ class Avf_Forms_Membership_Shortcodes
                 </div>
                 <div class="flex-container">
                     <div class="half-width">
-                        <label for="strasse">Strasse</label>
-                        <input type="text" name="strasse" id="strasse" placeholder="Strasse" required>
+                        <label for="strasse">Straße</label>
+                        <input type="text" name="strasse" id="strasse" placeholder="Straße" required>
                     </div>
                     <div class="half-width">
                         <label for="hausnummer">Hausnummer</label>
