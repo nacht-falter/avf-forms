@@ -20,17 +20,17 @@ class Avf_Forms_Membership_Handler
             global $wpdb;
             $table_name = $wpdb->prefix . 'avf_memberships';
 
-            $vorname = sanitize_text_field($_POST['vorname']);
-            $nachname = sanitize_text_field($_POST['nachname']);
-            $email = sanitize_email($_POST['email']);
-            $telefon = sanitize_text_field($_POST['telefon']);
-            $geburtsdatum = sanitize_text_field($_POST['geburtsdatum']);
-            $strasse = sanitize_text_field($_POST['strasse']);
-            $hausnummer = sanitize_text_field($_POST['hausnummer']);
-            $plz = sanitize_text_field($_POST['plz']);
-            $ort = sanitize_text_field($_POST['ort']);
+            $vorname = sanitize_text_field($_POST['vorname'] ?? '');
+            $nachname = sanitize_text_field($_POST['nachname'] ?? '');
+            $email = sanitize_email($_POST['email'] ?? '');
+            $telefon = sanitize_text_field($_POST['telefon'] ?? '');
+            $geburtsdatum = sanitize_text_field($_POST['geburtsdatum'] ?? '');
+            $strasse = sanitize_text_field($_POST['strasse'] ?? '');
+            $hausnummer = sanitize_text_field($_POST['hausnummer'] ?? '');
+            $plz = sanitize_text_field($_POST['plz'] ?? '');
+            $ort = sanitize_text_field($_POST['ort'] ?? '');
             $mitgliedschaft_art = sanitize_text_field($_POST['mitgliedschaft_art'] ?? '');
-            $beitrittsdatum = sanitize_text_field($_POST['beitrittsdatum']);
+            $beitrittsdatum = sanitize_text_field($_POST['beitrittsdatum'] ?? '');
             $starterpaket = isset($_POST['starterpaket']) ? 1 : 0;
             $mailinglist = isset($_POST['mailinglist']) ? 1 : 0;
             $satzung_datenschutz = isset($_POST['satzung_datenschutz']) ? 1 : 0;

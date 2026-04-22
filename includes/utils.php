@@ -38,6 +38,32 @@ class Avf_Forms_Utils
         return [get_option('admin_email')];
     }
 
+    public static function get_bank_details()
+    {
+        self::load_emails();
+        
+        if (!isset(self::$emails['bank_details']) || !is_array(self::$emails['bank_details'])) {
+            return null;
+        }
+        
+        $details = self::$emails['bank_details'];
+        $rows = [];
+        
+        if (isset($details['empfaenger'])) {
+            $rows[] = ['Empfänger', $details['empfaenger']];
+        }
+        if (isset($details['iban'])) {
+            $rows[] = ['IBAN', $details['iban']];
+        }
+        if (isset($details['bic'])) {
+            $rows[] = ['BIC', $details['bic']];
+        }
+        $rows[] = ['Verwendungszweck', 'Schnupperkurs + Name'];
+        
+        return empty($rows) ? null : $rows;
+    }
+
+
     public static function send_membership_confirmation_email($email, $vorname, $nachname, $additional_data = array())
     {
         $member_subject = '[Aikido Verein Freiburg e.V.] Mitgliedschaftsantrag erhalten';

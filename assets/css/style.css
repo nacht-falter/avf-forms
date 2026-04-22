@@ -88,6 +88,29 @@
   vertical-align: top;
 }
 
+.avf-form .form-table td {
+  vertical-align: top;
+}
+
+.avf-form .bank-details-table {
+  background: #f8f9fa;
+  padding: 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  .avf-form .form-table tr {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .avf-form .form-table td {
+    display: block;
+    padding: 0.25rem 0;
+  }
+}
+
 .avf-form input[type="radio"] {
   margin-right: 0;
 }

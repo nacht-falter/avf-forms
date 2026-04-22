@@ -125,6 +125,8 @@ $includes = [
     'includes/utils.php',
     'includes/membership/forms-handler.php',
     'includes/membership/shortcodes.php',
+    'includes/schnupperkurs/forms-handler.php',
+    'includes/schnupperkurs/shortcodes.php',
     'includes/admin/admin-page.php',
     'includes/admin/form-page.php',
     'includes/ajax-handler.php'
@@ -154,6 +156,8 @@ class Avf_Forms_Plugin
     {
         Avf_Forms_Membership_Shortcodes::register();
         Avf_Forms_Membership_Handler::register();
+        Avf_Forms_Schnupperkurs_Shortcodes::register();
+        Avf_Forms_Schnupperkurs_Handler::register();
 
         add_action('wp_enqueue_scripts', [__CLASS__, 'enqueue_public_assets']);
         add_action('admin_enqueue_scripts', [__CLASS__, 'enqueue_admin_assets']);
