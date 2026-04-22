@@ -100,7 +100,7 @@ class Avf_Forms_Schnupperkurs_Shortcodes
             </div>
             <div class="container">
                 <div class="flex-container">
-                    <div class="half-width">
+                    <div class="full-width">
                         <label for="wie_erfahren">Wie hast Du vom Aikido Verein Freiburg erfahren?</label>
                         <select id="wie_erfahren" name="wie_erfahren" required>
                             <option value="">Bitte auswählen</option>
@@ -113,7 +113,7 @@ class Avf_Forms_Schnupperkurs_Shortcodes
                     </div>
                 </div>
                 <div class="flex-container" id="wie-erfahren-sonstiges-container" style="display: none;">
-                    <div class="half-width">
+                    <div class="full-width">
                         <label for="wie_erfahren_sonstiges">Sonstiges</label>
                         <input type="text" name="wie_erfahren_sonstiges" id="wie_erfahren_sonstiges" placeholder="Bitte angeben">
                     </div>
@@ -231,27 +231,6 @@ class Avf_Forms_Schnupperkurs_Shortcodes
                   </div>
                 </div>
             </div>
-            <div class="container">
-                <div class="flex-container">
-                    <div class="half-width">
-                        <label for="wie_erfahren">Wie hast Du vom Aikido Verein Freiburg erfahren?</label>
-                        <select id="wie_erfahren" name="wie_erfahren" required>
-                            <option value="">Bitte auswählen</option>
-                            <?php
-                            foreach (WIE_ERFAHREN as $value => $display) {
-                                echo "<option value=\"{$value}\">{$display}</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-                </div>
-                <div class="flex-container" id="wie-erfahren-sonstiges-container" style="display: none;">
-                    <div class="half-width">
-                        <label for="wie_erfahren_sonstiges">Sonstiges</label>
-                        <input type="text" name="wie_erfahren_sonstiges" id="wie_erfahren_sonstiges" placeholder="Bitte angeben">
-                    </div>
-                </div>
-            </div>
 
             <h2>Kontaktdaten der Eltern</h2>
             <div class="container">
@@ -293,6 +272,28 @@ class Avf_Forms_Schnupperkurs_Shortcodes
                     <div class="half-width">
                         <label for="ort">Ort</label>
                         <input type="text" name="ort" id="ort" placeholder="Ort" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container">
+                <div class="flex-container">
+                    <div class="full-width">
+                        <label for="wie_erfahren">Wie haben Sie vom Aikido Verein Freiburg erfahren?</label>
+                        <select id="wie_erfahren" name="wie_erfahren" required>
+                            <option value="">Bitte auswählen</option>
+                            <?php
+                            foreach (WIE_ERFAHREN as $value => $display) {
+                                echo "<option value=\"{$value}\">{$display}</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex-container" id="wie-erfahren-sonstiges-container" style="display: none;">
+                    <div class="full-width">
+                        <label for="wie_erfahren_sonstiges">Sonstiges</label>
+                        <input type="text" name="wie_erfahren_sonstiges" id="wie_erfahren_sonstiges" placeholder="Bitte angeben">
                     </div>
                 </div>
             </div>

@@ -25,6 +25,10 @@
   flex: 0 0 calc(50% - 0.5rem);
 }
 
+.avf-form .full-width {
+  flex: 0 0 100%;
+}
+
 @media (max-width: 768px) {
   .avf-form .half-width {
     flex: 0 0 100%;
