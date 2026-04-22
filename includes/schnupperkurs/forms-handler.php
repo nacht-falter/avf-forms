@@ -145,6 +145,7 @@ class Avf_Forms_Schnupperkurs_Handler
         $result = $wpdb->insert($table_name, $data);
 
         if ($result) {
+            Avf_Forms_Utils::send_schnupperkurs_confirmation_email($email, $vorname, $nachname, $schnupperkurs_art, $beginn);
             wp_redirect(home_url('/success'));
         } else {
             $error_key = $is_adult ? 'schnupperkurs_form_errors' : 'schnupperkurs_kind_form_errors';

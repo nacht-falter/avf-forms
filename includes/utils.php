@@ -139,6 +139,54 @@ class Avf_Forms_Utils
         }
     }
 
+    public static function send_schnupperkurs_confirmation_email($email, $vorname, $nachname, $schnupperkurs_art, $beginn)
+    {
+        $headers = array(
+            'From: Aikido Verein Freiburg <noreply@aikido-freiburg.de>',
+            'Content-Type: text/plain; charset=UTF-8'
+        );
+
+        $art_label = SCHNUPPERKURSARTEN[$schnupperkurs_art] ?? $schnupperkurs_art;
+        $preis = SCHNUPPERKURSPREISE[$schnupperkurs_art] ?? '–';
+        $beginn_formatted = date_i18n('d.m.Y', strtotime($beginn));
+
+        $member_subject = '[Aikido Verein Freiburg e.V.] Schnupperkurs-Anmeldung erhalten';
+        $member_message = "Hallo $vorname,\n\n";
+        $member_message .= "Deine Anmeldung zum Schnupperkurs ($art_label) ist bei uns eingegangen.\n\n";
+        $member_message .= "Startdatum: $beginn_formatted\n";
+        $member_message .= "Teilnahmegebühr: $preis €\n\n";
+        $member_message .= "Bitte überweise den Betrag innerhalb von zwei Wochen auf folgendes Konto:\n\n";
+        $bank_details = self::get_bank_details();
+        if ($bank_details) {
+            foreach ($bank_details as $row) {
+                $member_message .= $row[0] . ": " . $row[1] . "\n";
+            }
+        }
+        $member_message .= "\n";
+        $member_message .= "Bei Fragen wende dich gerne an vorstand@aikido-freiburg.de oder sprich uns auf der Matte an.\n\n";
+        $member_message .= "Viele Grüße\n";
+        $member_message .= "Dein Aikido Verein Freiburg e.V.\n";
+
+        if (!wp_mail($email, $member_subject, $member_message, $headers)) {
+            error_log("Failed to send Schnupperkurs confirmation email to $email");
+        }
+
+        $treasurer_email = self::get_emails_by_key('treasurer_email');
+
+        $treasurer_subject = 'Neue Schnupperkurs-Anmeldung eingegangen';
+        $treasurer_message = "Neue Schnupperkurs-Anmeldung von $vorname $nachname eingegangen.\n\n";
+        $treasurer_message .= "Schnupperkursart: $art_label\n";
+        $treasurer_message .= "Startdatum: $beginn_formatted\n";
+        $treasurer_message .= "E-Mail: $email\n\n";
+        $treasurer_message .= "Zur Schnupperkurs-Verwaltung: " . home_url('/wp-admin/admin.php?page=avf-schnupperkurs-admin') . "\n";
+
+        foreach ($treasurer_email as $to_email) {
+            if (!wp_mail($to_email, $treasurer_subject, $treasurer_message, $headers)) {
+                error_log("Failed to send Schnupperkurs treasurer notification to: $to_email");
+            }
+        }
+    }
+
     public static function send_starter_kit_notification($email, $telefon, $vorname, $nachname)
     {
         $starterkit_email = self::get_emails_by_key('starterkit_email');
