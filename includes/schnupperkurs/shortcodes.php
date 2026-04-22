@@ -125,7 +125,7 @@ class Avf_Forms_Schnupperkurs_Shortcodes
             </div>
 
             <div class="container">
-                <p><i><strong>Haftungsausschluss</strong>: Der Aikido-Verein Freiburg e.V. weist ausdrücklich darauf hin, dass die Teilnahmegebühr keine Versicherung einschließt. Jedes Mitglied ist für ausreichenden Versicherungsschutz selbst verantwortlich. Eine Haftung durch den Verein ist, außer bei Vorsatz und grober Fahrlässigkeit, ausgeschlossen.</i></p>
+                <p><i><strong>Haftungsausschluss</strong>: Der Aikido-Verein Freiburg e.V. weist ausdrücklich darauf hin, dass die Teilnahmegebühr keine Versicherung einschließt. Teilnehmende sind für ausreichenden Versicherungsschutz selbst verantwortlich. Eine Haftung durch den Verein ist, außer bei Vorsatz und grober Fahrlässigkeit, ausgeschlossen.</i></p>
                 <div>
                     <input class="d-inline align-top mt-1" type="checkbox" name="haftungsausschluss" id="haftungsausschluss" required>
                     <label class="d-inline align-top" for="haftungsausschluss">Den <strong>Haftungsausschluss</strong> habe ich zur Kenntnis genommen.</label>
@@ -254,26 +254,6 @@ class Avf_Forms_Schnupperkurs_Shortcodes
                         <input type="tel" name="telefon" id="telefon" placeholder="Telefonnummer" required>
                     </div>
                 </div>
-                <div class="flex-container">
-                    <div class="half-width">
-                        <label for="strasse">Straße</label>
-                        <input type="text" name="strasse" id="strasse" placeholder="Straße" required>
-                    </div>
-                    <div class="half-width">
-                        <label for="hausnummer">Hausnummer</label>
-                        <input type="text" name="hausnummer" id="hausnummer" placeholder="Hausnummer" required>
-                    </div>
-                </div>
-                <div class="flex-container">
-                    <div class="half-width">
-                        <label for="plz">PLZ</label>
-                        <input type="text" name="plz" id="plz" placeholder="PLZ" maxlength="5" size="5" required>
-                    </div>
-                    <div class="half-width">
-                        <label for="ort">Ort</label>
-                        <input type="text" name="ort" id="ort" placeholder="Ort" required>
-                    </div>
-                </div>
             </div>
 
             <div class="container">
@@ -304,7 +284,7 @@ class Avf_Forms_Schnupperkurs_Shortcodes
             </div>
 
             <div class="container">
-                <p><i><strong>Haftungsausschluss</strong>: Der Aikido-Verein Freiburg e.V. weist ausdrücklich darauf hin, dass die Teilnahmegebühr keine Versicherung einschließt. Jedes Mitglied ist für ausreichenden Versicherungsschutz selbst verantwortlich. Eine Haftung durch den Verein ist, außer bei Vorsatz und grober Fahrlässigkeit, ausgeschlossen.</i></p>
+                <p><i><strong>Haftungsausschluss</strong>: Der Aikido-Verein Freiburg e.V. weist ausdrücklich darauf hin, dass die Teilnahmegebühr keine Versicherung einschließt. Teilnehmende sind für ausreichenden Versicherungsschutz selbst verantwortlich. Eine Haftung durch den Verein ist, außer bei Vorsatz und grober Fahrlässigkeit, ausgeschlossen.</i></p>
                 <div>
                     <input class="d-inline align-top mt-1" type="checkbox" name="haftungsausschluss" id="haftungsausschluss" required>
                     <label class="d-inline align-top" for="haftungsausschluss">Den <strong>Haftungsausschluss</strong> habe ich zur Kenntnis genommen.</label>

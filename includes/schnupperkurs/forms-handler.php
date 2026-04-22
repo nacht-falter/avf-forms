@@ -73,10 +73,6 @@ class Avf_Forms_Schnupperkurs_Handler
         if ($is_child) {
             $vorname_eltern = sanitize_text_field($_POST['vorname_eltern'] ?? '');
             $nachname_eltern = sanitize_text_field($_POST['nachname_eltern'] ?? '');
-            $strasse = sanitize_text_field($_POST['strasse'] ?? '');
-            $hausnummer = sanitize_text_field($_POST['hausnummer'] ?? '');
-            $plz = sanitize_text_field($_POST['plz'] ?? '');
-            $ort = sanitize_text_field($_POST['ort'] ?? '');
 
             if (empty($vorname_eltern)) {
                 $errors[] = "Bitte gib den Vornamen eines Elternteils ein.";
@@ -84,31 +80,8 @@ class Avf_Forms_Schnupperkurs_Handler
             if (empty($nachname_eltern)) {
                 $errors[] = "Bitte gib den Nachnamen eines Elternteils ein.";
             }
-            if (empty($strasse)) {
-                $errors[] = "Bitte gib die Straße ein.";
-            }
-            if (empty($hausnummer)) {
-                $errors[] = "Bitte gib die Hausnummer ein.";
-            }
-            if (empty($plz)) {
-                $errors[] = "Bitte gib die Postleitzahl ein.";
-            } elseif (strlen($plz) > 5) {
-                $errors[] = "Die Postleitzahl darf maximal 5 Zeichen lang sein.";
-            }
-            if (empty($ort)) {
-                $errors[] = "Bitte gib den Ort ein.";
-            }
 
-            $parent_fields = [
-                'vorname_eltern' => $vorname_eltern,
-                'nachname_eltern' => $nachname_eltern,
-                'strasse' => $strasse,
-                'hausnummer' => $hausnummer,
-                'plz' => $plz,
-                'ort' => $ort
-            ];
-
-            $notizen = "Eltern/Guardian: " . implode(", ", array_filter($parent_fields));
+            $notizen = "Kontakt Eltern: $vorname_eltern $nachname_eltern, $email, $telefon";
         } else {
             $notizen = '';
         }
