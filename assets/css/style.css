@@ -94,10 +94,18 @@
 
 .avf-form .bank-details-table {
   background: #f8f9fa;
-  padding: 1rem;
   border: 1px solid #dee2e6;
   border-radius: 4px;
   width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.avf-form .bank-details-table td {
+  padding: 0.25rem 0.75rem;
+  border: none !important;
+  background: transparent !important;
+  vertical-align: middle;
 }
 
 @media (max-width: 600px) {

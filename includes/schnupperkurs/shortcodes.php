@@ -86,25 +86,20 @@ class Avf_Forms_Schnupperkurs_Shortcodes
                         <input type="email" name="email" id="email" placeholder="E-Mail" required>
                     </div>
                     <div class="half-width">
-                        <label for="telefon">Telefon</label>
-                        <input type="tel" name="telefon" id="telefon" placeholder="Telefonnummer" required>
-                    </div>
-                </div>
-                <div class="flex-container">
-                    <div class="half-width">
                         <label for="geburtsdatum">Geburtsdatum</label>
                         <input type="date" name="geburtsdatum" id="geburtsdatum" required>
                     </div>
                 </div>
-            </div>
-
-            <div class="container">
                 <div class="flex-container">
                     <div class="half-width">
                         <label for="beginn">Anmeldung ab:</label>
                         <input type="date" name="beginn" id="beginn" required>
                         <small>Der Schnupperkurs beginnt üblicherweise nach dem zweiten kostenlosen Probetraining.</small>
                     </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="flex-container">
                     <div class="half-width">
                         <label for="wie_erfahren">Wie hast Du vom Aikido Verein Freiburg erfahren?</label>
                         <select id="wie_erfahren" name="wie_erfahren" required>
@@ -130,7 +125,7 @@ class Avf_Forms_Schnupperkurs_Shortcodes
             </div>
 
             <div class="container">
-                <p><i>Der Aikido-Verein Freiburg e.V. weist ausdrücklich darauf hin, dass die Teilnahmegebühr keine Versicherung einschließt. Jedes Mitglied ist für ausreichenden Versicherungsschutz selbst verantwortlich. Eine Haftung durch den Verein ist, außer bei Vorsatz und grober Fahrlässigkeit, ausgeschlossen.</i></p>
+                <p><i><strong>Haftungsausschluss</strong>: Der Aikido-Verein Freiburg e.V. weist ausdrücklich darauf hin, dass die Teilnahmegebühr keine Versicherung einschließt. Jedes Mitglied ist für ausreichenden Versicherungsschutz selbst verantwortlich. Eine Haftung durch den Verein ist, außer bei Vorsatz und grober Fahrlässigkeit, ausgeschlossen.</i></p>
                 <div>
                     <input class="d-inline align-top mt-1" type="checkbox" name="haftungsausschluss" id="haftungsausschluss" required>
                     <label class="d-inline align-top" for="haftungsausschluss">Den <strong>Haftungsausschluss</strong> habe ich zur Kenntnis genommen.</label>
@@ -228,13 +223,16 @@ class Avf_Forms_Schnupperkurs_Shortcodes
                         <input type="date" name="geburtsdatum" id="geburtsdatum" required>
                     </div>
                 </div>
-            </div>
-            <div class="container">
                 <div class="flex-container">
                     <div class="half-width">
                         <label for="beginn">Anmeldung ab:</label>
                         <input type="date" name="beginn" id="beginn" required>
-                    </div>
+                        <small>Der Schnupperkurs beginnt üblicherweise nach dem zweiten kostenlosen Probetraining.</small>
+                  </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="flex-container">
                     <div class="half-width">
                         <label for="wie_erfahren">Wie hast Du vom Aikido Verein Freiburg erfahren?</label>
                         <select id="wie_erfahren" name="wie_erfahren" required>
@@ -246,7 +244,6 @@ class Avf_Forms_Schnupperkurs_Shortcodes
                             ?>
                         </select>
                     </div>
-                    <small>Der Schnupperkurs beginnt üblicherweise nach dem zweiten kostenlosen Probetraining.</small>
                 </div>
                 <div class="flex-container" id="wie-erfahren-sonstiges-container" style="display: none;">
                     <div class="half-width">
@@ -306,10 +303,10 @@ class Avf_Forms_Schnupperkurs_Shortcodes
             </div>
 
             <div class="container">
-                <p><i>Der Aikido-Verein Freiburg e.V. weist ausdrücklich darauf hin, dass die Teilnahmegebühr keine Versicherung einschließt. Jedes Mitglied ist für ausreichenden Versicherungsschutz selbst verantwortlich. Eine Haftung durch den Verein ist, außer bei Vorsatz und grober Fahrlässigkeit, ausgeschlossen.</i></p>
+                <p><i><strong>Haftungsausschluss</strong>: Der Aikido-Verein Freiburg e.V. weist ausdrücklich darauf hin, dass die Teilnahmegebühr keine Versicherung einschließt. Jedes Mitglied ist für ausreichenden Versicherungsschutz selbst verantwortlich. Eine Haftung durch den Verein ist, außer bei Vorsatz und grober Fahrlässigkeit, ausgeschlossen.</i></p>
                 <div>
                     <input class="d-inline align-top mt-1" type="checkbox" name="haftungsausschluss" id="haftungsausschluss" required>
-                    <label class="d-inline align-top" for="haftungsausschluss">Den obenstehenden <strong>Haftungsausschluss</strong> habe ich zur Kenntnis genommen.</label>
+                    <label class="d-inline align-top" for="haftungsausschluss">Den <strong>Haftungsausschluss</strong> habe ich zur Kenntnis genommen.</label>
                 </div>
             </div>
 
@@ -325,7 +322,7 @@ class Avf_Forms_Schnupperkurs_Shortcodes
                 $bank_details = Avf_Forms_Utils::get_bank_details();
                 if ($bank_details && is_array($bank_details)) {
                     foreach ($bank_details as $row) {
-                        echo '<tr><td style="padding: 0.25rem 0;">' . esc_html($row[0]) . '</td><td style="padding: 0.25rem 0;"><strong>' . esc_html($row[1]) . '</strong></td></tr>';
+                        echo '<tr><td>' . esc_html($row[0]) . '</td><td><strong>' . esc_html($row[1]) . '</strong></td></tr>';
                     }
                 }
                 ?>

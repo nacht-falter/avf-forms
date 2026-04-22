@@ -47,9 +47,6 @@ class Avf_Forms_Schnupperkurs_Handler
         if (empty($email) || !is_email($email)) {
             $errors[] = "Bitte gib eine gültige E-Mail-Adresse ein.";
         }
-        if (empty($telefon)) {
-            $errors[] = "Bitte gib eine Telefonnummer ein.";
-        }
         if (empty($geburtsdatum)) {
             $errors[] = "Bitte gib dein Geburtsdatum ein.";
         }
@@ -67,6 +64,10 @@ class Avf_Forms_Schnupperkurs_Handler
         }
         if (!$datenschutz) {
             $errors[] = "Bitte akzeptiere die Datenschutzbestimmungen.";
+        }
+
+        if ($is_child && empty($telefon)) {
+            $errors[] = "Bitte gib eine Telefonnummer ein.";
         }
 
         if ($is_child) {
