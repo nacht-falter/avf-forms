@@ -281,6 +281,17 @@ label:has(+ input:required)::after {
   min-width: 250px;
 }
 
+.notizen-toggle {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.85em;
+  color: #2271b1;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0.25rem 0 !important;
+}
+
 .loading-spinner {
   position: fixed;
   top: 50%;

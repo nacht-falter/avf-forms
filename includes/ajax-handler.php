@@ -488,6 +488,19 @@ function build_membership_query($table_name, $active_filters, $search, $column, 
 }
 
 
+function format_notizen($text)
+{
+    $threshold = 120;
+    if (mb_strlen($text) > $threshold) {
+        $preview = nl2br(esc_html(mb_substr($text, 0, $threshold)));
+        $full    = nl2br(esc_html($text));
+        return '<span class="notizen-preview">' . $preview . '…</span>'
+            . '<span class="notizen-full" hidden>' . $full . '</span>'
+            . '<button type="button" class="notizen-toggle button-link">Mehr</button>';
+    }
+    return nl2br(esc_html($text));
+}
+
 function generate_membership_html($results)
 {
     $html = '';
@@ -496,7 +509,7 @@ function generate_membership_html($results)
     foreach ($results as $row) {
         foreach (array_keys($row) as $key) {
             if ($key === 'notizen') {
-                ${'column_' . $key} = nl2br(esc_html($row[$key]));
+                ${'column_' . $key} = format_notizen($row[$key] ?? '');
             } else {
                 ${'column_' . $key} = esc_html($row[$key]);
             }
@@ -640,7 +653,7 @@ function generate_schnupperkurs_html($results)
     foreach ($results as $row) {
         foreach (array_keys($row) as $key) {
             if ($key === 'notizen') {
-                ${'column_' . $key} = nl2br(esc_html($row[$key]));
+                ${'column_' . $key} = format_notizen($row[$key] ?? '');
             } else {
                 ${'column_' . $key} = esc_html($row[$key]);
             }

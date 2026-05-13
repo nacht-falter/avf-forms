@@ -724,6 +724,17 @@ jQuery(document).ready(function ($) {
     get_follow_ups();
   }
 
+  $(document).on("click", ".notizen-toggle", function (e) {
+    e.stopPropagation();
+    var td = $(this).closest("td");
+    var preview = td.find(".notizen-preview");
+    var full = td.find(".notizen-full");
+    var isExpanded = full.is(":visible");
+    full.prop("hidden", isExpanded);
+    preview.prop("hidden", !isExpanded);
+    $(this).text(isExpanded ? "Mehr" : "Weniger");
+  });
+
   $(document).on("click", ".table-row-link", handleRowClick);
 
   init();
