@@ -81,7 +81,7 @@ class Avf_Forms_Schnupperkurs_Handler
                 $errors[] = "Bitte gib den Nachnamen eines Elternteils ein.";
             }
 
-            $notizen = "Kontakt Eltern: $vorname_eltern $nachname_eltern, $email, $telefon";
+            $notizen = "Name Eltern: $vorname_eltern $nachname_eltern";
         } else {
             $notizen = '';
         }
