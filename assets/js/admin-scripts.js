@@ -49,6 +49,7 @@ jQuery(document).ready(function ($) {
     deleteButton.prop("disabled", selectedCheckboxes.length === 0);
     exportCsvButton.prop("disabled", selectedCheckboxes.length === 0);
     sendEmailButton.prop("disabled", selectedCheckboxes.length === 0);
+    $("#export-sepa").prop("disabled", selectedCheckboxes.length === 0);
   }
 
   const childFields = [
@@ -691,12 +692,23 @@ jQuery(document).ready(function ($) {
         alert("Bitte wähle ein Fälligkeitsdatum aus.");
         return;
       }
+      const selectedIds = $(".membership-checkbox")
+        .filter(":checked")
+        .map(function () {
+          return $(this).val();
+        })
+        .get();
+      if (selectedIds.length === 0) {
+        alert("Bitte wähle mindestens einen Eintrag zum Exportieren aus.");
+        return;
+      }
       $.post(
         avf_ajax_admin.ajaxurl,
         {
           action_type: "export_sepa",
           action: "avf_membership_action",
           due_date: dueDate,
+          ids: selectedIds,
           _ajax_nonce: avf_ajax_admin.nonce,
         },
         function (response) {

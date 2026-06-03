@@ -200,15 +200,20 @@ function avf_handle_ajax_membership_requests()
             );
             wp_send_json_success(['download_url' => $download_url]);
         }
-    } elseif ($action_type === 'export_sepa') {
+    } elseif ($action_type === 'export_sepa' && isset($_POST['ids']) && is_array($_POST['ids'])) {
         $due_date = sanitize_text_field($_POST['due_date'] ?? '');
         if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $due_date) || $due_date < date('Y-m-d')) {
             wp_send_json_error('Ungültiges oder vergangenes Fälligkeitsdatum.');
         }
+        if (empty($_POST['ids'])) {
+            wp_send_json_error('Keine Mitglieder ausgewählt.');
+        }
+        $ids = implode(',', array_map('intval', $_POST['ids']));
         $download_url = add_query_arg(
             [
                 'action'      => 'avf_download_sepa',
                 'due_date'    => $due_date,
+                'ids'         => $ids,
                 '_ajax_nonce' => $_POST['_ajax_nonce'],
             ],
             admin_url('admin-ajax.php')
@@ -426,6 +431,12 @@ function avf_generate_sepa_download()
     $creditor_name = $bank['empfaenger'];
     $glaeubigerid  = $bank['glaeubigerid'];
 
+    $ids_raw = sanitize_text_field($_GET['ids'] ?? '');
+    if (empty($ids_raw)) {
+        wp_die('Keine Mitglieder ausgewählt.');
+    }
+    $ids_string = implode(',', array_map('intval', explode(',', $ids_raw)));
+
     $default_fees = get_option('avf_beitraege', []);
 
     global $wpdb;
@@ -434,10 +445,9 @@ function avf_generate_sepa_download()
         "SELECT id, vorname, nachname, kontoinhaber, iban, bic, mitgliedschaft_art,
                 beitrag, spende_monatlich, submission_date
          FROM $table
-         WHERE sepa = 1
-           AND iban IS NOT NULL AND iban != ''
-           AND (thgutscheine IS NULL OR thgutscheine = 0)
-           AND (austrittsdatum IS NULL OR austrittsdatum > CURDATE())",
+         WHERE id IN ($ids_string)
+           AND sepa = 1
+           AND iban IS NOT NULL AND iban != ''",
         ARRAY_A
     );
 

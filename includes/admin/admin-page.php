@@ -94,7 +94,7 @@ function avf_display_memberships()
             <div id="sepa-export-section">
                 <label for="sepa-collection-date">Fälligkeitsdatum:</label>
                 <input type="date" id="sepa-collection-date" value="<?php echo esc_attr(avf_next_quarter_end()); ?>" />
-                <button type="button" id="export-sepa" class="button button-primary" title="SEPA-Lastschrift für alle aktiven Mitglieder mit SEPA-Mandat exportieren">SEPA Lastschrift exportieren</button>
+                <button type="button" id="export-sepa" class="button button-primary" title="SEPA-Lastschrift für ausgewählte Mitglieder exportieren" disabled>SEPA Lastschrift exportieren</button>
             </div>
         </form>
 
