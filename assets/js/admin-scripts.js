@@ -684,6 +684,32 @@ jQuery(document).ready(function ($) {
       );
     });
 
+    $("#export-sepa").on("click", function (e) {
+      e.preventDefault();
+      const dueDate = $("#sepa-collection-date").val();
+      if (!dueDate) {
+        alert("Bitte wähle ein Fälligkeitsdatum aus.");
+        return;
+      }
+      $.post(
+        avf_ajax_admin.ajaxurl,
+        {
+          action_type: "export_sepa",
+          action: "avf_membership_action",
+          due_date: dueDate,
+          _ajax_nonce: avf_ajax_admin.nonce,
+        },
+        function (response) {
+          if (response.success) {
+            window.location.href = response.data.download_url;
+          } else {
+            alert("Fehler: " + response.data.message);
+          }
+        },
+        "json",
+      );
+    });
+
     goBackButton.on("click", function (e) {
       e.preventDefault();
       window.history.back();

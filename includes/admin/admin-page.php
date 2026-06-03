@@ -1,4 +1,14 @@
 <?php
+function avf_next_quarter_end()
+{
+    $month = (int) date('n');
+    $year  = (int) date('Y');
+    if ($month <= 3)  return "$year-03-31";
+    if ($month <= 6)  return "$year-06-30";
+    if ($month <= 9)  return "$year-09-30";
+    return "$year-12-31";
+}
+
 function avf_display_memberships()
 {
     if (!current_user_can('manage_memberships')) {
@@ -80,6 +90,11 @@ function avf_display_memberships()
                 <button type="button" id="export-csv" class="button button-primary" title="Ausgewählte Mitgliedschaften als CSV exportieren" disabled>Als CSV exportieren</button>
                 <button type="button" id="send-email" class="button button-primary" title="E-Mail an ausgewählte Mitglieder schreiben" disabled>E-Mail schreiben</button>
                 <button type="button" id="delete-bulk" class="button button-secondary" title="Ausgewählte Mitgliedschaften löschen" disabled>Mitgliedschaften löschen</button>
+            </div>
+            <div id="sepa-export-section">
+                <label for="sepa-collection-date">Fälligkeitsdatum:</label>
+                <input type="date" id="sepa-collection-date" value="<?php echo esc_attr(avf_next_quarter_end()); ?>" />
+                <button type="button" id="export-sepa" class="button button-primary" title="SEPA-Lastschrift für alle aktiven Mitglieder mit SEPA-Mandat exportieren">SEPA Lastschrift exportieren</button>
             </div>
         </form>
 

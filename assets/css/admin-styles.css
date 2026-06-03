@@ -4,8 +4,16 @@
 #set-reminder,
 #delete-bulk,
 #update-fees,
-#send-email {
+#send-email,
+#export-sepa {
   margin-top: 0.5rem;
+}
+
+#sepa-export-section {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
 }
 
 #admin-page-header {

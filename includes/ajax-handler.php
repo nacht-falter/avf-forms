@@ -3,6 +3,7 @@
 add_action('wp_ajax_avf_membership_action', 'avf_handle_ajax_membership_requests');
 add_action('wp_ajax_avf_schnupperkurs_action', 'avf_handle_ajax_schnupperkurs_requests');
 add_action('wp_ajax_avf_download_csv', 'avf_generate_csv_download');
+add_action('wp_ajax_avf_download_sepa', 'avf_generate_sepa_download');
 add_action('wp_ajax_avf_fetch_memberships', 'avf_fetch_membership_data');
 add_action('wp_ajax_avf_fetch_schnupperkurse', 'avf_fetch_schnupperkurs_data');
 add_action('wp_ajax_avf_get_membership_stats', 'avf_get_membership_stats');
@@ -199,6 +200,20 @@ function avf_handle_ajax_membership_requests()
             );
             wp_send_json_success(['download_url' => $download_url]);
         }
+    } elseif ($action_type === 'export_sepa') {
+        $due_date = sanitize_text_field($_POST['due_date'] ?? '');
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $due_date) || $due_date < date('Y-m-d')) {
+            wp_send_json_error('Ungültiges oder vergangenes Fälligkeitsdatum.');
+        }
+        $download_url = add_query_arg(
+            [
+                'action'      => 'avf_download_sepa',
+                'due_date'    => $due_date,
+                '_ajax_nonce' => $_POST['_ajax_nonce'],
+            ],
+            admin_url('admin-ajax.php')
+        );
+        wp_send_json_success(['download_url' => $download_url]);
     } elseif ($action_type === 'update_fees') {
         if (empty($_POST['avf_beitraege']) || ! is_array($_POST['avf_beitraege']) ) {
             wp_send_json_error('No fee data received.');
@@ -393,6 +408,193 @@ function avf_generate_csv_download()
     } else {
         wp_die('Invalid request.');
     }
+}
+
+function avf_generate_sepa_download()
+{
+    avf_validate_user_and_nonce();
+
+    $due_date = sanitize_text_field($_GET['due_date'] ?? '');
+    if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $due_date)) {
+        wp_die('Ungültiges Fälligkeitsdatum.');
+    }
+
+    $config       = require AVF_PLUGIN_DIR . 'config.php';
+    $bank         = $config['bank_details'];
+    $creditor_iban = preg_replace('/\s+/', '', $bank['iban']);
+    $creditor_bic  = $bank['bic'];
+    $creditor_name = $bank['empfaenger'];
+    $glaeubigerid  = $bank['glaeubigerid'];
+
+    $default_fees = get_option('avf_beitraege', []);
+
+    global $wpdb;
+    $table = $wpdb->prefix . 'avf_memberships';
+    $members = $wpdb->get_results(
+        "SELECT id, vorname, nachname, kontoinhaber, iban, bic, mitgliedschaft_art,
+                beitrag, spende_monatlich, submission_date
+         FROM $table
+         WHERE sepa = 1
+           AND iban IS NOT NULL AND iban != ''
+           AND (thgutscheine IS NULL OR thgutscheine = 0)
+           AND (austrittsdatum IS NULL OR austrittsdatum > CURDATE())",
+        ARRAY_A
+    );
+
+    $transactions = [];
+    foreach ($members as $m) {
+        $base_fee = isset($m['beitrag']) && $m['beitrag'] !== null
+            ? (float) $m['beitrag']
+            : (float) ($default_fees[$m['mitgliedschaft_art']] ?? 0);
+        $donation = isset($m['spende_monatlich']) && $m['spende_monatlich'] !== null
+            ? (float) $m['spende_monatlich']
+            : 0.0;
+        $amount = $base_fee + $donation;
+        if ($amount <= 0) continue;
+        $transactions[] = [
+            'id'            => (int) $m['id'],
+            'kontoinhaber'  => $m['kontoinhaber'] ?: trim($m['vorname'] . ' ' . $m['nachname']),
+            'iban'          => preg_replace('/\s+/', '', $m['iban']),
+            'bic'           => $m['bic'] ?: 'NOTPROVIDED',
+            'amount'        => $amount,
+            'mandate_date'  => substr($m['submission_date'], 0, 10),
+        ];
+    }
+
+    if (empty($transactions)) {
+        wp_die('Keine Mitglieder mit SEPA-Mandat gefunden.');
+    }
+
+    $count      = count($transactions);
+    $total      = array_sum(array_column($transactions, 'amount'));
+    $msg_id     = 'AVF-' . date('YmdHis');
+    $created_at = date('Y-m-d\TH:i:s');
+    $due_ym     = date('Ym', strtotime($due_date));
+
+    $quarter_map = [1 => 'Q1', 2 => 'Q1', 3 => 'Q1', 4 => 'Q2', 5 => 'Q2', 6 => 'Q2',
+                    7 => 'Q3', 8 => 'Q3', 9 => 'Q3', 10 => 'Q4', 11 => 'Q4', 12 => 'Q4'];
+    $quarter_label = $quarter_map[(int) date('n', strtotime($due_date))] . ' ' . date('Y', strtotime($due_date));
+
+    $dom = new DOMDocument('1.0', 'UTF-8');
+    $dom->formatOutput = true;
+
+    $doc = $dom->createElement('Document');
+    $doc->setAttribute('xmlns', 'urn:iso:std:iso:20022:tech:xsd:pain.008.001.08');
+    $dom->appendChild($doc);
+
+    $initn = $dom->createElement('CstmrDrctDbtInitn');
+    $doc->appendChild($initn);
+
+    // Group Header
+    $grp = $dom->createElement('GrpHdr');
+    $grp->appendChild($dom->createElement('MsgId', $msg_id));
+    $grp->appendChild($dom->createElement('CreDtTm', $created_at));
+    $grp->appendChild($dom->createElement('NbOfTxs', (string) $count));
+    $grp->appendChild($dom->createElement('CtrlSum', number_format($total, 2, '.', '')));
+    $initg = $dom->createElement('InitgPty');
+    $initg->appendChild($dom->createElement('Nm', $creditor_name));
+    $grp->appendChild($initg);
+    $initn->appendChild($grp);
+
+    // Payment Information
+    $pmt = $dom->createElement('PmtInf');
+    $pmt->appendChild($dom->createElement('PmtInfId', $msg_id));
+    $pmt->appendChild($dom->createElement('PmtMtd', 'DD'));
+    $pmt->appendChild($dom->createElement('NbOfTxs', (string) $count));
+    $pmt->appendChild($dom->createElement('CtrlSum', number_format($total, 2, '.', '')));
+
+    $pmt_tp = $dom->createElement('PmtTpInf');
+    $svc = $dom->createElement('SvcLvl');
+    $svc->appendChild($dom->createElement('Cd', 'SEPA'));
+    $pmt_tp->appendChild($svc);
+    $lcl = $dom->createElement('LclInstrm');
+    $lcl->appendChild($dom->createElement('Cd', 'CORE'));
+    $pmt_tp->appendChild($lcl);
+    $pmt_tp->appendChild($dom->createElement('SeqTp', 'RCUR'));
+    $pmt->appendChild($pmt_tp);
+
+    $pmt->appendChild($dom->createElement('ReqdColltnDt', $due_date));
+
+    $cdtr = $dom->createElement('Cdtr');
+    $cdtr->appendChild($dom->createElement('Nm', $creditor_name));
+    $pmt->appendChild($cdtr);
+
+    $cdtr_acct = $dom->createElement('CdtrAcct');
+    $cdtr_id   = $dom->createElement('Id');
+    $cdtr_id->appendChild($dom->createElement('IBAN', $creditor_iban));
+    $cdtr_acct->appendChild($cdtr_id);
+    $pmt->appendChild($cdtr_acct);
+
+    $cdtr_agt = $dom->createElement('CdtrAgt');
+    $fin_inst  = $dom->createElement('FinInstnId');
+    $fin_inst->appendChild($dom->createElement('BICFI', $creditor_bic));
+    $cdtr_agt->appendChild($fin_inst);
+    $pmt->appendChild($cdtr_agt);
+
+    $pmt->appendChild($dom->createElement('ChrgBr', 'SLEV'));
+
+    $cdtr_schme = $dom->createElement('CdtrSchmeId');
+    $cs_id      = $dom->createElement('Id');
+    $cs_prvt    = $dom->createElement('PrvtId');
+    $cs_othr    = $dom->createElement('Othr');
+    $cs_othr->appendChild($dom->createElement('Id', $glaeubigerid));
+    $cs_schme_nm = $dom->createElement('SchmeNm');
+    $cs_schme_nm->appendChild($dom->createElement('Prtry', 'SEPA'));
+    $cs_othr->appendChild($cs_schme_nm);
+    $cs_prvt->appendChild($cs_othr);
+    $cs_id->appendChild($cs_prvt);
+    $cdtr_schme->appendChild($cs_id);
+    $pmt->appendChild($cdtr_schme);
+
+    // One transaction per member
+    foreach ($transactions as $tx) {
+        $ddi = $dom->createElement('DrctDbtTxInf');
+
+        $pmt_id = $dom->createElement('PmtId');
+        $pmt_id->appendChild($dom->createElement('EndToEndId', 'AVF-' . $tx['id'] . '-' . $due_ym));
+        $ddi->appendChild($pmt_id);
+
+        $amt = $dom->createElement('InstdAmt', number_format($tx['amount'], 2, '.', ''));
+        $amt->setAttribute('Ccy', 'EUR');
+        $ddi->appendChild($amt);
+
+        $ddt    = $dom->createElement('DrctDbtTx');
+        $mndt   = $dom->createElement('MndtRltdInf');
+        $mndt->appendChild($dom->createElement('MndtId', 'AVF-' . $tx['id']));
+        $mndt->appendChild($dom->createElement('DtOfSgntr', $tx['mandate_date']));
+        $ddt->appendChild($mndt);
+        $ddi->appendChild($ddt);
+
+        $dbtr_agt  = $dom->createElement('DbtrAgt');
+        $dbtr_fin  = $dom->createElement('FinInstnId');
+        $dbtr_fin->appendChild($dom->createElement('BICFI', $tx['bic']));
+        $dbtr_agt->appendChild($dbtr_fin);
+        $ddi->appendChild($dbtr_agt);
+
+        $dbtr = $dom->createElement('Dbtr');
+        $dbtr->appendChild($dom->createElement('Nm', $tx['kontoinhaber']));
+        $ddi->appendChild($dbtr);
+
+        $dbtr_acct = $dom->createElement('DbtrAcct');
+        $dbtr_id   = $dom->createElement('Id');
+        $dbtr_id->appendChild($dom->createElement('IBAN', $tx['iban']));
+        $dbtr_acct->appendChild($dbtr_id);
+        $ddi->appendChild($dbtr_acct);
+
+        $rmt = $dom->createElement('RmtInf');
+        $rmt->appendChild($dom->createElement('Ustrd', 'Mitgliedsbeitrag AVF ' . $quarter_label));
+        $ddi->appendChild($rmt);
+
+        $pmt->appendChild($ddi);
+    }
+
+    $initn->appendChild($pmt);
+
+    $filename = 'sepa-lastschrift-' . $due_date . '.xml';
+    header('Content-Type: application/xml; charset=UTF-8');
+    header('Content-Disposition: attachment; filename="' . $filename . '"');
+    echo $dom->saveXML();
+    exit();
 }
 
 function validate_and_get_params($allowed_columns)
