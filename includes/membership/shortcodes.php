@@ -52,6 +52,7 @@ class Avf_Forms_Membership_Shortcodes
     public static function render_membership_form()
     {
         $errors = get_transient('form_validation_errors');
+        $glaeubigerid = self::get_config()['bank_details']['glaeubigerid'];
 
         ob_start();
         ?>
@@ -185,7 +186,7 @@ class Avf_Forms_Membership_Shortcodes
                 </div>
                 <div>
                     <input class="d-inline align-top mt-4" type="checkbox" name="sepa" id="sepa" required>
-                    <label class="d-inline align-top" for="sepa">Hiermit ermächtige ich den Aikido Verein Freiburg e.V., Zahlungen von meinem Konto mittels Lastschrift einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom Aikido Verein Freiburg e.V. auf mein Konto gezogenen Lastschriften einzulösen. Die untenstehenden Hinweise habe ich zur Kenntnis genommen.</label>
+                    <label class="d-inline align-top" for="sepa">Hiermit ermächtige ich den Aikido Verein Freiburg e.V. (Gläubiger-ID: <?php echo esc_html($glaeubigerid); ?>), Zahlungen von meinem Konto mittels Lastschrift einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom Aikido Verein Freiburg e.V. auf mein Konto gezogenen Lastschriften einzulösen. Die untenstehenden Hinweise habe ich zur Kenntnis genommen.</label>
                 </div>
                 <div>
                     <input class="d-inline align-top mt-4" type="checkbox" name="starterpaket" id="starterpaket">
@@ -240,6 +241,7 @@ class Avf_Forms_Membership_Shortcodes
     // Render Membership Children form
     public static function render_membership_children_form()
     {
+        $glaeubigerid = self::get_config()['bank_details']['glaeubigerid'];
         ob_start();
         ?>
         <form id="membership-children-form" class="avf-form" method="post" action="">
@@ -362,7 +364,7 @@ class Avf_Forms_Membership_Shortcodes
                 </div>
                 <div>
                     <input class="d-inline align-top mt-4" type="checkbox" name="sepa" id="sepa" required>
-                    <label class="d-inline align-top" for="sepa">Hiermit ermächtige ich den Aikido Verein Freiburg e.V., Zahlungen von meinem Konto mittels Lastschrift einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom Aikido Verein Freiburg e.V. auf mein Konto gezogenen Lastschriften einzulösen. Die untenstehenden Hinweise habe ich zur Kenntnis genommen.</label>
+                    <label class="d-inline align-top" for="sepa">Hiermit ermächtige ich den Aikido Verein Freiburg e.V. (Gläubiger-ID: <?php echo esc_html($glaeubigerid); ?>), Zahlungen von meinem Konto mittels Lastschrift einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom Aikido Verein Freiburg e.V. auf mein Konto gezogenen Lastschriften einzulösen. Die untenstehenden Hinweise habe ich zur Kenntnis genommen.</label>
                 </div>
                 <div>
                     <h5>Hinweise:</h5>
