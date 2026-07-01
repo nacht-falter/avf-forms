@@ -272,8 +272,12 @@ label:has(+ input:required)::after {
   background-color: #e6f7ff !important;
 }
 
-.highlight-blue:hover {
+.highlight-blue {
   background-color: #e6f7ff !important;
+}
+
+.highlight-blue:hover {
+  background-color: #f0fbff !important;
 }
 
 .highlight-green {

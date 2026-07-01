@@ -929,10 +929,17 @@ function generate_schnupperkurs_html($results)
             <td>{$column_telefon}</td>
             <td>{$column_geburtsdatum}</td>
             <td>{$column_beginn}</td>
-            <td>
             HTML;
 
+        $isExtended = false;
+        if (($row['schnupperkurs_art'] ?? '') === 'kind' && !empty($row['beginn']) && !empty($row['ende'])) {
+            $baseline_ende = (new DateTime($row['beginn']))->modify('+2 months');
+            $isExtended = strtotime($row['ende']) > $baseline_ende->getTimestamp();
+        }
+
+        $html .= '<td class="' . ($isExtended ? 'highlight-blue' : '') . '" title="' . ($isExtended ? 'Automatisch verlängert wegen Schulferien' : '') . '">';
         $html .= $column_ende;
+        $html .= $isExtended ? '&nbsp;<span class="dashicons dashicons-edit" style="color: #3498db;"></span>' : '';
         $html .= $markOver && !$markMember ? '&nbsp;<span class="dashicons dashicons-warning" style="color: red;" title="Schnupperkurs ist vorbei"></span>' : '';
 
         $wie_erfahren_display = WIE_ERFAHREN[$column_wie_erfahren] ?? $column_wie_erfahren;
