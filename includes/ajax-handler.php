@@ -279,11 +279,11 @@ function avf_handle_ajax_schnupperkurs_requests()
 
     if ($action_type === 'create' || $action_type === 'update') {
         $beginn = sanitize_text_field($_POST['beginn']);
-        $beginn_date = new DateTime($beginn);
-        $ende_date = $beginn_date->modify('+2 months');
+        $schnupperkurs_art = sanitize_text_field($_POST['schnupperkurs_art']);
+        $ende_date = Avf_Forms_Utils::calculate_schnupperkurs_ende($beginn, $schnupperkurs_art);
 
         $data = [
-            'schnupperkurs_art' => sanitize_text_field($_POST['schnupperkurs_art']),
+            'schnupperkurs_art' => $schnupperkurs_art,
             'vorname' => sanitize_text_field($_POST['vorname']),
             'nachname' => sanitize_text_field($_POST['nachname']),
             'email' => sanitize_email($_POST['email']),
@@ -892,8 +892,8 @@ function generate_schnupperkurs_html($results)
 
         $markOver = false;
         $markMember = false;
-        $beginn = strtotime($row['beginn']);
-        if ($beginn && $beginn < strtotime('-2 months')) {
+        $ende = strtotime($row['ende'] ?? '');
+        if ($ende && $ende < strtotime('today')) {
             $rowClasses = 'highlight-red';
             $rowTitle = 'Schnupperkurs ist vorbei';
             $markOver = true;

@@ -3,6 +3,7 @@
 class Avf_Forms_Utils
 {
     private static $emails = null;
+    private static $bw_school_holidays = null;
 
     private static function load_emails()
     {
@@ -139,7 +140,61 @@ class Avf_Forms_Utils
         }
     }
 
-    public static function send_schnupperkurs_confirmation_email($email, $vorname, $nachname, $schnupperkurs_art, $beginn)
+    private static function load_bw_school_holidays()
+    {
+        if (self::$bw_school_holidays === null) {
+            $path = AVF_PLUGIN_DIR . 'includes/data/bw-schulferien.php';
+            self::$bw_school_holidays = file_exists($path) ? include $path : [];
+        }
+        return self::$bw_school_holidays;
+    }
+
+    public static function calculate_schnupperkurs_ende($beginn, $schnupperkurs_art)
+    {
+        $beginn_date = new DateTime($beginn);
+        $ende_date = clone $beginn_date;
+        $ende_date->modify('+2 months');
+
+        if ($schnupperkurs_art === 'kind') {
+            $ende_date = self::extend_for_school_holidays($beginn_date, $ende_date);
+        }
+
+        return $ende_date;
+    }
+
+    private static function extend_for_school_holidays(DateTime $beginn_date, DateTime $ende_date)
+    {
+        $holidays = self::load_bw_school_holidays();
+        $applied = array_fill(0, count($holidays), false);
+        $changed = true;
+
+        while ($changed) {
+            $changed = false;
+            foreach ($holidays as $i => $holiday) {
+                if ($applied[$i]) {
+                    continue;
+                }
+                $h_start = new DateTime($holiday['start']);
+                $h_end = new DateTime($holiday['end']);
+
+                if ($h_start > $ende_date || $h_end < $beginn_date) {
+                    continue;
+                }
+
+                $overlap_start = $h_start > $beginn_date ? $h_start : $beginn_date;
+                $overlap_end = $h_end < $ende_date ? $h_end : $ende_date;
+                $days = (int) $overlap_start->diff($overlap_end)->days + 1;
+
+                $ende_date = (clone $ende_date)->modify("+{$days} days");
+                $applied[$i] = true;
+                $changed = true;
+            }
+        }
+
+        return $ende_date;
+    }
+
+    public static function send_schnupperkurs_confirmation_email($email, $vorname, $nachname, $schnupperkurs_art, $beginn, $ende)
     {
         $headers = array(
             'From: Aikido Verein Freiburg <noreply@aikido-freiburg.de>',
@@ -149,11 +204,13 @@ class Avf_Forms_Utils
         $art_label = SCHNUPPERKURSARTEN[$schnupperkurs_art] ?? $schnupperkurs_art;
         $preis = SCHNUPPERKURSPREISE[$schnupperkurs_art] ?? '–';
         $beginn_formatted = date_i18n('d.m.Y', strtotime($beginn));
+        $ende_formatted = date_i18n('d.m.Y', strtotime($ende));
 
         $member_subject = '[Aikido Verein Freiburg e.V.] Schnupperkurs-Anmeldung erhalten';
         $member_message = "Hallo $vorname,\n\n";
         $member_message .= "Deine Anmeldung zum Schnupperkurs ($art_label) ist bei uns eingegangen.\n\n";
         $member_message .= "Startdatum: $beginn_formatted\n";
+        $member_message .= "Enddatum: $ende_formatted\n";
         $member_message .= "Teilnahmegebühr: $preis €\n\n";
         $member_message .= "Bitte überweise den Betrag innerhalb von zwei Wochen auf folgendes Konto:\n\n";
         $bank_details = self::get_bank_details();

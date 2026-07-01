@@ -94,12 +94,10 @@ class Avf_Forms_Schnupperkurs_Handler
             exit();
         }
 
-        $beginn_date = new DateTime($beginn);
-        $ende_date = clone $beginn_date;
-        $ende_date->modify('+2 months');
-
         $wie_erfahren_value = $wie_erfahren === 'sonstiges' ? $wie_erfahren_sonstiges : $wie_erfahren;
         $schnupperkurs_art = sanitize_text_field($_POST['schnupperkurs_art']);
+
+        $ende_date = Avf_Forms_Utils::calculate_schnupperkurs_ende($beginn, $schnupperkurs_art);
 
         $data = [
             'schnupperkurs_art' => $schnupperkurs_art,
@@ -118,7 +116,7 @@ class Avf_Forms_Schnupperkurs_Handler
         $result = $wpdb->insert($table_name, $data);
 
         if ($result) {
-            Avf_Forms_Utils::send_schnupperkurs_confirmation_email($email, $vorname, $nachname, $schnupperkurs_art, $beginn);
+            Avf_Forms_Utils::send_schnupperkurs_confirmation_email($email, $vorname, $nachname, $schnupperkurs_art, $beginn, $ende_date->format('Y-m-d'));
             wp_redirect(home_url('/success'));
         } else {
             $error_key = $is_adult ? 'schnupperkurs_form_errors' : 'schnupperkurs_kind_form_errors';
