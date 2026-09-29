@@ -132,7 +132,7 @@ class Avf_Forms_Membership_Shortcodes
             <div class="container">
                 <div class="flex-container">
                     <div class="half-width">
-                        <label for="mitgliedschaft">Art der Mitgliedschaft</label>
+                        <label for="mitgliedschaft_art">Art der Mitgliedschaft</label>
                         <select name="mitgliedschaft_art" id="mitgliedschaft_art" required>
                             <option value="aktiv">Aktives Mitglied</option>
                             <option value="aktiv_ermaessigt">Aktives Mitglied (ermäßigt)</option>
@@ -268,9 +268,9 @@ class Avf_Forms_Membership_Shortcodes
                     </div>
                 </div>
                 <div>
-                    <label>Geschwisterkind<label>
+                    <label>Geschwisterkind</label>
                     <input class="d-inline align-top" type="checkbox" name="geschwisterkind" id="geschwisterkind">
-                    <label class="d-inline align-top" for="geschwisterkind" class="font-weight-normal">Mein Kind hat ein Geschwisterkind, das bereits Mitglied im Aikido-Verein Freiburg e.V. ist.</label>
+                    <label class="d-inline align-top font-weight-normal" for="geschwisterkind">Mein Kind hat ein Geschwisterkind, das bereits Mitglied im Aikido-Verein Freiburg e.V. ist.</label>
                 </div>
            </div>
 
@@ -343,9 +343,9 @@ class Avf_Forms_Membership_Shortcodes
                 <div class="flex-container">
                     <div>
                       <input class="d-inline align-top mt-4" type="checkbox" name="thgutscheine" id="thgutscheine">
-                      <label class="d-inline align-top" for="thgutscheine">Wir erhalten Teilhabegutscheine von der Stadt Freiburg und möchten die Mitgliedsbeiträge darüber abrechnen.</label>
+                      <label class="d-inline align-top" for="thgutscheine">Wir erhalten Teilhabegutscheine von der Stadt Freiburg und möchten die Mitgliedsbeiträge darüber abrechnen.<br>
+                      <small>Alle Informationen zur Beantragung von Teilhabeleistungen unter: <a href="https://www.freiburg.de/pb/231199.html" title="Bildungs- und Teilhabeleistungen in Freiburg">https://www.freiburg.de/pb/231199.html</a></small></label>
                      </div>
-                     <div>Alle Informationen zur Beantragung von Teilhabeleistungen unter: <a href="https://www.freiburg.de/pb/231199.html" title="Bildungs- und Teilhabeleistungen in Freiburg">https://www.freiburg.de/pb/231199.html</a></div>
                     <div class="half-width">
                         <label for="kontoinhaber">Kontoinhaber</label>
                         <input type="text" name="kontoinhaber" id="kontoinhaber" placeholder="Kontoinhaber" required>
