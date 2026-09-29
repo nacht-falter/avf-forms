@@ -344,7 +344,7 @@ class Avf_Forms_Membership_Shortcodes
                     <div>
                       <input class="d-inline align-top mt-4" type="checkbox" name="thgutscheine" id="thgutscheine">
                       <label class="d-inline align-top" for="thgutscheine">Wir erhalten Teilhabegutscheine von der Stadt Freiburg und möchten die Mitgliedsbeiträge darüber abrechnen.<br>
-                      <small>Alle Informationen zur Beantragung von Teilhabeleistungen unter: <a href="https://www.freiburg.de/pb/231199.html" title="Bildungs- und Teilhabeleistungen in Freiburg">https://www.freiburg.de/pb/231199.html</a></small></label>
+                      <small>Alle Informationen zur Beantragung von Teilhabeleistungen unter: <a href="https://www.freiburg.de/pb/231199.html" title="Bildungs- und Teilhabeleistungen in Freiburg" target="_blank">https://www.freiburg.de/pb/231199.html</a></small></label>
                      </div>
                     <div class="half-width">
                         <label for="kontoinhaber">Kontoinhaber</label>
