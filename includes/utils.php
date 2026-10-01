@@ -2,6 +2,9 @@
 
 class Avf_Forms_Utils
 {
+    // Months after the end of a Schnupperkurs until its personal data is anonymized
+    const SCHNUPPERKURS_RETENTION_MONTHS = 12;
+
     private static $emails = null;
     private static $bw_school_holidays = null;
 
@@ -495,6 +498,65 @@ class Avf_Forms_Utils
             error_log('AVF-Mitgliedschaftsverwaltung: Keine zu bereinigenden Daten gefunden.');
         } else {
             error_log("AVF-Mitgliedschaftsverwaltung: $affected_rows Datensätze bereinigt.");
+        }
+    }
+
+    /**
+     * Anonymizes Schnupperkurse that ended more than SCHNUPPERKURS_RETENTION_MONTHS ago.
+     * Before the personal data is removed, the membership match used for the
+     * statistics is stored in mitglied_seit, so conversion rates stay available.
+     */
+    public static function anonymize_old_schnupperkurs_data()
+    {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'avf_schnupperkurse';
+        $memberships_table = $wpdb->prefix . 'avf_memberships';
+
+        $column_exists = $wpdb->get_results(
+            $wpdb->prepare("SHOW COLUMNS FROM $table_name LIKE %s", 'mitglied_seit')
+        );
+        if (empty($column_exists)) {
+            error_log('AVF-Mitgliedschaftsverwaltung: Spalte mitglied_seit fehlt, Schnupperkurse nicht anonymisiert. Plugin bitte neu aktivieren.');
+            return;
+        }
+
+        // Free text entered for "Sonstiges" may contain names
+        $wie_erfahren_keys = array_keys(WIE_ERFAHREN);
+        $placeholders = implode(', ', array_fill(0, count($wie_erfahren_keys), '%s'));
+
+        // MySQL applies the assignments left to right, so mitglied_seit is
+        // computed before the name and date of birth are removed.
+        $query = $wpdb->prepare(
+            "UPDATE $table_name AS sk
+            SET sk.mitglied_seit = (
+                    SELECT MIN(m.beitrittsdatum)
+                    FROM $memberships_table AS m
+                    WHERE LOWER(m.vorname) = LOWER(sk.vorname)
+                    AND LOWER(m.nachname) = LOWER(sk.nachname)
+                    AND m.geburtsdatum = DATE(sk.geburtsdatum)
+                    AND m.beitrittsdatum >= sk.beginn
+                ),
+                sk.vorname = NULL,
+                sk.nachname = NULL,
+                sk.email = NULL,
+                sk.telefon = NULL,
+                sk.geburtsdatum = NULL,
+                sk.notizen = NULL,
+                sk.wie_erfahren = CASE
+                    WHEN sk.wie_erfahren IN ($placeholders) THEN sk.wie_erfahren
+                    ELSE 'sonstiges'
+                END
+            WHERE sk.vorname IS NOT NULL
+            AND COALESCE(sk.ende, sk.beginn) < DATE_SUB(CURDATE(), INTERVAL %d MONTH)",
+            ...array_merge($wie_erfahren_keys, [self::SCHNUPPERKURS_RETENTION_MONTHS])
+        );
+
+        $affected_rows = $wpdb->query($query);
+
+        if ($affected_rows === false) {
+            error_log('AVF-Mitgliedschaftsverwaltung: Fehler beim Anonymisieren der Schnupperkurse.');
+        } elseif ($affected_rows > 0) {
+            error_log("AVF-Mitgliedschaftsverwaltung: $affected_rows Schnupperkurse anonymisiert.");
         }
     }
 }

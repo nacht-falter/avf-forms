@@ -74,21 +74,40 @@ class Avf_Forms_Activator
             CREATE TABLE IF NOT EXISTS $schnupperkurs_table (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             schnupperkurs_art varchar(255) NOT NULL,
-            vorname varchar(255) NOT NULL,
-            nachname varchar(255) NOT NULL,
-            email varchar(255) NOT NULL,
+            vorname varchar(255) NULL,
+            nachname varchar(255) NULL,
+            email varchar(255) NULL,
             telefon varchar(20),
-            geburtsdatum date NOT NULL,
+            geburtsdatum date NULL,
             beginn date NOT NULL,
             ende date NULL,
             wie_erfahren varchar(255),
             notizen text NULL,
+            mitglied_seit date NULL,
             submission_date datetime DEFAULT CURRENT_TIMESTAMP,
 
             PRIMARY KEY  (id)
             ) $charset_collate;";
 
         $wpdb->query($schnupperkurs_sql);
+
+        // Personal data of old Schnupperkurse is anonymized (set to NULL),
+        // and the conversion to a membership is kept in mitglied_seit
+        $wpdb->query("ALTER TABLE $schnupperkurs_table MODIFY COLUMN vorname varchar(255) NULL");
+        $wpdb->query("ALTER TABLE $schnupperkurs_table MODIFY COLUMN nachname varchar(255) NULL");
+        $wpdb->query("ALTER TABLE $schnupperkurs_table MODIFY COLUMN email varchar(255) NULL");
+        $wpdb->query("ALTER TABLE $schnupperkurs_table MODIFY COLUMN geburtsdatum date NULL");
+
+        $column_exists = $wpdb->get_results(
+            $wpdb->prepare(
+                "SHOW COLUMNS FROM $schnupperkurs_table LIKE %s",
+                'mitglied_seit'
+            )
+        );
+
+        if (empty($column_exists)) {
+            $wpdb->query("ALTER TABLE $schnupperkurs_table ADD COLUMN mitglied_seit date NULL AFTER notizen");
+        }
 
         // Add treasurer role
         $editor = get_role('editor');
@@ -119,7 +138,8 @@ class Avf_Forms_Activator
             error_log('Cron job scheduled at ' . date('Y-m-d H:i:s', time()));
         }
 
-        // Define membership fees and store them in wp_options
+        // Define default membership fees and store them in wp_options.
+        // add_option() keeps fees that were changed in the admin area.
         $membership_fees = [
         'aktiv' => 81,
         'aktiv_ermaessigt' => 60,
@@ -132,6 +152,6 @@ class Avf_Forms_Activator
         'passiv' => 0,
         ];
 
-        update_option('avf_beitraege', $membership_fees);
+        add_option('avf_beitraege', $membership_fees);
     }
 }

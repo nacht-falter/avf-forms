@@ -164,6 +164,7 @@ class Avf_Forms_Plugin
         add_action('admin_menu', [__CLASS__, 'add_admin_menu']);
         add_action('avf_schnupperkurs_notification', ['Avf_Forms_Utils', 'schnupperkurs_notification']);
         add_action('avf_delete_old_membership_data', ['Avf_Forms_Utils', 'delete_old_membership_data']);
+        add_action('avf_delete_old_membership_data', ['Avf_Forms_Utils', 'anonymize_old_schnupperkurs_data']);
     }
 
     public static function enqueue_public_assets()

@@ -887,6 +887,10 @@ function generate_schnupperkurs_html($results)
             }
         }
 
+        if ($row['vorname'] === null) {
+            $column_vorname = '<em>anonymisiert</em>';
+        }
+
         $rowClasses = '';
         $rowTitle = '';
 
@@ -980,6 +984,10 @@ function check_membership_status($schnupperkurs_results)
                 $result['member_since'] = $membership->beitrittsdatum;
                 $result['member_id'] = $membership->id;
             }
+        } else {
+            // Anonymized Schnupperkurs
+            $result['is_member'] = !empty($result['mitglied_seit']);
+            $result['member_since'] = $result['mitglied_seit'] ?? null;
         }
     }
 
@@ -1222,13 +1230,17 @@ function avf_get_membership_stats()
         $schnupperkurs_conversion_query = $wpdb->prepare(
             "SELECT schnupperkurs_art, COUNT(*) as count
             FROM $table_name AS sk
-            WHERE YEAR(sk.beginn) = %d AND EXISTS (
-                SELECT 1
-                FROM $memberships_table AS m
-                WHERE LOWER(m.vorname) = LOWER(sk.vorname)
-                AND LOWER(m.nachname) = LOWER(sk.nachname)
-                AND m.geburtsdatum = DATE(sk.geburtsdatum)
-                AND m.beitrittsdatum >= sk.beginn
+            WHERE YEAR(sk.beginn) = %d AND (
+                -- Anonymized Schnupperkurse keep the result in mitglied_seit
+                (sk.vorname IS NULL AND sk.mitglied_seit IS NOT NULL)
+                OR EXISTS (
+                    SELECT 1
+                    FROM $memberships_table AS m
+                    WHERE LOWER(m.vorname) = LOWER(sk.vorname)
+                    AND LOWER(m.nachname) = LOWER(sk.nachname)
+                    AND m.geburtsdatum = DATE(sk.geburtsdatum)
+                    AND m.beitrittsdatum >= sk.beginn
+                )
             )
             GROUP BY schnupperkurs_art",
             $year
