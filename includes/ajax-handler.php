@@ -815,7 +815,7 @@ function generate_membership_html($results)
         $html .= $checkAge ? '&nbsp;<span class="dashicons dashicons-warning" style="color: orange;" title="Alter stimmt nicht mit Mitgliedschaftsart überein."></span>' : '';
         $html .= $markCancelled ? '&nbsp;<span class="dashicons dashicons-warning" style="color: red;" title="Gekündigt zum ' . esc_attr(date('d.m.Y', $austrittsdatum)) . '"></span>' : '';
         $html .= $markResigned ? '&nbsp;<span class="dashicons dashicons-dismiss" style="color: red;" title="Ausgetreten zum ' . esc_attr(date('d.m.Y', $austrittsdatum)) . '"></span>' : '';
-        $html .= $markWiedervorlage ? '&nbsp;<span class="dashicons dashicons-info" style="color: #3498db;" title="Wiedervorlage: ' . $column_wiedervorlage_grund . '"></span>' : '';
+        $html .= $markWiedervorlage ? '&nbsp;<span class="dashicons dashicons-info" style="color: #3498db;" title="Wiedervorlage: ' . esc_attr($column_wiedervorlage_grund) . '"></span>' : '';
 
         $html .= <<<HTML
             </td>
@@ -1129,7 +1129,7 @@ function avf_get_follow_ups()
             $html .= '<td>' . MITGLIEDSCHAFTSARTEN[esc_html($result['mitgliedschaft_art'])];
             $html .= $markCancelled ? '&nbsp;<span class="dashicons dashicons-warning" style="color: red;" title="Gekündigt zum ' . esc_attr(date('d.m.Y', $austrittsdatum)) . '"></span>' : '';
             $html .= $markResigned ? '&nbsp;<span class="dashicons dashicons-dismiss" style="color: red;" title="Ausgetreten zum ' . esc_attr(date('d.m.Y', $austrittsdatum)) . '"></span>' : '';
-            $html .= $markWiedervorlage ? '&nbsp;<span class="dashicons dashicons-info" style="color: #3498db;" title="Wiedervorlage: ' . $result['wiedervorlage_grund'] . '"></span>' : '';
+            $html .= $markWiedervorlage ? '&nbsp;<span class="dashicons dashicons-info" style="color: #3498db;" title="Wiedervorlage: ' . esc_attr($result['wiedervorlage_grund']) . '"></span>' : '';
             $html .= '</td>';
             $html .= '<td>' . esc_html($result['vorname']) . '</td>';
             $html .= '<td>' . esc_html($result['nachname']) . '</td>';
