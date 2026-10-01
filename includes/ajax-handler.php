@@ -1071,6 +1071,8 @@ function avf_fetch_schnupperkurs_data()
 
 function avf_get_follow_ups()
 {
+    avf_validate_user_and_nonce();
+
     global $wpdb;
     $table_name = $wpdb->prefix . 'avf_memberships';
 
@@ -1153,6 +1155,8 @@ function avf_get_follow_ups()
 
 function avf_get_membership_stats()
 {
+    avf_validate_user_and_nonce();
+
     $current_year = date('Y');
     $previous_year = $current_year - 1;
 
