@@ -44,30 +44,11 @@ class Avf_Forms_Schnupperkurs_Shortcodes
 
     public static function render_schnupperkurs_erwachsene_form()
     {
-        $errors = get_transient('schnupperkurs_form_errors');
-        $success = get_transient('schnupperkurs_form_success');
-
         ob_start();
         ?>
         <form id="schnupperkurs-erwachsene-form" class="avf-form" method="post" action="">
 
-        <?php
-        if ($success) {
-            echo '<div class="form-success" style="padding: 0.5rem; background: #d4edda; border: 1px solid #c3e6cb; margin-bottom: 1rem;">';
-            echo '<p>' . esc_html($success) . '</p>';
-            echo '</div>';
-            delete_transient('schnupperkurs_form_success');
-        }
-
-        if ($errors) {
-            echo '<div class="form-error" style="display: block; padding: 0.25rem 0.75rem;">';
-            foreach ($errors as $error) {
-                echo '<p>' . esc_html($error) . '</p>';
-            }
-            echo '</div>';
-            delete_transient('schnupperkurs_form_errors');
-        }
-        ?>
+        <?php echo Avf_Forms_Utils::render_form_errors(); ?>
 
             <div class="container">
                 <div class="flex-container">
@@ -180,30 +161,11 @@ class Avf_Forms_Schnupperkurs_Shortcodes
 
     public static function render_schnupperkurs_kind_form()
     {
-        $errors = get_transient('schnupperkurs_kind_form_errors');
-        $success = get_transient('schnupperkurs_kind_form_success');
-
         ob_start();
         ?>
         <form id="schnupperkurs-kind-form" class="avf-form" method="post" action="">
 
-        <?php
-        if ($success) {
-            echo '<div class="form-success" style="padding: 0.5rem; background: #d4edda; border: 1px solid #c3e6cb; margin-bottom: 1rem;">';
-            echo '<p>' . esc_html($success) . '</p>';
-            echo '</div>';
-            delete_transient('schnupperkurs_kind_form_success');
-        }
-
-        if ($errors) {
-            echo '<div class="form-error" style="display: block; padding: 0.25rem 0.75rem;">';
-            foreach ($errors as $error) {
-                echo '<p>' . esc_html($error) . '</p>';
-            }
-            echo '</div>';
-            delete_transient('schnupperkurs_kind_form_errors');
-        }
-        ?>
+        <?php echo Avf_Forms_Utils::render_form_errors(); ?>
 
             <h2>Angaben zum Kind</h2>
             <div class="container">

@@ -27,6 +27,57 @@ class Avf_Forms_Utils
         }
     }
 
+    /**
+     * Stores form errors under a random token and redirects back to the form.
+     * The token in the URL ties the errors to this submission, so concurrent
+     * visitors don't see each other's errors.
+     */
+    public static function redirect_with_form_errors(array $errors)
+    {
+        $token = bin2hex(random_bytes(16));
+        set_transient('avf_form_errors_' . $token, $errors, 10 * MINUTE_IN_SECONDS);
+
+        $redirect_url = add_query_arg(
+            ['form_status' => 'error', 'avf_errors' => $token],
+            wp_get_referer()
+        );
+        wp_redirect($redirect_url);
+        exit();
+    }
+
+    /**
+     * Returns the errors stored by redirect_with_form_errors() for the token in the URL.
+     */
+    public static function get_form_errors()
+    {
+        $token = isset($_GET['avf_errors']) ? sanitize_key($_GET['avf_errors']) : '';
+        if ($token === '') {
+            return [];
+        }
+
+        $key = 'avf_form_errors_' . $token;
+        $errors = get_transient($key);
+        delete_transient($key);
+
+        return is_array($errors) ? $errors : [];
+    }
+
+    public static function render_form_errors()
+    {
+        $errors = self::get_form_errors();
+        if (!$errors) {
+            return '';
+        }
+
+        $html = '<div class="form-error" style="display: block; padding: 0.25rem 0.75rem;">';
+        foreach ($errors as $error) {
+            $html .= '<p>' . esc_html($error) . '</p>';
+        }
+        $html .= '</div>';
+
+        return $html;
+    }
+
     public static function get_emails_by_key($key)
     {
         self::load_emails();
@@ -65,7 +116,7 @@ class Avf_Forms_Utils
     }
 
 
-    public static function send_membership_confirmation_email($email, $vorname, $nachname, $additional_data = array())
+    public static function send_membership_confirmation_email($email, $vorname, $nachname, $additional_data = array(), $record_id = 0)
     {
         $member_subject = '[Aikido Verein Freiburg e.V.] Mitgliedschaftsantrag erhalten';
         $member_message = "Hallo $vorname,\n\n";
@@ -81,7 +132,7 @@ class Avf_Forms_Utils
         );
 
         if (!wp_mail($email, $member_subject, $member_message, $member_headers)) {
-            error_log("Failed to send membership confirmation email to $email");
+            error_log("Failed to send membership confirmation email for Mitgliedschaft #$record_id");
         }
 
         $treasurer_email = self::get_emails_by_key('treasurer_email');
@@ -135,7 +186,7 @@ class Avf_Forms_Utils
 
         foreach ($treasurer_email as $to_email) {
             if (!wp_mail($to_email, $treasurer_subject, $treasurer_message, $treasurer_headers)) {
-                error_log("Failed to send treasurer notification to: " . $to_email);
+                error_log("Failed to send treasurer notification for Mitgliedschaft #$record_id");
             }
         }
     }
@@ -194,7 +245,7 @@ class Avf_Forms_Utils
         return $ende_date;
     }
 
-    public static function send_schnupperkurs_confirmation_email($email, $vorname, $nachname, $schnupperkurs_art, $beginn, $ende)
+    public static function send_schnupperkurs_confirmation_email($email, $vorname, $nachname, $schnupperkurs_art, $beginn, $ende, $record_id = 0)
     {
         $headers = array(
             'From: Aikido Verein Freiburg <noreply@aikido-freiburg.de>',
@@ -225,7 +276,7 @@ class Avf_Forms_Utils
         $member_message .= "Dein Aikido Verein Freiburg e.V.\n";
 
         if (!wp_mail($email, $member_subject, $member_message, $headers)) {
-            error_log("Failed to send Schnupperkurs confirmation email to $email");
+            error_log("Failed to send Schnupperkurs confirmation email for Schnupperkurs #$record_id");
         }
 
         $treasurer_email = self::get_emails_by_key('treasurer_email');
@@ -239,12 +290,12 @@ class Avf_Forms_Utils
 
         foreach ($treasurer_email as $to_email) {
             if (!wp_mail($to_email, $treasurer_subject, $treasurer_message, $headers)) {
-                error_log("Failed to send Schnupperkurs treasurer notification to: $to_email");
+                error_log("Failed to send Schnupperkurs treasurer notification for Schnupperkurs #$record_id");
             }
         }
     }
 
-    public static function send_starter_kit_notification($email, $telefon, $vorname, $nachname)
+    public static function send_starter_kit_notification($email, $telefon, $vorname, $nachname, $record_id = 0)
     {
         $starterkit_email = self::get_emails_by_key('starterkit_email');
 
@@ -262,7 +313,7 @@ class Avf_Forms_Utils
 
         foreach ($starterkit_email as $to_email) {
             if (!wp_mail($to_email, $subject, $message, $headers)) {
-                error_log("Failed to send email to: " . $to_email);
+                error_log("Failed to send starter kit notification for Mitgliedschaft #$record_id");
             }
         }
     }
@@ -330,7 +381,7 @@ class Avf_Forms_Utils
             );
 
             if ($is_member > 0) {
-                error_log("AVF-Mitgliedschaftsverwaltung: Schnupperkurs von $result->vorname $result->nachname beendet, aber Mitgliedschaft bereits vorhanden. Keine Benachrichtigung versendet.");
+                error_log("AVF-Mitgliedschaftsverwaltung: Schnupperkurs #$result->id beendet, aber Mitgliedschaft bereits vorhanden. Keine Benachrichtigung versendet.");
                 continue;
             }
 
@@ -376,26 +427,23 @@ class Avf_Forms_Utils
                 if ($sent) {
                     error_log(
                         sprintf(
-                            'AVF-Mitgliedschaftsverwaltung: Schnupperkurs-Benachrichtigung für %s %s wurde am %s an %s gesendet',
-                            $vorname,
-                            $nachname,
-                            current_time('mysql'),
-                            $to
+                            'AVF-Mitgliedschaftsverwaltung: Schnupperkurs-Benachrichtigung für Schnupperkurs #%d wurde am %s gesendet',
+                            $result->id,
+                            current_time('mysql')
                         )
                     );
                 } else {
                     error_log(
                         sprintf(
-                            'AVF-Mitgliedschaftsverwaltung: Fehler beim Senden der Schnupperkurs-Benachrichtigung für %s %s am %s an %s',
-                            $vorname,
-                            $nachname,
-                            current_time('mysql'),
-                            $to
+                            'AVF-Mitgliedschaftsverwaltung: Fehler beim Senden der Schnupperkurs-Benachrichtigung für Schnupperkurs #%d am %s',
+                            $result->id,
+                            current_time('mysql')
                         )
                     );
                 }
             } catch (Exception $e) {
-                error_log("Fehler beim Senden der Schnupperkurs-Benachrichtigung: " . $e->getMessage());
+                // The exception message may contain email addresses, so only the type is logged.
+                error_log("Fehler beim Senden der Schnupperkurs-Benachrichtigung für Schnupperkurs #$result->id: " . get_class($e));
             }
         }
     }

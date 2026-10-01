@@ -51,25 +51,13 @@ class Avf_Forms_Membership_Shortcodes
     // Render Membership Adults form
     public static function render_membership_form()
     {
-        $errors = get_transient('form_validation_errors');
         $glaeubigerid = self::get_config()['bank_details']['glaeubigerid'];
 
         ob_start();
         ?>
         <form id="membership-form" class="avf-form" method="post" action="">
 
-        <?php
-         $errors = get_transient('form_validation_errors');
-
-        if ($errors) {
-            echo '<div class="form-error" style="display: block; padding: 0.25rem 0.75rem;">';
-            foreach ($errors as $field => $error) {
-                echo '<p class="error-' . esc_attr($field) . '">' . esc_html($error) . '</p>';
-            }
-            echo '</div>';
-            delete_transient('form_validation_errors');
-        }
-        ?>
+        <?php echo Avf_Forms_Utils::render_form_errors(); ?>
 
             <h2>Persönliche Angaben</h2>
             <div class="container">
@@ -245,6 +233,8 @@ class Avf_Forms_Membership_Shortcodes
         ob_start();
         ?>
         <form id="membership-children-form" class="avf-form" method="post" action="">
+
+        <?php echo Avf_Forms_Utils::render_form_errors(); ?>
 
             <h2>Angaben zum Kind</h2>
             <div class="container">

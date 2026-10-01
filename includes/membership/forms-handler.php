@@ -57,13 +57,7 @@ class Avf_Forms_Membership_Handler
             }
 
             if (!empty($errors)) {
-                set_transient('form_validation_errors', $errors, 0);
-
-                $redirect_url = wp_get_referer();
-                $redirect_url = add_query_arg('form_status', 'error', $redirect_url);
-
-                wp_redirect($redirect_url);
-                exit();
+                Avf_Forms_Utils::redirect_with_form_errors($errors);
             }
 
             // Donations
@@ -109,7 +103,7 @@ class Avf_Forms_Membership_Handler
                 $notizen = '2. Kind, ' . $discount . ' € Rabatt';
             }
 
-            $wpdb->insert(
+            $result = $wpdb->insert(
                 $table_name,
                 array(
                     'mitgliedschaft_art' => $mitgliedschaft_art,
@@ -144,6 +138,14 @@ class Avf_Forms_Membership_Handler
                 )
             );
 
+            if (!$result) {
+                // $wpdb->last_error can contain submitted values, so it is not logged.
+                error_log("Failed to save membership");
+                Avf_Forms_Utils::redirect_with_form_errors(["Es ist ein Fehler aufgetreten. Bitte versuche es später erneut."]);
+            }
+
+            $record_id = $wpdb->insert_id;
+
             // Subscribe to mailinglist
             if ($mailinglist) {
                 Avf_Forms_Utils::subscribe_to_mailinglist($email, "alle@aikido-freiburg.de");
@@ -151,7 +153,7 @@ class Avf_Forms_Membership_Handler
 
             // Send notification for starter kit
             if ($starterpaket) {
-                Avf_Forms_Utils::send_starter_kit_notification($email, $telefon, $vorname, $nachname);
+                Avf_Forms_Utils::send_starter_kit_notification($email, $telefon, $vorname, $nachname, $record_id);
             }
 
             // Prepare additional data for staff notification based on membership type
@@ -165,7 +167,7 @@ class Avf_Forms_Membership_Handler
                     'thgutscheine' => $thgutscheine,
                     'email' => $email
                 );
-                Avf_Forms_Utils::send_membership_confirmation_email($email, $vorname_eltern, $nachname_eltern, $additional_data);
+                Avf_Forms_Utils::send_membership_confirmation_email($email, $vorname_eltern, $nachname_eltern, $additional_data, $record_id);
             } else {
                 // Adult membership - include donations and starter kit
                 $additional_data = array(
@@ -175,7 +177,7 @@ class Avf_Forms_Membership_Handler
                     'spende_einmalig' => $spende_einmalig,
                     'email' => $email
                 );
-                Avf_Forms_Utils::send_membership_confirmation_email($email, $vorname, $nachname, $additional_data);
+                Avf_Forms_Utils::send_membership_confirmation_email($email, $vorname, $nachname, $additional_data, $record_id);
             }
 
             wp_redirect(home_url('/success'));

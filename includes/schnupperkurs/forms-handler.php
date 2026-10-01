@@ -25,7 +25,6 @@ class Avf_Forms_Schnupperkurs_Handler
         $table_name = $wpdb->prefix . 'avf_schnupperkurse';
 
         $errors = [];
-        $transient_key = $is_adult ? 'schnupperkurs_form_errors' : 'schnupperkurs_kind_form_errors';
 
         $vorname = sanitize_text_field($_POST['vorname'] ?? '');
         $nachname = sanitize_text_field($_POST['nachname'] ?? '');
@@ -87,11 +86,7 @@ class Avf_Forms_Schnupperkurs_Handler
         }
 
         if (!empty($errors)) {
-            set_transient($transient_key, $errors, 0);
-            $redirect_url = wp_get_referer();
-            $redirect_url = add_query_arg('form_status', 'error', $redirect_url);
-            wp_redirect($redirect_url);
-            exit();
+            Avf_Forms_Utils::redirect_with_form_errors($errors);
         }
 
         $wie_erfahren_value = $wie_erfahren === 'sonstiges' ? $wie_erfahren_sonstiges : $wie_erfahren;
@@ -115,16 +110,12 @@ class Avf_Forms_Schnupperkurs_Handler
 
         $result = $wpdb->insert($table_name, $data);
 
-        if ($result) {
-            Avf_Forms_Utils::send_schnupperkurs_confirmation_email($email, $vorname, $nachname, $schnupperkurs_art, $beginn, $ende_date->format('Y-m-d'));
-            wp_redirect(home_url('/success'));
-        } else {
-            $error_key = $is_adult ? 'schnupperkurs_form_errors' : 'schnupperkurs_kind_form_errors';
-            set_transient($error_key, ["Es ist ein Fehler aufgetreten. Bitte versuche es später erneut."], 0);
-            $redirect_url = wp_get_referer();
-            $redirect_url = add_query_arg('form_status', 'error', $redirect_url);
-            wp_redirect($redirect_url);
+        if (!$result) {
+            Avf_Forms_Utils::redirect_with_form_errors(["Es ist ein Fehler aufgetreten. Bitte versuche es später erneut."]);
         }
+
+        Avf_Forms_Utils::send_schnupperkurs_confirmation_email($email, $vorname, $nachname, $schnupperkurs_art, $beginn, $ende_date->format('Y-m-d'), $wpdb->insert_id);
+        wp_redirect(home_url('/success'));
         exit();
     }
 }
